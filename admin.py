@@ -81,13 +81,11 @@ def get_current_user(request: Request) -> Optional[str]:
     return request.session.get("user")
 
 def require_auth(request: Request) -> str:
-    """Проверка авторизации через сессию."""
+    """Проверка авторизации через сессию с редиректом на логин."""
     user = get_current_user(request)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Требуется авторизация"
-        )
+        # Редирект на страницу логина вместо 401 ошибки
+        return None
     return user
 
 
@@ -154,8 +152,12 @@ async def logout(request: Request):
     return RedirectResponse(url="/admin/login", status_code=303)
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_home(request: Request, user: str = Depends(require_auth)):
+async def admin_home(request: Request):
     """Главная страница админки"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     texts = load_texts()
     
     # Подсчёт заполненных/пустых
@@ -267,8 +269,12 @@ async def admin_home(request: Request, user: str = Depends(require_auth)):
 
 
 @app.get("/admin/signs", response_class=HTMLResponse)
-async def admin_signs(request: Request, planet: str = None, user: str = Depends(require_auth)):
+async def admin_signs(request: Request, planet: str = None):
     """Редактирование текстов планет в знаках"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     texts = load_texts()
     signs_data = texts.get("signs", {})
     
@@ -362,8 +368,12 @@ async def admin_signs(request: Request, planet: str = None, user: str = Depends(
 
 
 @app.post("/admin/signs/save")
-async def save_signs(request: Request, planet: str, user: str = Depends(require_auth)):
+async def save_signs(request: Request, planet: str):
     """Сохранение текстов планет в знаках"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     form = await request.form()
     texts = load_texts()
     
@@ -380,8 +390,12 @@ async def save_signs(request: Request, planet: str, user: str = Depends(require_
 
 
 @app.get("/admin/houses", response_class=HTMLResponse)
-async def admin_houses(request: Request, planet: str = None, user: str = Depends(require_auth)):
+async def admin_houses(request: Request, planet: str = None):
     """Редактирование текстов планет в домах"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     texts = load_texts()
     houses_data = texts.get("houses", {})
     
@@ -473,8 +487,12 @@ async def admin_houses(request: Request, planet: str = None, user: str = Depends
 
 
 @app.post("/admin/houses/save")
-async def save_houses(request: Request, planet: str, user: str = Depends(require_auth)):
+async def save_houses(request: Request, planet: str):
     """Сохранение текстов планет в домах"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     form = await request.form()
     texts = load_texts()
     
@@ -491,8 +509,12 @@ async def save_houses(request: Request, planet: str, user: str = Depends(require
 
 
 @app.get("/admin/aspects", response_class=HTMLResponse)
-async def admin_aspects(request: Request, pair: str = None, user: str = Depends(require_auth)):
+async def admin_aspects(request: Request, pair: str = None):
     """Редактирование текстов аспектов"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     texts = load_texts()
     aspects_data = texts.get("aspects", {})
     
@@ -588,8 +610,12 @@ async def admin_aspects(request: Request, pair: str = None, user: str = Depends(
 
 
 @app.post("/admin/aspects/save")
-async def save_aspects(request: Request, pair: str, user: str = Depends(require_auth)):
+async def save_aspects(request: Request, pair: str):
     """Сохранение текстов аспектов"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     form = await request.form()
     texts = load_texts()
     
@@ -609,8 +635,12 @@ async def save_aspects(request: Request, pair: str, user: str = Depends(require_
 
 
 @app.get("/admin/generate", response_class=HTMLResponse)
-async def admin_generate_page(request: Request, user: str = Depends(require_auth)):
+async def admin_generate_page(request: Request):
     """Страница массовой AI-генерации"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/admin/login", status_code=303)
+    
     html = """
     <!DOCTYPE html>
     <html lang="ru">
@@ -701,11 +731,18 @@ async def admin_generate_page(request: Request, user: str = Depends(require_auth
 
 
 @app.post("/admin/api/generate")
-async def api_generate_text(request: Request, user: str = Depends(require_auth)):
+async def api_generate_text(request: Request):
     """
     API для генерации текстов.
     Это заглушка - реальная генерация происходит через Cursor IDE.
     """
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Требуется авторизация"
+        )
+    
     data = await request.json()
     gen_type = data.get("type")
     
