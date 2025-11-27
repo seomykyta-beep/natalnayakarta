@@ -15,6 +15,17 @@ CHARTS_DIR = os.path.join(BASE_DIR, "charts")
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 TEXTS_FILE = os.path.join(BASE_DIR, "texts.json")
 
+# Загрузка текстов интерпретаций
+def load_interpretation_texts():
+    """Загрузка текстов из texts.json"""
+    if os.path.exists(TEXTS_FILE):
+        with open(TEXTS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {"signs": {}, "houses": {}, "aspects": {}}
+
+# Загрузка текстов при старте
+TEXTS = load_interpretation_texts()
+
 # Создаем загрузчик, указывая папку проекта как хранилище
 load = Loader(BASE_DIR)
 EPHEMERIS_FILE = 'de421.bsp' # Skyfield сам найдет его в папке Loader-а
