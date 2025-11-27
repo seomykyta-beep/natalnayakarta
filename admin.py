@@ -12,9 +12,9 @@ from typing import Optional
 
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 import uvicorn
 
 # Конфигурация
@@ -22,9 +22,12 @@ BASE_DIR = Path(__file__).parent
 TEXTS_FILE = BASE_DIR / "texts.json"
 ADMIN_USER = "admin"
 ADMIN_PASS = "astro2025"  # Сменить на продакшене!
+SESSION_SECRET = secrets.token_hex(32)  # Секретный ключ для сессий
 
 app = FastAPI(title="Админка Натальной Карты")
-security = HTTPBasic()
+
+# Добавляем middleware для сессий
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
 # Шаблоны
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -73,17 +76,19 @@ ASPECT_NAMES = {
 }
 
 
-def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
-    """Проверка логина/пароля"""
-    correct_username = secrets.compare_digest(credentials.username, ADMIN_USER)
-    correct_password = secrets.compare_digest(credentials.password, ADMIN_PASS)
-    if not (correct_username and correct_password):
+def get_current_user(request: Request) -> Optional[str]:
+    """Получить текущего пользователя из сессии."""
+    return request.session.get("user")
+
+def require_auth(request: Request) -> str:
+    """Проверка авторизации через сессию."""
+    user = get_current_user(request)
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный логин или пароль",
-            headers={"WWW-Authenticate": "Basic"},
+            detail="Требуется авторизация"
         )
-    return credentials.username
+    return user
 
 
 def load_texts() -> dict:
@@ -100,8 +105,56 @@ def save_texts(data: dict):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+@app.get("/admin/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    """Страница логина"""
+    error = request.query_params.get("error")
+    html = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Вход - Админка</title>
+        <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    </head>
+    <body>
+        <main class="container" style="max-width: 500px; margin-top: 100px;">
+            <article>
+                <hgroup>
+                    <h1>🔐 Вход в админку</h1>
+                    <h2>Натальная Карта</h2>
+                </hgroup>
+                """ + (f'<p style="color: red;">{error}</p>' if error else '') + """
+                <form method="POST" action="/admin/login">
+                    <input type="text" name="username" placeholder="Логин" required autofocus>
+                    <input type="password" name="password" placeholder="Пароль" required>
+                    <button type="submit">Войти</button>
+                </form>
+            </article>
+        </main>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html)
+
+@app.post("/admin/login")
+async def login(request: Request, username: str = Form(...), password: str = Form(...)):
+    """Обработка логина"""
+    if username == ADMIN_USER and password == ADMIN_PASS:
+        request.session["user"] = username
+        return RedirectResponse(url="/admin", status_code=303)
+    else:
+        return RedirectResponse(url="/admin/login?error=Неверный логин или пароль", status_code=303)
+
+@app.get("/admin/logout")
+async def logout(request: Request):
+    """Выход"""
+    request.session.clear()
+    return RedirectResponse(url="/admin/login", status_code=303)
+
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_home(request: Request, username: str = Depends(verify_credentials)):
+async def admin_home(request: Request, user: str = Depends(require_auth)):
     """Главная страница админки"""
     texts = load_texts()
     
@@ -126,13 +179,12 @@ async def admin_home(request: Request, username: str = Depends(verify_credential
             else:
                 stats["houses"]["empty"] += 1
                 
-    for p1, targets in texts.get("aspects", {}).items():
-        for p2, aspects in targets.items():
-            for asp, text in aspects.items():
-                if text and "ЗАПОЛНИТЬ" not in text:
-                    stats["aspects"]["filled"] += 1
-                else:
-                    stats["aspects"]["empty"] += 1
+    for pair_key, aspects in texts.get("aspects", {}).items():
+        for asp, text in aspects.items():
+            if text and "ЗАПОЛНИТЬ" not in text:
+                stats["aspects"]["filled"] += 1
+            else:
+                stats["aspects"]["empty"] += 1
     
     html = f"""
     <!DOCTYPE html>
@@ -161,8 +213,11 @@ async def admin_home(request: Request, username: str = Depends(verify_credential
     </head>
     <body>
         <main class="container">
-            <h1>🌌 Админка Натальной Карты</h1>
-            <p style="text-align: center; color: #888;">Привет, {username}! Здесь можно редактировать тексты интерпретаций.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>🌌 Админка Натальной Карты</h1>
+                <a href="/admin/logout" style="color: #e94560;">Выйти →</a>
+            </div>
+            <p style="text-align: center; color: #888;">Привет, {user}! Здесь можно редактировать тексты интерпретаций.</p>
             
             <div class="stats-grid">
                 <div class="stat-card">
@@ -212,7 +267,7 @@ async def admin_home(request: Request, username: str = Depends(verify_credential
 
 
 @app.get("/admin/signs", response_class=HTMLResponse)
-async def admin_signs(request: Request, planet: str = None, username: str = Depends(verify_credentials)):
+async def admin_signs(request: Request, planet: str = None, user: str = Depends(require_auth)):
     """Редактирование текстов планет в знаках"""
     texts = load_texts()
     signs_data = texts.get("signs", {})
@@ -285,7 +340,8 @@ async def admin_signs(request: Request, planet: str = None, username: str = Depe
                 const resp = await fetch('/admin/api/generate', {{
                     method: 'POST',
                     headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{type: 'sign', planet, sign}})
+                    body: JSON.stringify({{type: 'sign', planet, sign}}),
+                    credentials: 'include'
                 }});
                 const data = await resp.json();
                 if (data.text) {{
@@ -306,7 +362,7 @@ async def admin_signs(request: Request, planet: str = None, username: str = Depe
 
 
 @app.post("/admin/signs/save")
-async def save_signs(request: Request, planet: str, username: str = Depends(verify_credentials)):
+async def save_signs(request: Request, planet: str, user: str = Depends(require_auth)):
     """Сохранение текстов планет в знаках"""
     form = await request.form()
     texts = load_texts()
@@ -324,7 +380,7 @@ async def save_signs(request: Request, planet: str, username: str = Depends(veri
 
 
 @app.get("/admin/houses", response_class=HTMLResponse)
-async def admin_houses(request: Request, planet: str = None, username: str = Depends(verify_credentials)):
+async def admin_houses(request: Request, planet: str = None, user: str = Depends(require_auth)):
     """Редактирование текстов планет в домах"""
     texts = load_texts()
     houses_data = texts.get("houses", {})
@@ -395,7 +451,8 @@ async def admin_houses(request: Request, planet: str = None, username: str = Dep
                 const resp = await fetch('/admin/api/generate', {{
                     method: 'POST',
                     headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{type: 'house', planet, house}})
+                    body: JSON.stringify({{type: 'house', planet, house}}),
+                    credentials: 'include'
                 }});
                 const data = await resp.json();
                 if (data.text) {{
@@ -416,7 +473,7 @@ async def admin_houses(request: Request, planet: str = None, username: str = Dep
 
 
 @app.post("/admin/houses/save")
-async def save_houses(request: Request, planet: str, username: str = Depends(verify_credentials)):
+async def save_houses(request: Request, planet: str, user: str = Depends(require_auth)):
     """Сохранение текстов планет в домах"""
     form = await request.form()
     texts = load_texts()
@@ -434,39 +491,32 @@ async def save_houses(request: Request, planet: str, username: str = Depends(ver
 
 
 @app.get("/admin/aspects", response_class=HTMLResponse)
-async def admin_aspects(request: Request, p1: str = None, p2: str = None, username: str = Depends(verify_credentials)):
+async def admin_aspects(request: Request, pair: str = None, user: str = Depends(require_auth)):
     """Редактирование текстов аспектов"""
     texts = load_texts()
     aspects_data = texts.get("aspects", {})
     
-    # Список первых планет
-    p1_list = "".join([
-        f'<a href="/admin/aspects?p1={p}" class="planet-btn {"active" if p1 == p else ""}">{PLANET_NAMES.get(p, p)}</a>'
+    # Список пар планет (Sun_Moon, Sun_Mercury, etc.)
+    pairs_list = "".join([
+        f'<a href="/admin/aspects?pair={p}" class="planet-btn {"active" if pair == p else ""}">{p.replace("_", " — ")}</a>'
         for p in aspects_data.keys()
     ])
     
-    # Список вторых планет (если выбрана первая)
-    p2_list = ""
-    if p1 and p1 in aspects_data:
-        p2_list = "".join([
-            f'<a href="/admin/aspects?p1={p1}&p2={p}" class="planet-btn {"active" if p2 == p else ""}">{PLANET_NAMES.get(p, p)}</a>'
-            for p in aspects_data[p1].keys()
-        ])
-    
     # Форма редактирования
     form_html = ""
-    if p1 and p2 and p1 in aspects_data and p2 in aspects_data.get(p1, {}):
+    if pair and pair in aspects_data:
+        p1, p2 = pair.split("_") if "_" in pair else (pair, "")
         form_html = f"<h2>{PLANET_NAMES.get(p1, p1)} — {PLANET_NAMES.get(p2, p2)}</h2>"
-        for asp, text in aspects_data[p1][p2].items():
+        for asp, text in aspects_data[pair].items():
             is_empty = "ЗАПОЛНИТЬ" in text or not text
             form_html += f"""
             <div class="text-block {'empty' if is_empty else 'filled'}">
                 <label>{ASPECT_NAMES.get(asp, asp)}</label>
-                <textarea name="{p1}_{p2}_{asp}" rows="4">{text}</textarea>
+                <textarea name="{pair}_{asp}" rows="4">{text}</textarea>
                 <button type="button" onclick="generateText('{p1}', '{p2}', '{asp}', this)" class="generate-btn">🤖 Сгенерировать</button>
             </div>
             """
-        form_html = f'<form method="POST" action="/admin/aspects/save?p1={p1}&p2={p2}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
+        form_html = f'<form method="POST" action="/admin/aspects/save?pair={pair}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
     
     html = f"""
     <!DOCTYPE html>
@@ -482,7 +532,7 @@ async def admin_aspects(request: Request, p1: str = None, p2: str = None, userna
             .container {{ max-width: 1000px; padding: 20px; }}
             h1, h2, h3 {{ color: #ffd700; }}
             .planets-nav {{ display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }}
-            .planet-btn {{ padding: 10px 15px; background: #16213e; color: white; text-decoration: none; border-radius: 8px; }}
+            .planet-btn {{ padding: 10px 15px; background: #16213e; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; }}
             .planet-btn:hover, .planet-btn.active {{ background: #e94560; }}
             .text-block {{ background: #16213e; padding: 15px; border-radius: 10px; margin: 15px 0; }}
             .text-block.empty {{ border-left: 4px solid #ff5252; }}
@@ -499,14 +549,12 @@ async def admin_aspects(request: Request, p1: str = None, p2: str = None, userna
             <h1>⭐ Аспекты</h1>
             <a href="/admin" class="back-link">← Назад в админку</a>
             
-            <h3>Первая планета:</h3>
+            <h3>Выберите пару планет:</h3>
             <div class="planets-nav">
-                {p1_list}
+                {pairs_list}
             </div>
             
-            {'<h3>Вторая планета:</h3><div class="planets-nav">' + p2_list + '</div>' if p2_list else ''}
-            
-            {form_html if form_html else '<p style="color: #888;">Выберите две планеты для редактирования аспектов</p>'}
+            {form_html if form_html else '<p style="color: #888;">Выберите пару планет для редактирования аспектов</p>'}
         </main>
         
         <script>
@@ -518,7 +566,8 @@ async def admin_aspects(request: Request, p1: str = None, p2: str = None, userna
                 const resp = await fetch('/admin/api/generate', {{
                     method: 'POST',
                     headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{type: 'aspect', p1, p2, aspect}})
+                    body: JSON.stringify({{type: 'aspect', p1, p2, aspect}}),
+                    credentials: 'include'
                 }});
                 const data = await resp.json();
                 if (data.text) {{
@@ -539,30 +588,28 @@ async def admin_aspects(request: Request, p1: str = None, p2: str = None, userna
 
 
 @app.post("/admin/aspects/save")
-async def save_aspects(request: Request, p1: str, p2: str, username: str = Depends(verify_credentials)):
+async def save_aspects(request: Request, pair: str, user: str = Depends(require_auth)):
     """Сохранение текстов аспектов"""
     form = await request.form()
     texts = load_texts()
     
     if "aspects" not in texts:
         texts["aspects"] = {}
-    if p1 not in texts["aspects"]:
-        texts["aspects"][p1] = {}
-    if p2 not in texts["aspects"][p1]:
-        texts["aspects"][p1][p2] = {}
+    if pair not in texts["aspects"]:
+        texts["aspects"][pair] = {}
     
-    prefix = f"{p1}_{p2}_"
+    prefix = f"{pair}_"
     for key, value in form.items():
         if key.startswith(prefix):
             asp = key.replace(prefix, "")
-            texts["aspects"][p1][p2][asp] = value
+            texts["aspects"][pair][asp] = value
     
     save_texts(texts)
-    return RedirectResponse(url=f"/admin/aspects?p1={p1}&p2={p2}", status_code=303)
+    return RedirectResponse(url=f"/admin/aspects?pair={pair}", status_code=303)
 
 
 @app.get("/admin/generate", response_class=HTMLResponse)
-async def admin_generate_page(request: Request, username: str = Depends(verify_credentials)):
+async def admin_generate_page(request: Request, user: str = Depends(require_auth)):
     """Страница массовой AI-генерации"""
     html = """
     <!DOCTYPE html>
@@ -654,7 +701,7 @@ async def admin_generate_page(request: Request, username: str = Depends(verify_c
 
 
 @app.post("/admin/api/generate")
-async def api_generate_text(request: Request, username: str = Depends(verify_credentials)):
+async def api_generate_text(request: Request, user: str = Depends(require_auth)):
     """
     API для генерации текстов.
     Это заглушка - реальная генерация происходит через Cursor IDE.
