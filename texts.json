@@ -1,0 +1,919 @@
+{
+  "intro": "Здесь вводный текст для натальной карты...",
+  "signs": {
+    "Sun": {
+      "Ari": "Описание: Sun в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Sun в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Sun в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Sun в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Sun в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Sun в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Sun в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Sun в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Sun в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Sun в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Sun в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Sun в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Moon": {
+      "Ari": "Описание: Moon в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Moon в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Moon в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Moon в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Moon в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Moon в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Moon в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Moon в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Moon в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Moon в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Moon в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Moon в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Mercury": {
+      "Ari": "Описание: Mercury в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Mercury в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Mercury в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Mercury в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Mercury в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Mercury в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Mercury в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Mercury в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Mercury в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Mercury в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Mercury в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Mercury в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Venus": {
+      "Ari": "Описание: Venus в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Venus в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Venus в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Venus в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Venus в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Venus в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Venus в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Venus в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Venus в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Venus в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Venus в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Venus в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Mars": {
+      "Ari": "Описание: Mars в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Mars в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Mars в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Mars в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Mars в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Mars в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Mars в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Mars в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Mars в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Mars в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Mars в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Mars в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter": {
+      "Ari": "Описание: Jupiter в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Jupiter в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Jupiter в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Jupiter в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Jupiter в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Jupiter в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Jupiter в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Jupiter в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Jupiter в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Jupiter в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Jupiter в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Jupiter в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Saturn": {
+      "Ari": "Описание: Saturn в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Saturn в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Saturn в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Saturn в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Saturn в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Saturn в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Saturn в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Saturn в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Saturn в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Saturn в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Saturn в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Saturn в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Uranus": {
+      "Ari": "Описание: Uranus в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Uranus в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Uranus в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Uranus в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Uranus в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Uranus в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Uranus в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Uranus в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Uranus в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Uranus в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Uranus в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Uranus в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Neptune": {
+      "Ari": "Описание: Neptune в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Neptune в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Neptune в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Neptune в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Neptune в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Neptune в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Neptune в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Neptune в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Neptune в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Neptune в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Neptune в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Neptune в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Pluto": {
+      "Ari": "Описание: Pluto в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Pluto в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Pluto в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Pluto в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Pluto в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Pluto в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Pluto в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Pluto в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Pluto в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Pluto в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Pluto в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Pluto в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "North_node": {
+      "Ari": "Описание: North_node в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: North_node в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: North_node в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: North_node в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: North_node в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: North_node в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: North_node в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: North_node в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: North_node в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: North_node в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: North_node в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: North_node в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "South_node": {
+      "Ari": "Описание: South_node в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: South_node в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: South_node в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: South_node в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: South_node в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: South_node в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: South_node в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: South_node в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: South_node в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: South_node в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: South_node в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: South_node в знаке Pis (ЗАПОЛНИТЬ)"
+    },
+    "Lilith": {
+      "Ari": "Описание: Lilith в знаке Ari (ЗАПОЛНИТЬ)",
+      "Tau": "Описание: Lilith в знаке Tau (ЗАПОЛНИТЬ)",
+      "Gem": "Описание: Lilith в знаке Gem (ЗАПОЛНИТЬ)",
+      "Cnc": "Описание: Lilith в знаке Cnc (ЗАПОЛНИТЬ)",
+      "Leo": "Описание: Lilith в знаке Leo (ЗАПОЛНИТЬ)",
+      "Vir": "Описание: Lilith в знаке Vir (ЗАПОЛНИТЬ)",
+      "Lib": "Описание: Lilith в знаке Lib (ЗАПОЛНИТЬ)",
+      "Sco": "Описание: Lilith в знаке Sco (ЗАПОЛНИТЬ)",
+      "Sag": "Описание: Lilith в знаке Sag (ЗАПОЛНИТЬ)",
+      "Cap": "Описание: Lilith в знаке Cap (ЗАПОЛНИТЬ)",
+      "Aqu": "Описание: Lilith в знаке Aqu (ЗАПОЛНИТЬ)",
+      "Pis": "Описание: Lilith в знаке Pis (ЗАПОЛНИТЬ)"
+    }
+  },
+  "houses": {
+    "Sun": {
+      "1": "Описание: Sun в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Sun в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Sun в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Sun в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Sun в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Sun в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Sun в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Sun в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Sun в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Sun в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Sun в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Sun в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Moon": {
+      "1": "Описание: Moon в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Moon в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Moon в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Moon в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Moon в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Moon в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Moon в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Moon в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Moon в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Moon в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Moon в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Moon в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Mercury": {
+      "1": "Описание: Mercury в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Mercury в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Mercury в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Mercury в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Mercury в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Mercury в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Mercury в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Mercury в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Mercury в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Mercury в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Mercury в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Mercury в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Venus": {
+      "1": "Описание: Venus в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Venus в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Venus в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Venus в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Venus в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Venus в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Venus в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Venus в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Venus в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Venus в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Venus в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Venus в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Mars": {
+      "1": "Описание: Mars в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Mars в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Mars в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Mars в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Mars в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Mars в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Mars в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Mars в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Mars в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Mars в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Mars в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Mars в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter": {
+      "1": "Описание: Jupiter в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Jupiter в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Jupiter в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Jupiter в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Jupiter в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Jupiter в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Jupiter в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Jupiter в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Jupiter в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Jupiter в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Jupiter в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Jupiter в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Saturn": {
+      "1": "Описание: Saturn в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Saturn в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Saturn в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Saturn в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Saturn в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Saturn в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Saturn в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Saturn в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Saturn в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Saturn в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Saturn в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Saturn в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Uranus": {
+      "1": "Описание: Uranus в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Uranus в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Uranus в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Uranus в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Uranus в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Uranus в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Uranus в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Uranus в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Uranus в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Uranus в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Uranus в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Uranus в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Neptune": {
+      "1": "Описание: Neptune в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Neptune в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Neptune в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Neptune в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Neptune в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Neptune в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Neptune в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Neptune в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Neptune в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Neptune в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Neptune в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Neptune в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Pluto": {
+      "1": "Описание: Pluto в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Pluto в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Pluto в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Pluto в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Pluto в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Pluto в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Pluto в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Pluto в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Pluto в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Pluto в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Pluto в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Pluto в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "North_node": {
+      "1": "Описание: North_node в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: North_node в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: North_node в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: North_node в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: North_node в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: North_node в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: North_node в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: North_node в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: North_node в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: North_node в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: North_node в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: North_node в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "South_node": {
+      "1": "Описание: South_node в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: South_node в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: South_node в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: South_node в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: South_node в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: South_node в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: South_node в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: South_node в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: South_node в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: South_node в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: South_node в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: South_node в 12 доме (ЗАПОЛНИТЬ)"
+    },
+    "Lilith": {
+      "1": "Описание: Lilith в 1 доме (ЗАПОЛНИТЬ)",
+      "2": "Описание: Lilith в 2 доме (ЗАПОЛНИТЬ)",
+      "3": "Описание: Lilith в 3 доме (ЗАПОЛНИТЬ)",
+      "4": "Описание: Lilith в 4 доме (ЗАПОЛНИТЬ)",
+      "5": "Описание: Lilith в 5 доме (ЗАПОЛНИТЬ)",
+      "6": "Описание: Lilith в 6 доме (ЗАПОЛНИТЬ)",
+      "7": "Описание: Lilith в 7 доме (ЗАПОЛНИТЬ)",
+      "8": "Описание: Lilith в 8 доме (ЗАПОЛНИТЬ)",
+      "9": "Описание: Lilith в 9 доме (ЗАПОЛНИТЬ)",
+      "10": "Описание: Lilith в 10 доме (ЗАПОЛНИТЬ)",
+      "11": "Описание: Lilith в 11 доме (ЗАПОЛНИТЬ)",
+      "12": "Описание: Lilith в 12 доме (ЗАПОЛНИТЬ)"
+    }
+  },
+  "aspects": {
+    "Sun_Moon": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Moon (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Moon (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Moon (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Moon (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Moon (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Mercury": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Mercury (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Mercury (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Mercury (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Mercury (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Mercury (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Venus": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Venus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Venus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Venus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Venus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Venus (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Mars": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Mars (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Mars (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Mars (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Mars (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Mars (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Jupiter": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Jupiter (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Jupiter (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Jupiter (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Jupiter (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Jupiter (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Saturn": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Saturn (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Saturn (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Saturn (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Saturn (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Saturn (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Sun_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Sun_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Sun_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Sun и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Sun и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Sun и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Sun и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Sun и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Mercury": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Mercury (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Mercury (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Mercury (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Mercury (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Mercury (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Venus": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Venus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Venus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Venus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Venus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Venus (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Mars": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Mars (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Mars (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Mars (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Mars (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Mars (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Jupiter": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Jupiter (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Jupiter (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Jupiter (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Jupiter (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Jupiter (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Saturn": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Saturn (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Saturn (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Saturn (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Saturn (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Saturn (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Moon_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Moon_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Moon_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Moon и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Moon и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Moon и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Moon и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Moon и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Venus": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Venus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Venus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Venus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Venus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Venus (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Mars": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Mars (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Mars (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Mars (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Mars (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Mars (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Jupiter": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Jupiter (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Jupiter (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Jupiter (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Jupiter (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Jupiter (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Saturn": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Saturn (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Saturn (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Saturn (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Saturn (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Saturn (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Mercury_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Mercury и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mercury и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mercury и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mercury и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mercury и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Mars": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Mars (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Mars (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Mars (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Mars (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Mars (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Jupiter": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Jupiter (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Jupiter (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Jupiter (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Jupiter (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Jupiter (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Saturn": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Saturn (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Saturn (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Saturn (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Saturn (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Saturn (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Venus_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Venus_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Venus_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Venus и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Venus и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Venus и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Venus и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Venus и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Mars_Jupiter": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и Jupiter (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и Jupiter (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и Jupiter (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и Jupiter (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и Jupiter (ЗАПОЛНИТЬ)"
+    },
+    "Mars_Saturn": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и Saturn (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и Saturn (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и Saturn (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и Saturn (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и Saturn (ЗАПОЛНИТЬ)"
+    },
+    "Mars_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Mars_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Mars_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Mars_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Mars_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Mars_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Mars и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Mars и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Mars и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Mars и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Mars и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_Saturn": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и Saturn (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и Saturn (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и Saturn (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и Saturn (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и Saturn (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Jupiter_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Jupiter и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Jupiter и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Jupiter и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Jupiter и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Jupiter и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Saturn_Uranus": {
+      "Conjunction": "Описание: Аспект Conjunction между Saturn и Uranus (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Saturn и Uranus (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Saturn и Uranus (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Saturn и Uranus (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Saturn и Uranus (ЗАПОЛНИТЬ)"
+    },
+    "Saturn_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Saturn и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Saturn и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Saturn и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Saturn и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Saturn и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Saturn_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Saturn и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Saturn и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Saturn и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Saturn и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Saturn и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Saturn_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Saturn и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Saturn и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Saturn и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Saturn и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Saturn и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Saturn_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Saturn и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Saturn и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Saturn и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Saturn и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Saturn и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Saturn_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Saturn и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Saturn и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Saturn и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Saturn и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Saturn и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Uranus_Neptune": {
+      "Conjunction": "Описание: Аспект Conjunction между Uranus и Neptune (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Uranus и Neptune (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Uranus и Neptune (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Uranus и Neptune (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Uranus и Neptune (ЗАПОЛНИТЬ)"
+    },
+    "Uranus_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Uranus и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Uranus и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Uranus и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Uranus и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Uranus и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Uranus_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Uranus и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Uranus и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Uranus и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Uranus и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Uranus и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Uranus_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Uranus и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Uranus и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Uranus и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Uranus и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Uranus и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Uranus_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Uranus и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Uranus и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Uranus и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Uranus и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Uranus и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Neptune_Pluto": {
+      "Conjunction": "Описание: Аспект Conjunction между Neptune и Pluto (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Neptune и Pluto (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Neptune и Pluto (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Neptune и Pluto (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Neptune и Pluto (ЗАПОЛНИТЬ)"
+    },
+    "Neptune_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Neptune и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Neptune и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Neptune и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Neptune и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Neptune и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Neptune_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Neptune и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Neptune и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Neptune и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Neptune и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Neptune и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Neptune_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Neptune и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Neptune и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Neptune и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Neptune и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Neptune и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "Pluto_North_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Pluto и North_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Pluto и North_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Pluto и North_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Pluto и North_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Pluto и North_node (ЗАПОЛНИТЬ)"
+    },
+    "Pluto_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между Pluto и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Pluto и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Pluto и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Pluto и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Pluto и South_node (ЗАПОЛНИТЬ)"
+    },
+    "Pluto_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между Pluto и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между Pluto и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между Pluto и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между Pluto и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между Pluto и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "North_node_South_node": {
+      "Conjunction": "Описание: Аспект Conjunction между North_node и South_node (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между North_node и South_node (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между North_node и South_node (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между North_node и South_node (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между North_node и South_node (ЗАПОЛНИТЬ)"
+    },
+    "North_node_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между North_node и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между North_node и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между North_node и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между North_node и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между North_node и Lilith (ЗАПОЛНИТЬ)"
+    },
+    "South_node_Lilith": {
+      "Conjunction": "Описание: Аспект Conjunction между South_node и Lilith (ЗАПОЛНИТЬ)",
+      "Sextile": "Описание: Аспект Sextile между South_node и Lilith (ЗАПОЛНИТЬ)",
+      "Square": "Описание: Аспект Square между South_node и Lilith (ЗАПОЛНИТЬ)",
+      "Trine": "Описание: Аспект Trine между South_node и Lilith (ЗАПОЛНИТЬ)",
+      "Opposition": "Описание: Аспект Opposition между South_node и Lilith (ЗАПОЛНИТЬ)"
+    }
+  }
+}

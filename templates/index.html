@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Астро-Процессор</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Custom Chart JS -->
+    <script src="/static/chart.js?v=5"></script>
+    <style>
+        :root { --bg:#1a1a2e; --card:#16213e; --text:#e0e0e0; --accent:#e94560; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #ffd700; margin-bottom: 30px; }
+        
+        /* Form Styles */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        
+        .input-group { margin-bottom: 15px; position: relative; }
+        label { font-size: 12px; color: #888; display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; background: var(--card); border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input:focus { border-color: var(--accent); outline: none; }
+        
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+        
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: opacity 0.2s; }
+        button:active { opacity: 0.8; }
+        button:disabled { opacity: 0.5; cursor: wait; }
+        
+        /* Results */
+        .result-section { display: none; margin-top: 30px; animation: fadeIn 0.5s; }
+        
+        #chartDiv { width: 100%; max-width: 600px; height: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        
+        /* SCHEMES STYLES */
+        .schemes-container { display: flex; flex-direction: column; gap: 20px; justify-content: center; margin-bottom: 30px; }
+        .scheme-box { background: var(--card); padding: 15px; border-radius: 10px; width: 100%; }
+        .scheme-box.full-width { width: 100%; }
+        .transit-block { margin-top: 15px; padding: 12px; border: 1px solid #333; border-radius: 10px; background: rgba(255,255,255,0.02); }
+        .transit-block h3 { margin-top: 0; color: #ffd700; font-size: 15px; }
+        
+        /* Planet Table */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table th, .data-table td { padding: 8px; text-align: left; border-bottom: 1px solid #333; }
+        .data-table th { color: #888; font-weight: normal; }
+        .data-table td:first-child { font-weight: bold; color: #ffd700; }
+        .transit-cell { color: #ff7575; text-align: center; }
+        
+        /* Aspect Matrix */
+        .aspect-matrix-wrapper { overflow: auto; margin-top: 10px; width: 100%; }
+        .aspect-matrix-table { border-collapse: collapse; width: 100%; min-width: 100%; background: #0f1424; }
+        .aspect-matrix-table th,
+        .aspect-matrix-table td { border: 1px solid #333; width: 32px; height: 32px; text-align: center; font-size: 12px; color: #ddd; }
+        .aspect-matrix-table th { background: #1f1f35; font-weight: normal; }
+        .matrix-icon { font-size: 16px; color: #ffd700; display: block; }
+        .matrix-symbol { font-size: 15px; font-weight: bold; display: block; }
+        .matrix-empty { background: rgba(255,255,255,0.02); }
+        .asp-conj { color: #4fc3f7; }
+        .asp-sextile { color: #00c853; }
+        .asp-square { color: #ff5555; }
+        .asp-trine { color: #d4e157; }
+        .asp-opposition { color: #ff9100; }
+        .asp-quincunx { color: #26c6da; }
+        .aspect-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; font-size: 12px; color: #bbb; margin-top: 15px; }
+        .aspect-legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-symbol { font-weight: bold; font-size: 14px; }
+        .legend-retro { color: #ff5555; }
+        .transit-meta { text-align: center; color: #bbb; font-size: 12px; margin-top: 8px; }
+
+        /* Texts */
+        .text-section { margin-top: 40px; }
+        .planet-text-block { background: var(--card); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--accent); }
+        .planet-text-header { font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #ffd700; display: flex; align-items: center; }
+        .planet-text-header span { margin-right: 10px; font-size: 20px; }
+        .planet-text-body { font-size: 14px; line-height: 1.6; color: #ddd; white-space: pre-wrap; }
+
+        /* Suggestions */
+        .suggestions { position: absolute; background: #222; width: 100%; max-height: 200px; overflow-y: auto; z-index: 100; border: 1px solid #444; border-radius: 0 0 8px 8px; display: none; top: 100%; }
+        .suggestion-item { padding: 12px; border-bottom: 1px solid #333; cursor: pointer; }
+        .suggestion-item:hover { background: #333; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .error-msg { color: #ff4444; text-align: center; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌌 Натальная Карта</h1>
+        
+        <div id="form">
+            <div class="input-group"><label>Имя</label><input type="text" id="name" placeholder="Ваше имя" value="Павел"></div>
+            
+            <div class="form-grid">
+                <div>
+                    <label>Дата рождения</label>
+                    <div class="row">
+                        <input type="number" id="day" placeholder="ДД" class="col" value="13">
+                        <input type="number" id="month" placeholder="ММ" class="col" value="10">
+                        <input type="number" id="year" placeholder="ГГГГ" class="col" style="flex: 1.5;" value="1992">
+                    </div>
+                </div>
+                <div>
+                    <label>Время рождения</label>
+                    <div class="row">
+                        <input type="number" id="hour" placeholder="ЧЧ" class="col" value="9">
+                        <input type="number" id="minute" placeholder="ММ" class="col" value="35">
+                    </div>
+                </div>
+            </div>
+
+            <div class="transit-block">
+                <h3>Параметры транзита</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>Дата транзита</label>
+                        <div class="row">
+                            <input type="number" id="t_day" placeholder="ДД" class="col">
+                            <input type="number" id="t_month" placeholder="ММ" class="col">
+                            <input type="number" id="t_year" placeholder="ГГГГ" class="col" style="flex: 1.5;">
+                        </div>
+                    </div>
+                    <div>
+                        <label>Время транзита</label>
+                        <div class="row">
+                            <input type="number" id="t_hour" placeholder="ЧЧ" class="col">
+                            <input type="number" id="t_minute" placeholder="ММ" class="col">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-top: 15px;">
+                <label>Город рождения</label>
+                <input type="text" id="city" placeholder="Начните вводить..." oninput="suggestCity()" autocomplete="off" value="Грозный">
+                <div class="suggestions" id="suggestions"></div>
+                <input type="hidden" id="lat" value="43.31695"><input type="hidden" id="lon" value="45.68365">
+            </div>
+            
+            <button onclick="calculate()" id="calcBtn">Рассчитать карту</button>
+            <div id="errorMsg" class="error-msg"></div>
+        </div>
+
+        <div id="result" class="result-section">
+            <h2 style="text-align:center">Карта для: <span id="resName" style="color: var(--accent)"></span></h2>
+            <div style="text-align: center; color: #888; font-size: 14px; margin-bottom: 20px;">
+                <span id="resCity"></span> • <span id="resTime"></span>
+            </div>
+
+            <!-- 1. CHART VISUAL -->
+            <div id="chartDiv"></div>
+            
+            <!-- 2. SCHEMES (TABLES) -->
+            <div class="schemes-container">
+                <!-- Aspects Matrix -->
+                <div class="scheme-box full-width">
+                    <h3 style="text-align:center; margin-top:0">✨ Матрица аспектов</h3>
+                    <div class="aspect-matrix-wrapper">
+                        <table id="aspectMatrixTable" class="aspect-matrix-table"></table>
+                    </div>
+                    <div id="transitMeta" class="transit-meta"></div>
+                    <div class="aspect-legend">
+                        <div class="aspect-legend-item"><span class="legend-symbol asp-conj">●</span>- Соединение 0° (Гармоничный)</div>
+                        <div class="aspect-legend-item"><span class="legend-symbol asp-sextile">✶</span>- Секстиль 60° (Гармоничный)</div>
+                        <div class="aspect-legend-item"><span class="legend-symbol asp-trine">△</span>- Тригон 120° (Гармоничный)</div>
+                        <div class="aspect-legend-item"><span class="legend-symbol asp-quincunx">⤻</span>- Квинконс 150° (Гармоничный)</div>
+                        <div class="aspect-legend-item"><span class="legend-symbol asp-square">□</span>- Квадрат 90° (Напряжённый)</div>
+                        <div class="aspect-legend-item"><span class="legend-symbol asp-opposition">☍</span>- Оппозиция 180° (Напряжённый)</div>
+                        <div class="aspect-legend-item"><span class="legend-symbol legend-retro">R</span>- Ретроградный</div>
+                    </div>
+                </div>
+
+                <!-- Planets Table -->
+                <div class="scheme-box">
+                    <h3 style="text-align:center; margin-top:0">🪐 Координаты</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Планеты</th>
+                                <th>Натальная долгота</th>
+                                <th>Транзитная долгота</th>
+                            </tr>
+                        </thead>
+                        <tbody id="planetsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 3. TEXTS -->
+            <div class="text-section">
+                <h3 style="text-align:center; margin-bottom:30px;">📖 Расшифровка</h3>
+                <div id="textsList"></div>
+            </div>
+            
+            <button onclick="downloadPDF()" style="background: #444; margin-bottom: 50px; margin-top: 30px;">📄 Скачать PDF отчет</button>
+        </div>
+    </div>
+
+    <script>
+        // ... (Telegram & Focus logic same as before) ...
+        // Init Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+
+        // Auto-focus logic
+        ['day', 'month', 'year', 'hour', 'minute'].forEach((id, i, arr) => {
+            document.getElementById(id).addEventListener('input', function() {
+                if(this.value.length >= this.getAttribute('placeholder').length && i < arr.length-1) {
+                    document.getElementById(arr[i+1]).focus();
+                }
+            });
+        });
+
+        function setDefaultTransitFields() {
+            const now = new Date();
+            document.getElementById('t_day').value = now.getDate();
+            document.getElementById('t_month').value = now.getMonth() + 1;
+            document.getElementById('t_year').value = now.getFullYear();
+            document.getElementById('t_hour').value = now.getHours();
+            document.getElementById('t_minute').value = now.getMinutes();
+        }
+        window.addEventListener('load', setDefaultTransitFields);
+
+        // City Search
+        let timer;
+        function suggestCity() {
+            clearTimeout(timer);
+            const val = document.getElementById('city').value;
+            const list = document.getElementById('suggestions');
+            if(val.length < 3) { list.style.display='none'; return; }
+            
+            timer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru`);
+                    const data = await res.json();
+                    list.innerHTML = '';
+                    if(data.length) {
+                        list.style.display = 'block';
+                        data.slice(0, 5).forEach(p => {
+                            const div = document.createElement('div');
+                            div.className = 'suggestion-item';
+                            div.textContent = p.display_name.split(',').slice(0,3).join(', ');
+                            div.onclick = () => {
+                                document.getElementById('city').value = p.display_name.split(',')[0];
+                                document.getElementById('lat').value = p.lat;
+                                document.getElementById('lon').value = p.lon;
+                                list.style.display = 'none';
+                            }
+                            list.appendChild(div);
+                        });
+                    }
+                } catch(e) { console.error(e); }
+            }, 500);
+        }
+
+        // Close suggestions on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.input-group')) {
+                document.getElementById('suggestions').style.display = 'none';
+            }
+        });
+
+        // Main Calculation
+        async function calculate() {
+            const btn = document.getElementById('calcBtn');
+            const errorDiv = document.getElementById('errorMsg');
+            
+            // Basic validation
+            const required = ['day', 'month', 'year', 'hour', 'minute', 'city', 't_day', 't_month', 't_year', 't_hour', 't_minute'];
+            for (let id of required) {
+                if (!document.getElementById(id).value) {
+                    alert('Пожалуйста, заполните все поля');
+                    return;
+                }
+            }
+
+            btn.innerHTML = "⏳ Вычисляю...";
+            btn.disabled = true;
+            errorDiv.style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+            
+            const data = {
+                name: document.getElementById('name').value || "Пользователь",
+                year: parseInt(document.getElementById('year').value),
+                month: parseInt(document.getElementById('month').value),
+                day: parseInt(document.getElementById('day').value),
+                hour: parseInt(document.getElementById('hour').value),
+                minute: parseInt(document.getElementById('minute').value),
+                city: document.getElementById('city').value,
+                lat: parseFloat(document.getElementById('lat').value) || null,
+                lon: parseFloat(document.getElementById('lon').value) || null,
+                transit_year: parseInt(document.getElementById('t_year').value),
+                transit_month: parseInt(document.getElementById('t_month').value),
+                transit_day: parseInt(document.getElementById('t_day').value),
+                transit_hour: parseInt(document.getElementById('t_hour').value),
+                transit_minute: parseInt(document.getElementById('t_minute').value)
+            };
+
+            try {
+                const res = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                renderResult(result);
+            } catch (e) {
+                errorDiv.textContent = "Ошибка: " + e.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.innerHTML = "Рассчитать карту";
+                btn.disabled = false;
+            }
+        }
+
+        function renderResult(data) {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resName').textContent = data.name;
+            document.getElementById('resCity').textContent = data.meta.city;
+            document.getElementById('resTime').textContent = data.meta.dt;
+            const transitInfo = document.getElementById('transitMeta');
+            if (transitInfo) {
+                transitInfo.textContent = data.transit_meta ? `Транзит на ${data.transit_meta.dt}` : '';
+            }
+            
+            // 1. Planets Table
+            const tBody = document.getElementById('planetsTableBody');
+            tBody.innerHTML = '';
+            const textContainer = document.getElementById('textsList');
+            textContainer.innerHTML = '';
+
+            const transits = data.transits || [];
+            const transitMap = {};
+            transits.forEach(p => { if (p.key) transitMap[p.key] = p; });
+
+            const formatNatalPos = (planet) => {
+                if (!planet) return '—';
+                const deg = Math.floor(planet.pos);
+                const min = Math.round((planet.pos % 1) * 60);
+                return `${planet.sign} ${deg}°${min.toString().padStart(2,'0')}'`;
+            };
+            const formatTransitPos = (planet) => {
+                if (!planet) return '—';
+                const abs = (planet.abs_pos || 0) % 360;
+                const signs = ['Овен','Телец','Близнецы','Рак','Лев','Дева','Весы','Скорпион','Стрелец','Козерог','Водолей','Рыбы'];
+                const idx = Math.floor(abs / 30);
+                const local = abs % 30;
+                const min = Math.round((local % 1) * 60);
+                return `${signs[idx]} ${Math.floor(local)}°${min.toString().padStart(2,'0')}'`;
+            };
+
+            data.planets.forEach(p => {
+                const retro = p.is_retro ? '<span style="color:red; font-size:10px; vertical-align:super;">R</span>' : '';
+                
+                tBody.innerHTML += `
+                    <tr>
+                        <td style="color:${p.key==='ASC'||p.key==='MC'?'#ff5555':'#ffd700'}; display:flex; align-items:center; gap:8px;">
+                            <span>${p.icon}</span><span>${p.name} ${retro}</span>
+                        </td>
+                        <td>${formatNatalPos(p)}</td>
+                        <td class="transit-cell">${formatTransitPos(transitMap[p.key])}</td>
+                    </tr>`;
+
+                // Text Block
+                if(p.text && p.key !== 'ASC' && p.key !== 'MC') {
+                    textContainer.innerHTML += `
+                        <div class="planet-text-block">
+                            <div class="planet-text-header">
+                                <span>${p.icon}</span> ${p.name} в знаке ${p.sign}, ${p.house} дом
+                            </div>
+                            <div class="planet-text-body">${p.text}</div>
+                        </div>`;
+                }
+            });
+
+            // 2. Aspect Matrix
+            const matrixTransits = transits.length ? transits : data.planets;
+            const matrixAspects = transits.length ? (data.transit_aspects || []) : (data.aspects || []);
+            renderAspectMatrix(data.planets, matrixTransits, matrixAspects);
+
+            // Also Text descriptions
+            data.aspects.forEach(a => {
+                let color = "#ccc";
+                if (a.type === "Square" || a.type === "Opposition") color = "#ff5555";
+                if (a.type === "Trine") color = "#8bc34a";
+                if (a.type === "Sextile") color = "#4dd0e1";
+                if (a.type === "Quincunx") color = "#26c6da";
+                
+                let symbol = "●";
+                if(a.type === "Conjunction") symbol = "☌";
+                if(a.type === "Sextile") symbol = "✶";
+                if(a.type === "Square") symbol = "□";
+                if(a.type === "Trine") symbol = "△";
+                if(a.type === "Opposition") symbol = "☍";
+                if(a.type === "Quincunx") symbol = "⤻";
+
+                const nameLabel = a.name || a.type;
+
+                textContainer.innerHTML += `
+                    <div class="planet-text-block" style="border-left-color: ${color}">
+                        <div class="planet-text-header">
+                            <span style="color:${color}">${symbol}</span> ${a.p1} — ${a.p2} (${nameLabel})
+                        </div>
+                        <div class="planet-text-body">${a.text || 'Нет описания'}</div>
+                    </div>`;
+            });
+
+            // 3. Draw Chart
+            try {
+                drawChart(data.planets, data.houses, data.aspects);
+            } catch (e) {
+                console.error("Chart error:", e);
+                document.getElementById('chartDiv').innerHTML = "<p style='color:black; text-align:center; padding:20px;'>Не удалось отобразить графику</p>";
+            }
+            
+            setTimeout(() => {
+                document.getElementById('result').scrollIntoView({behavior: 'smooth'});
+            }, 100);
+        }
+        
+        function drawChart(planets, cusps, aspects) {
+            const container = document.getElementById('chartDiv');
+            const size = Math.min(container.clientWidth, 600) || 400;
+            
+            // Ensure container has height
+            container.style.height = size + "px";
+
+            const chart = new NatalChart('chartDiv', size);
+            chart.draw({
+                planets: planets,
+                houses: cusps,
+                aspects: aspects
+            });
+        }
+
+        function renderAspectMatrix(natalPlanets, transitPlanets, transitAspects) {
+            const table = document.getElementById('aspectMatrixTable');
+            if (!table) return;
+            table.innerHTML = '';
+
+            const planetsOrder = [
+                { key: 'Sun', icon: '☉' },
+                { key: 'Moon', icon: '☾' },
+                { key: 'Mercury', icon: '☿' },
+                { key: 'Venus', icon: '♀' },
+                { key: 'Mars', icon: '♂' },
+                { key: 'Jupiter', icon: '♃' },
+                { key: 'Saturn', icon: '♄' },
+                { key: 'Uranus', icon: '♅' },
+                { key: 'Neptune', icon: '♆' },
+                { key: 'Pluto', icon: '♇' },
+                { key: 'Lilith', icon: '⚸' },
+                { key: 'North_node', icon: '☊' },
+                { key: 'South_node', icon: '☋' },
+                { key: 'ASC', icon: 'AC' },
+                { key: 'MC', icon: 'MC' }
+            ];
+
+            const natalMap = {};
+            natalPlanets.forEach(p => { if (p.key) natalMap[p.key] = p; });
+            const transitMap = {};
+            transitPlanets.forEach(p => { if (p.key) transitMap[p.key] = p; });
+
+            const aspectMap = {};
+            transitAspects.forEach(a => {
+                if (a.p1_key && a.p2_key) {
+                    aspectMap[`${a.p1_key}_${a.p2_key}`] = a;
+                }
+            });
+
+            const symbols = {
+                Conjunction: { char: '●', cls: 'asp-conj' },
+                Sextile: { char: '✶', cls: 'asp-sextile' },
+                Square: { char: '□', cls: 'asp-square' },
+                Trine: { char: '△', cls: 'asp-trine' },
+                Opposition: { char: '☍', cls: 'asp-opposition' },
+                Quincunx: { char: '⤻', cls: 'asp-quincunx' }
+            };
+
+            const headerRow = document.createElement('tr');
+            headerRow.appendChild(document.createElement('th'));
+            planetsOrder.forEach(pl => {
+                const th = document.createElement('th');
+                th.innerHTML = `<span class="matrix-icon">${pl.icon}</span>`;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            planetsOrder.forEach(rowPl => {
+                const tr = document.createElement('tr');
+                const header = document.createElement('th');
+                header.innerHTML = `<span class="matrix-icon">${rowPl.icon}</span>`;
+                tr.appendChild(header);
+
+                planetsOrder.forEach(colPl => {
+                    const td = document.createElement('td');
+                    const natalPlanet = natalMap[rowPl.key];
+                    const transitPlanet = transitMap[colPl.key];
+                    if (!natalPlanet || !transitPlanet) {
+                        td.classList.add('matrix-empty');
+                    } else {
+                        const aspect = aspectMap[`${natalPlanet.key}_${transitPlanet.key}`];
+                        if (aspect) {
+                            const sym = symbols[aspect.type] || symbols.Conjunction;
+                            td.innerHTML = `<span class="matrix-symbol ${sym.cls}">${sym.char}</span>`;
+                        } else {
+                            td.classList.add('matrix-empty');
+                        }
+                    }
+                    tr.appendChild(td);
+                });
+
+                table.appendChild(tr);
+            });
+
+        }
+
+        function downloadPDF() {
+            const name = document.getElementById('name').value;
+            const btn = event.target;
+            btn.innerHTML = "⏳ Загрузка...";
+            
+            const link = document.createElement('a');
+            link.href = `/api/pdf?name=${encodeURIComponent(name)}`;
+            link.download = `Horoscope_${name}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            setTimeout(() => btn.innerHTML = "📄 Скачать PDF отчет", 2000);
+        }
+    </script>
+</body>
+</html>
