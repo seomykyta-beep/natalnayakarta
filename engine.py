@@ -57,6 +57,16 @@ PLANET_ICONS = {
     'north_node': '☊', 'south_node': '☋', 'lilith': '⚸'
 }
 
+# Дефолтные орбисы (можно переопределить через параметры)
+DEFAULT_ORBS = {
+    0: 8,    # Соединение
+    60: 6,   # Секстиль
+    90: 8,   # Квадрат
+    120: 8,  # Тригон
+    150: 4,  # Квинконс
+    180: 8   # Оппозиция
+}
+
 ASPECTS = {
     0: {"name": "Соединение", "orb": 8, "type": "Conjunction"},
     60: {"name": "Секстиль", "orb": 6, "type": "Sextile"},
@@ -65,6 +75,100 @@ ASPECTS = {
     150: {"name": "Квинконс", "orb": 4, "type": "Quincunx"},
     180: {"name": "Оппозиция", "orb": 8, "type": "Opposition"}
 }
+
+# === АФЕТИКА: Таблицы достоинств планет ===
+# Обитель, Экзальтация, Изгнание, Падение
+DIGNITIES = {
+    "Sun": {"domicile": ["Leo"], "exaltation": ["Ari"], "detriment": ["Aqu"], "fall": ["Lib"]},
+    "Moon": {"domicile": ["Cnc"], "exaltation": ["Tau"], "detriment": ["Cap"], "fall": ["Sco"]},
+    "Mercury": {"domicile": ["Gem", "Vir"], "exaltation": ["Vir"], "detriment": ["Sag", "Pis"], "fall": ["Pis"]},
+    "Venus": {"domicile": ["Tau", "Lib"], "exaltation": ["Pis"], "detriment": ["Sco", "Ari"], "fall": ["Vir"]},
+    "Mars": {"domicile": ["Ari", "Sco"], "exaltation": ["Cap"], "detriment": ["Lib", "Tau"], "fall": ["Cnc"]},
+    "Jupiter": {"domicile": ["Sag", "Pis"], "exaltation": ["Cnc"], "detriment": ["Gem", "Vir"], "fall": ["Cap"]},
+    "Saturn": {"domicile": ["Cap", "Aqu"], "exaltation": ["Lib"], "detriment": ["Cnc", "Leo"], "fall": ["Ari"]},
+    "Uranus": {"domicile": ["Aqu"], "exaltation": ["Sco"], "detriment": ["Leo"], "fall": ["Tau"]},
+    "Neptune": {"domicile": ["Pis"], "exaltation": ["Leo"], "detriment": ["Vir"], "fall": ["Aqu"]},
+    "Pluto": {"domicile": ["Sco"], "exaltation": ["Ari"], "detriment": ["Tau"], "fall": ["Lib"]}
+}
+
+# Баллы за достоинства
+DIGNITY_SCORES = {
+    "domicile": 5,      # Обитель
+    "exaltation": 4,    # Экзальтация
+    "detriment": -5,    # Изгнание
+    "fall": -4          # Падение
+}
+
+def calculate_dignity(planet_key, sign_key):
+    """Рассчитывает достоинство планеты в знаке и возвращает статус и баллы."""
+    if planet_key not in DIGNITIES:
+        return {"status": "", "score": 0}
+    
+    dignities = DIGNITIES[planet_key]
+    
+    if sign_key in dignities.get("domicile", []):
+        return {"status": "Обитель", "score": DIGNITY_SCORES["domicile"]}
+    if sign_key in dignities.get("exaltation", []):
+        return {"status": "Экзальтация", "score": DIGNITY_SCORES["exaltation"]}
+    if sign_key in dignities.get("detriment", []):
+        return {"status": "Изгнание", "score": DIGNITY_SCORES["detriment"]}
+    if sign_key in dignities.get("fall", []):
+        return {"status": "Падение", "score": DIGNITY_SCORES["fall"]}
+    
+    return {"status": "", "score": 0}
+
+def calculate_afetics(planets_data, aspects_list):
+    """
+    Рассчитывает афетику (силу) каждой планеты.
+    Учитывает: достоинства, аспекты, угловые дома.
+    """
+    scores = {}
+    
+    for planet in planets_data:
+        key = planet.get('key')
+        if not key or key in ['ASC', 'MC']:
+            continue
+            
+        score = 0
+        
+        # 1. Достоинства в знаке
+        sign_key = planet.get('sign_key', '')
+        dignity = calculate_dignity(key, sign_key)
+        score += dignity['score']
+        
+        # 2. Угловые дома (1, 4, 7, 10) дают +3
+        house = planet.get('house')
+        if house in [1, 4, 7, 10]:
+            score += 3
+        # Последующие дома (2, 5, 8, 11) дают +2
+        elif house in [2, 5, 8, 11]:
+            score += 2
+        # Падающие дома (3, 6, 9, 12) дают +1
+        elif house in [3, 6, 9, 12]:
+            score += 1
+        
+        # 3. Аспекты
+        for aspect in aspects_list:
+            if aspect['p1_key'] == key or aspect['p2_key'] == key:
+                asp_type = aspect['type']
+                if asp_type in ['Trine', 'Sextile']:
+                    score += 1
+                elif asp_type in ['Square', 'Opposition']:
+                    score -= 1
+                elif asp_type == 'Conjunction':
+                    # Соединение с благодетелями (+) или вредителями (-)
+                    other_key = aspect['p2_key'] if aspect['p1_key'] == key else aspect['p1_key']
+                    if other_key in ['Jupiter', 'Venus']:
+                        score += 2
+                    elif other_key in ['Saturn', 'Mars']:
+                        score -= 1
+        
+        scores[key] = {
+            'score': score,
+            'dignity': dignity['status']
+        }
+    
+    return scores
 
 try:
     with open(TEXTS_FILE, "r", encoding="utf-8") as f: TEXTS = json.load(f)
@@ -207,7 +311,20 @@ def calculate_placidus_houses(t, lat, lon):
     
     return houses
 
-def find_aspects(planets_data):
+def get_transit_text(transit_planet_key, aspect_type):
+    """Получает текст интерпретации транзита из texts.json"""
+    key = f"tr_{transit_planet_key}_{aspect_type}"
+    return TEXTS.get('transits', {}).get(key, "")
+
+def find_aspects(planets_data, custom_orbs=None):
+    """
+    Находит аспекты между планетами.
+    custom_orbs: dict {angle: orb} для переопределения орбисов
+    """
+    orbs = DEFAULT_ORBS.copy()
+    if custom_orbs:
+        orbs.update(custom_orbs)
+    
     aspects_list = []
     for i in range(len(planets_data)):
         for j in range(i + 1, len(planets_data)):
@@ -218,21 +335,39 @@ def find_aspects(planets_data):
                 diff = 360 - diff
 
             for angle, data in ASPECTS.items():
-                if abs(diff - angle) <= data['orb']:
+                orb = orbs.get(angle, data['orb'])
+                if abs(diff - angle) <= orb:
+                    # Получаем текст аспекта из texts.json
+                    p1_key = p1.get('key', '')
+                    p2_key = p2.get('key', '')
+                    aspect_key = f"{p1_key}_{p2_key}"
+                    aspect_text = TEXTS.get('aspects', {}).get(aspect_key, {}).get(data['type'], "")
+                    if not aspect_text:
+                        aspect_text = f"Аспект {data['name']} между {p1['name']} и {p2['name']} ({round(diff,1)}°)"
+                    
                     aspects_list.append({
                         "p1": p1['name'],
                         "p2": p2['name'],
-                        "p1_key": p1.get('key'),
-                        "p2_key": p2.get('key'),
+                        "p1_key": p1_key,
+                        "p2_key": p2_key,
                         "type": data['type'],
                         "name": data['name'],
                         "orb": round(abs(diff - angle), 2),
-                        "text": f"Аспект {data['name']} ({round(diff,1)}°)"
+                        "exact_orb": round(diff, 2),
+                        "text": aspect_text
                     })
     return aspects_list
 
 
-def find_transit_aspects(natal_planets, transit_planets):
+def find_transit_aspects(natal_planets, transit_planets, custom_orbs=None):
+    """
+    Находит аспекты между натальными и транзитными планетами.
+    custom_orbs: dict {angle: orb} для переопределения орбисов
+    """
+    orbs = DEFAULT_ORBS.copy()
+    if custom_orbs:
+        orbs.update(custom_orbs)
+    
     aspects_list = []
     for p1 in natal_planets:
         for p2 in transit_planets:
@@ -241,16 +376,24 @@ def find_transit_aspects(natal_planets, transit_planets):
                 diff = 360 - diff
 
             for angle, data in ASPECTS.items():
-                if abs(diff - angle) <= data['orb']:
+                orb = orbs.get(angle, data['orb'])
+                if abs(diff - angle) <= orb:
+                    # Получаем транзитный текст
+                    transit_text = get_transit_text(p2.get('key', ''), data['type'])
+                    if not transit_text:
+                        transit_text = f"Транзит {p2['name']} {data['name']} натальный {p1['name']}"
+                    
                     aspects_list.append({
-                        "p1": p1['name'],
-                        "p2": p2['name'],
+                        "p1": p1['name'],  # Натальная
+                        "p2": p2['name'],  # Транзитная
                         "p1_key": p1.get('key'),
                         "p2_key": p2.get('key'),
                         "type": data['type'],
                         "name": data['name'],
                         "orb": round(abs(diff - angle), 2),
-                        "text": f"Аспект {data['name']} ({round(diff,1)}°)"
+                        "exact_orb": round(diff, 2),
+                        "text": transit_text,
+                        "is_transit": True
                     })
     return aspects_list
 
@@ -383,18 +526,33 @@ def build_chart(local_dt, latitude, longitude, city_label):
     })
 
     aspects = find_aspects(planets_data)
+    
+    # Рассчитываем афетику (силу планет)
+    afetics = calculate_afetics(planets_data, aspects)
+    
+    # Добавляем данные афетики к каждой планете
+    for planet in planets_data:
+        key = planet.get('key')
+        if key and key in afetics:
+            planet['afetic_score'] = afetics[key]['score']
+            planet['dignity'] = afetics[key]['dignity']
+        else:
+            planet['afetic_score'] = 0
+            planet['dignity'] = ''
+    
     meta = {
         'city': city_label,
         'coords': f"{latitude:.2f}, {longitude:.2f}",
         'dt': local_dt.strftime('%d.%m.%Y %H:%M')
     }
-    return {'planets': planets_data, 'houses': houses, 'aspects': aspects, 'meta': meta}
+    return {'planets': planets_data, 'houses': houses, 'aspects': aspects, 'meta': meta, 'afetics': afetics}
 
 
 def calculate_real_chart(name, year, month, day, hour, minute, city,
                          lat=None, lon=None,
                          transit_year=None, transit_month=None, transit_day=None,
-                         transit_hour=None, transit_minute=None):
+                         transit_hour=None, transit_minute=None,
+                         custom_orbs=None):
     if not SKYFIELD_AVAILABLE:
         return {
             'name': name,
@@ -413,12 +571,18 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
     natal_dt = tz.localize(datetime(year, month, day, hour, minute))
     natal_chart = build_chart(natal_dt, r_lat, r_lon, city)
 
+    # Пересчитываем аспекты с учетом пользовательских орбисов
+    if custom_orbs:
+        natal_chart['aspects'] = find_aspects(natal_chart['planets'], custom_orbs)
+    
     result = {
         'name': name,
         'planets': natal_chart['planets'],
         'aspects': natal_chart['aspects'],
         'houses': natal_chart['houses'],
-        'meta': natal_chart['meta']
+        'meta': natal_chart['meta'],
+        'afetics': natal_chart.get('afetics', {}),
+        'orbs_used': custom_orbs or DEFAULT_ORBS
     }
 
     transit_fields = [transit_year, transit_month, transit_day, transit_hour, transit_minute]
@@ -427,7 +591,7 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
         transit_chart = build_chart(transit_dt, r_lat, r_lon, city)
         result['transits'] = transit_chart['planets']
         result['transit_meta'] = transit_chart['meta']
-        result['transit_aspects'] = find_transit_aspects(natal_chart['planets'], transit_chart['planets'])
+        result['transit_aspects'] = find_transit_aspects(natal_chart['planets'], transit_chart['planets'], custom_orbs)
     else:
         result['transits'] = []
         result['transit_meta'] = None

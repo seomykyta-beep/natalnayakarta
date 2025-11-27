@@ -6,7 +6,7 @@
     <title>Астро-Процессор</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Custom Chart JS -->
-    <script src="/static/chart.js?v=5"></script>
+    <script src="/static/chart.js?v=6"></script>
     <style>
         :root { --bg:#1a1a2e; --card:#16213e; --text:#e0e0e0; --accent:#e94560; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 20px; margin: 0; }
@@ -68,6 +68,30 @@
         .legend-symbol { font-weight: bold; font-size: 14px; }
         .legend-retro { color: #ff5555; }
         .transit-meta { text-align: center; color: #bbb; font-size: 12px; margin-top: 8px; }
+
+        /* Orbs Settings */
+        .orbs-block { margin-top: 15px; border: 1px solid #333; border-radius: 10px; overflow: hidden; }
+        .orbs-header { background: rgba(255,255,255,0.05); padding: 12px 15px; cursor: pointer; }
+        .orbs-header h3 { margin: 0; font-size: 14px; color: #888; display: flex; justify-content: space-between; align-items: center; }
+        .orbs-header:hover { background: rgba(255,255,255,0.08); }
+        .orbs-settings { padding: 15px; background: rgba(0,0,0,0.2); }
+        .orbs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        @media (max-width: 600px) { .orbs-grid { grid-template-columns: repeat(2, 1fr); } }
+        .orb-item label { font-size: 11px; color: #888; display: block; margin-bottom: 4px; }
+        .orb-item input { width: 100%; padding: 8px; background: var(--card); border: 1px solid #444; color: white; border-radius: 6px; text-align: center; font-size: 14px; }
+        .reset-orbs-btn { margin-top: 12px; padding: 8px 16px; background: #444; border: none; color: #aaa; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .reset-orbs-btn:hover { background: #555; }
+
+        /* Afetics (Planet Strength) */
+        .afetic-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; }
+        .afetic-positive { background: #1b5e20; color: #a5d6a7; }
+        .afetic-negative { background: #b71c1c; color: #ef9a9a; }
+        .afetic-neutral { background: #37474f; color: #90a4ae; }
+        .dignity-badge { font-size: 10px; color: #ffd54f; margin-left: 4px; }
+        
+        /* Interactive Aspects */
+        .aspect-highlight { background: rgba(255,215,0,0.15) !important; }
+        .planet-highlight { color: #ffd700 !important; text-shadow: 0 0 8px #ffd700; }
 
         /* Texts */
         .text-section { margin-top: 40px; }
@@ -131,6 +155,42 @@
                 </div>
             </div>
 
+            <!-- Настройка орбисов -->
+            <div class="orbs-block">
+                <div class="orbs-header" onclick="toggleOrbs()">
+                    <h3>⚙️ Настройка орбисов <span id="orbsToggle">▼</span></h3>
+                </div>
+                <div id="orbsSettings" class="orbs-settings" style="display: none;">
+                    <div class="orbs-grid">
+                        <div class="orb-item">
+                            <label>☌ Соединение (0°)</label>
+                            <input type="number" id="orb_conj" value="8" min="1" max="15">
+                        </div>
+                        <div class="orb-item">
+                            <label>✶ Секстиль (60°)</label>
+                            <input type="number" id="orb_sext" value="6" min="1" max="12">
+                        </div>
+                        <div class="orb-item">
+                            <label>□ Квадрат (90°)</label>
+                            <input type="number" id="orb_sqr" value="8" min="1" max="12">
+                        </div>
+                        <div class="orb-item">
+                            <label>△ Тригон (120°)</label>
+                            <input type="number" id="orb_tri" value="8" min="1" max="12">
+                        </div>
+                        <div class="orb-item">
+                            <label>⤻ Квинконс (150°)</label>
+                            <input type="number" id="orb_quin" value="4" min="1" max="8">
+                        </div>
+                        <div class="orb-item">
+                            <label>☍ Оппозиция (180°)</label>
+                            <input type="number" id="orb_opp" value="8" min="1" max="12">
+                        </div>
+                    </div>
+                    <button type="button" onclick="resetOrbs()" class="reset-orbs-btn">Сбросить по умолчанию</button>
+                </div>
+            </div>
+
             <div class="input-group" style="margin-top: 15px;">
                 <label>Город рождения</label>
                 <input type="text" id="city" placeholder="Начните вводить..." oninput="suggestCity()" autocomplete="off" value="Грозный">
@@ -171,19 +231,25 @@
                     </div>
                 </div>
 
-                <!-- Planets Table -->
+                <!-- Planets Table with Afetics -->
                 <div class="scheme-box">
-                    <h3 style="text-align:center; margin-top:0">🪐 Координаты</h3>
+                    <h3 style="text-align:center; margin-top:0">🪐 Координаты и Сила планет</h3>
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Планеты</th>
                                 <th>Натальная долгота</th>
                                 <th>Транзитная долгота</th>
+                                <th style="text-align:center">Сила</th>
                             </tr>
                         </thead>
                         <tbody id="planetsTableBody"></tbody>
                     </table>
+                    <div style="margin-top: 10px; font-size: 11px; color: #888;">
+                        <b>Сила:</b> Баллы афетики (достоинства + дома + аспекты). 
+                        <span style="color:#a5d6a7">Зеленый</span> = сильная, 
+                        <span style="color:#ef9a9a">красный</span> = слабая.
+                    </div>
                 </div>
             </div>
             
@@ -223,6 +289,39 @@
             document.getElementById('t_minute').value = now.getMinutes();
         }
         window.addEventListener('load', setDefaultTransitFields);
+
+        // Orbs toggle
+        function toggleOrbs() {
+            const settings = document.getElementById('orbsSettings');
+            const toggle = document.getElementById('orbsToggle');
+            if (settings.style.display === 'none') {
+                settings.style.display = 'block';
+                toggle.textContent = '▲';
+            } else {
+                settings.style.display = 'none';
+                toggle.textContent = '▼';
+            }
+        }
+
+        function resetOrbs() {
+            document.getElementById('orb_conj').value = 8;
+            document.getElementById('orb_sext').value = 6;
+            document.getElementById('orb_sqr').value = 8;
+            document.getElementById('orb_tri').value = 8;
+            document.getElementById('orb_quin').value = 4;
+            document.getElementById('orb_opp').value = 8;
+        }
+
+        function getOrbValues() {
+            return {
+                orb_conjunction: parseInt(document.getElementById('orb_conj').value) || null,
+                orb_sextile: parseInt(document.getElementById('orb_sext').value) || null,
+                orb_square: parseInt(document.getElementById('orb_sqr').value) || null,
+                orb_trine: parseInt(document.getElementById('orb_tri').value) || null,
+                orb_quincunx: parseInt(document.getElementById('orb_quin').value) || null,
+                orb_opposition: parseInt(document.getElementById('orb_opp').value) || null
+            };
+        }
 
         // City Search
         let timer;
@@ -282,6 +381,7 @@
             errorDiv.style.display = 'none';
             document.getElementById('result').style.display = 'none';
             
+            const orbValues = getOrbValues();
             const data = {
                 name: document.getElementById('name').value || "Пользователь",
                 year: parseInt(document.getElementById('year').value),
@@ -296,7 +396,8 @@
                 transit_month: parseInt(document.getElementById('t_month').value),
                 transit_day: parseInt(document.getElementById('t_day').value),
                 transit_hour: parseInt(document.getElementById('t_hour').value),
-                transit_minute: parseInt(document.getElementById('t_minute').value)
+                transit_minute: parseInt(document.getElementById('t_minute').value),
+                ...orbValues
             };
 
             try {
@@ -360,13 +461,27 @@
             data.planets.forEach(p => {
                 const retro = p.is_retro ? '<span style="color:red; font-size:10px; vertical-align:super;">R</span>' : '';
                 
+                // Афетика
+                let afeticHtml = '';
+                if (p.afetic_score !== undefined && p.key !== 'ASC' && p.key !== 'MC') {
+                    const score = p.afetic_score;
+                    let badgeClass = 'afetic-neutral';
+                    if (score >= 3) badgeClass = 'afetic-positive';
+                    else if (score <= -3) badgeClass = 'afetic-negative';
+                    afeticHtml = `<span class="afetic-badge ${badgeClass}">${score > 0 ? '+' : ''}${score}</span>`;
+                    if (p.dignity) {
+                        afeticHtml += `<span class="dignity-badge">${p.dignity}</span>`;
+                    }
+                }
+                
                 tBody.innerHTML += `
-                    <tr>
+                    <tr class="planet-row" data-planet="${p.key}">
                         <td style="color:${p.key==='ASC'||p.key==='MC'?'#ff5555':'#ffd700'}; display:flex; align-items:center; gap:8px;">
                             <span>${p.icon}</span><span>${p.name} ${retro}</span>
                         </td>
                         <td>${formatNatalPos(p)}</td>
                         <td class="transit-cell">${formatTransitPos(transitMap[p.key])}</td>
+                        <td style="text-align:center">${afeticHtml}</td>
                     </tr>`;
 
                 // Text Block
@@ -441,10 +556,18 @@
             });
         }
 
+        // Глобальное хранилище аспектов для интерактивности
+        let globalAspects = [];
+        let globalPlanets = [];
+
         function renderAspectMatrix(natalPlanets, transitPlanets, transitAspects) {
             const table = document.getElementById('aspectMatrixTable');
             if (!table) return;
             table.innerHTML = '';
+
+            // Сохраняем для интерактивности
+            globalAspects = transitAspects;
+            globalPlanets = natalPlanets;
 
             const planetsOrder = [
                 { key: 'Sun', icon: '☉' },
@@ -486,22 +609,38 @@
             };
 
             const headerRow = document.createElement('tr');
-            headerRow.appendChild(document.createElement('th'));
-            planetsOrder.forEach(pl => {
+            const cornerTh = document.createElement('th');
+            cornerTh.textContent = '↓Нат / Тр→';
+            cornerTh.style.fontSize = '9px';
+            headerRow.appendChild(cornerTh);
+            planetsOrder.forEach((pl, colIdx) => {
                 const th = document.createElement('th');
-                th.innerHTML = `<span class="matrix-icon">${pl.icon}</span>`;
+                th.innerHTML = `<span class="matrix-icon" data-col="${colIdx}" data-planet="${pl.key}">${pl.icon}</span>`;
+                th.dataset.planet = pl.key;
+                th.classList.add('matrix-header-cell');
+                // Hover на заголовке колонки
+                th.addEventListener('mouseenter', () => highlightPlanetAspects(pl.key, 'col'));
+                th.addEventListener('mouseleave', clearHighlights);
                 headerRow.appendChild(th);
             });
             table.appendChild(headerRow);
 
-            planetsOrder.forEach(rowPl => {
+            planetsOrder.forEach((rowPl, rowIdx) => {
                 const tr = document.createElement('tr');
+                tr.dataset.planet = rowPl.key;
                 const header = document.createElement('th');
                 header.innerHTML = `<span class="matrix-icon">${rowPl.icon}</span>`;
+                header.classList.add('matrix-header-cell');
+                header.dataset.planet = rowPl.key;
+                // Hover на заголовке строки
+                header.addEventListener('mouseenter', () => highlightPlanetAspects(rowPl.key, 'row'));
+                header.addEventListener('mouseleave', clearHighlights);
                 tr.appendChild(header);
 
-                planetsOrder.forEach(colPl => {
+                planetsOrder.forEach((colPl, colIdx) => {
                     const td = document.createElement('td');
+                    td.dataset.row = rowPl.key;
+                    td.dataset.col = colPl.key;
                     const natalPlanet = natalMap[rowPl.key];
                     const transitPlanet = transitMap[colPl.key];
                     if (!natalPlanet || !transitPlanet) {
@@ -511,6 +650,10 @@
                         if (aspect) {
                             const sym = symbols[aspect.type] || symbols.Conjunction;
                             td.innerHTML = `<span class="matrix-symbol ${sym.cls}">${sym.char}</span>`;
+                            td.title = `${aspect.p1} ${aspect.name} ${aspect.p2} (орбис: ${aspect.orb}°)`;
+                            // Hover на ячейке аспекта
+                            td.addEventListener('mouseenter', () => highlightAspectCell(rowPl.key, colPl.key, aspect));
+                            td.addEventListener('mouseleave', clearHighlights);
                         } else {
                             td.classList.add('matrix-empty');
                         }
@@ -520,7 +663,106 @@
 
                 table.appendChild(tr);
             });
+        }
 
+        // Подсветка аспектов при наведении на планету
+        function highlightPlanetAspects(planetKey, direction) {
+            // Подсвечиваем все ячейки с этой планетой
+            const table = document.getElementById('aspectMatrixTable');
+            if (!table) return;
+
+            const cells = table.querySelectorAll('td');
+            cells.forEach(cell => {
+                if (direction === 'row' && cell.dataset.row === planetKey) {
+                    cell.classList.add('aspect-highlight');
+                } else if (direction === 'col' && cell.dataset.col === planetKey) {
+                    cell.classList.add('aspect-highlight');
+                }
+            });
+
+            // Подсвечиваем планету в таблице координат
+            const planetRows = document.querySelectorAll('.planet-row');
+            planetRows.forEach(row => {
+                if (row.dataset.planet === planetKey) {
+                    row.classList.add('aspect-highlight');
+                }
+            });
+
+            // Подсвечиваем линии аспектов на карте SVG
+            highlightChartAspects(planetKey);
+        }
+
+        // Подсветка конкретной ячейки аспекта
+        function highlightAspectCell(rowKey, colKey, aspect) {
+            // Подсвечиваем обе планеты
+            const planetRows = document.querySelectorAll('.planet-row');
+            planetRows.forEach(row => {
+                if (row.dataset.planet === rowKey || row.dataset.planet === colKey) {
+                    row.classList.add('aspect-highlight');
+                }
+            });
+
+            // Подсвечиваем линию аспекта на карте
+            highlightSpecificAspect(aspect.p1, aspect.p2);
+        }
+
+        // Очистка подсветки
+        function clearHighlights() {
+            document.querySelectorAll('.aspect-highlight').forEach(el => {
+                el.classList.remove('aspect-highlight');
+            });
+            document.querySelectorAll('.planet-highlight').forEach(el => {
+                el.classList.remove('planet-highlight');
+            });
+            // Сброс подсветки на SVG
+            resetChartHighlights();
+        }
+
+        // Подсветка аспектов на SVG карте
+        function highlightChartAspects(planetKey) {
+            const svg = document.querySelector('#chartDiv svg');
+            if (!svg) return;
+            
+            const lines = svg.querySelectorAll('line');
+            lines.forEach(line => {
+                // Аспектные линии обычно имеют определенные цвета
+                const stroke = line.getAttribute('stroke');
+                if (stroke && ['#ff5252', '#4caf50', '#29b6f6', '#ff9800'].includes(stroke)) {
+                    line.style.opacity = '0.3';
+                }
+            });
+
+            // Находим аспекты с этой планетой и подсвечиваем их
+            globalAspects.forEach(asp => {
+                if (asp.p1_key === planetKey || asp.p2_key === planetKey) {
+                    // Ищем линию этого аспекта (по позиции)
+                    // Это сложно без ID, поэтому просто подсвечиваем все
+                }
+            });
+        }
+
+        function highlightSpecificAspect(p1Name, p2Name) {
+            // Подсветка конкретного аспекта на карте
+            const svg = document.querySelector('#chartDiv svg');
+            if (!svg) return;
+            
+            const lines = svg.querySelectorAll('line');
+            lines.forEach(line => {
+                const stroke = line.getAttribute('stroke');
+                if (stroke && ['#ff5252', '#4caf50', '#29b6f6', '#ff9800'].includes(stroke)) {
+                    line.style.opacity = '0.2';
+                }
+            });
+        }
+
+        function resetChartHighlights() {
+            const svg = document.querySelector('#chartDiv svg');
+            if (!svg) return;
+            
+            const lines = svg.querySelectorAll('line');
+            lines.forEach(line => {
+                line.style.opacity = '1';
+            });
         }
 
         function downloadPDF() {

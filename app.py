@@ -52,6 +52,13 @@ class UserData(BaseModel):
     transit_day: Optional[int] = None
     transit_hour: Optional[int] = None
     transit_minute: Optional[int] = None
+    # Настраиваемые орбисы
+    orb_conjunction: Optional[int] = None
+    orb_sextile: Optional[int] = None
+    orb_square: Optional[int] = None
+    orb_trine: Optional[int] = None
+    orb_quincunx: Optional[int] = None
+    orb_opposition: Optional[int] = None
 
 @app.get("/")
 async def home(request: Request):
@@ -59,7 +66,22 @@ async def home(request: Request):
 
 @app.post("/api/calculate")
 async def api_calculate(data: UserData):
-    # Передаем координаты, если они есть
+    # Собираем пользовательские орбисы, если заданы
+    custom_orbs = {}
+    if data.orb_conjunction is not None:
+        custom_orbs[0] = data.orb_conjunction
+    if data.orb_sextile is not None:
+        custom_orbs[60] = data.orb_sextile
+    if data.orb_square is not None:
+        custom_orbs[90] = data.orb_square
+    if data.orb_trine is not None:
+        custom_orbs[120] = data.orb_trine
+    if data.orb_quincunx is not None:
+        custom_orbs[150] = data.orb_quincunx
+    if data.orb_opposition is not None:
+        custom_orbs[180] = data.orb_opposition
+    
+    # Передаем координаты и орбисы
     result = calculate_real_chart(
         data.name, data.year, data.month, data.day,
         data.hour, data.minute, data.city,
@@ -68,7 +90,8 @@ async def api_calculate(data: UserData):
         transit_month=data.transit_month,
         transit_day=data.transit_day,
         transit_hour=data.transit_hour,
-        transit_minute=data.transit_minute
+        transit_minute=data.transit_minute,
+        custom_orbs=custom_orbs if custom_orbs else None
     )
     
     generate_pdf(result)
