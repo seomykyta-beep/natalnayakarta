@@ -8,7 +8,11 @@ from geopy.geocoders import Nominatim
 from datetime import datetime, timedelta
 import pytz
 from timezonefinder import TimezoneFinder
-from xhtml2pdf import pisa
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.units import mm
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHARTS_DIR = os.path.join(BASE_DIR, "charts")
@@ -174,19 +178,40 @@ try:
     with open(TEXTS_FILE, "r", encoding="utf-8") as f: TEXTS = json.load(f)
 except: TEXTS = {}
 
-def get_text(category, key1, key2=None):
+def get_text(category, key1, key2=None, gender="general"):
+    """Получение текста с учётом пола (gender: general/male/female)"""
     try:
-        if category == "signs": return TEXTS.get('signs', {}).get(key1, {}).get(key2, "")
-        if category == "houses": return TEXTS.get('houses', {}).get(key1, {}).get(str(key2), "")
-        if category == "aspects": return TEXTS.get('aspects', {}).get(f"{key1}_{key2}", {}).get(key2, "")
+        if category == "signs":
+            data = TEXTS.get('signs', {}).get(key1, {}).get(key2, "")
+            if isinstance(data, dict):
+                # Новая структура с разделением по полу
+                return data.get(gender, data.get('general', ''))
+            return data  # Старая структура (просто строка)
+        if category == "houses":
+            data = TEXTS.get('houses', {}).get(key1, {}).get(str(key2), "")
+            if isinstance(data, dict):
+                return data.get(gender, data.get('general', ''))
+            return data
+        if category == "aspects":
+            return TEXTS.get('aspects', {}).get(f"{key1}_{key2}", {}).get(key2, "")
     except: return ""
     return ""
 
-def get_interpretation(planet_key, sign):
+def get_interpretation(planet_key, sign, gender="general"):
+    """Получение интерпретации планеты в знаке с учётом пола"""
     json_key = planet_key.capitalize()
     if "barycenter" in planet_key: json_key = planet_key.split()[0].capitalize()
-    text = TEXTS['signs'].get(json_key, {}).get(sign, "")
-    if not text: return f"Трактовка для {PLANET_NAMES.get(planet_key, planet_key)} в знаке {sign}."
+    
+    data = TEXTS.get('signs', {}).get(json_key, {}).get(sign, "")
+    
+    if isinstance(data, dict):
+        # Новая структура с разделением по полу
+        text = data.get(gender, data.get('general', ''))
+    else:
+        text = data  # Старая структура
+    
+    if not text: 
+        return f"Трактовка для {PLANET_NAMES.get(planet_key, planet_key)} в знаке {sign}."
     return text
 
 def degrees_to_zodiac(lon):
@@ -397,7 +422,7 @@ def find_transit_aspects(natal_planets, transit_planets, custom_orbs=None):
                     })
     return aspects_list
 
-def build_chart(local_dt, latitude, longitude, city_label):
+def build_chart(local_dt, latitude, longitude, city_label, gender="male"):
     t = ts.from_datetime(local_dt)
     try:
         houses = calculate_placidus_houses(t, latitude, longitude)
@@ -426,8 +451,8 @@ def build_chart(local_dt, latitude, longitude, city_label):
         sign_name, sign_deg, _, sign_key = degrees_to_zodiac(deg)
         p_key = p_name.split()[0].capitalize()
         house_num = get_house_placement(deg, houses)
-        text_sign = get_interpretation(p_name, sign_key)
-        text_house = get_text('houses', p_key, house_num) or f" (Дом {house_num})"
+        text_sign = get_interpretation(p_name, sign_key, gender)
+        text_house = get_text('houses', p_key, house_num, gender) or f" (Дом {house_num})"
 
         planets_data.append({
             'name': PLANET_NAMES[p_name],
@@ -552,10 +577,11 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
                          lat=None, lon=None,
                          transit_year=None, transit_month=None, transit_day=None,
                          transit_hour=None, transit_minute=None,
-                         custom_orbs=None):
+                         custom_orbs=None, gender="male"):
     if not SKYFIELD_AVAILABLE:
         return {
             'name': name,
+            'gender': gender,
             'planets': [],
             'aspects': [],
             'houses': [0]*12,
@@ -569,7 +595,7 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
 
     tz = pytz.timezone(tz_str) if tz_str else pytz.UTC
     natal_dt = tz.localize(datetime(year, month, day, hour, minute))
-    natal_chart = build_chart(natal_dt, r_lat, r_lon, city)
+    natal_chart = build_chart(natal_dt, r_lat, r_lon, city, gender=gender)
 
     # Пересчитываем аспекты с учетом пользовательских орбисов
     if custom_orbs:
@@ -577,6 +603,7 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
     
     result = {
         'name': name,
+        'gender': gender,
         'planets': natal_chart['planets'],
         'aspects': natal_chart['aspects'],
         'houses': natal_chart['houses'],
@@ -588,7 +615,7 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
     transit_fields = [transit_year, transit_month, transit_day, transit_hour, transit_minute]
     if all(v is not None for v in transit_fields):
         transit_dt = tz.localize(datetime(transit_year, transit_month, transit_day, transit_hour, transit_minute))
-        transit_chart = build_chart(transit_dt, r_lat, r_lon, city)
+        transit_chart = build_chart(transit_dt, r_lat, r_lon, city, gender=gender)
         result['transits'] = transit_chart['planets']
         result['transit_meta'] = transit_chart['meta']
         result['transit_aspects'] = find_transit_aspects(natal_chart['planets'], transit_chart['planets'], custom_orbs)
@@ -600,40 +627,114 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
     return result
 
 def generate_pdf(user_data):
-    if not os.path.exists(REPORTS_DIR): os.makedirs(REPORTS_DIR)
-    pdf_path = os.path.join(REPORTS_DIR, f"report_{user_data['name']}.pdf")
+    """Генерация PDF отчёта с помощью reportlab"""
+    if not os.path.exists(REPORTS_DIR): 
+        os.makedirs(REPORTS_DIR)
     
-    FONT_REGULAR = os.path.join(BASE_DIR, "DejaVuSans.ttf")
-
-    rows = ""
-    for p in user_data['planets']:
-        rows += f"""<div class="planet"><b>{p['icon']} {p['name']}</b>: {p['sign']} {p['pos']}°<br><small>{p['text']}</small></div>"""
+    # Безопасное имя файла
+    safe_name = "".join(c for c in user_data.get('name', 'report') if c.isalnum() or c in ' _-').strip()
+    if not safe_name:
+        safe_name = 'report'
+    pdf_path = os.path.join(REPORTS_DIR, f"report_{safe_name}.pdf")
     
-    aspects_html = ""
-    for a in user_data['aspects']:
-        aspects_html += f"<div>• {a['p1']} {a['type']} {a['p2']}</div>"
-
-    html = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            @font-face {{ font-family: 'DejaVu'; src: url('{FONT_REGULAR}'); }}
-            body {{ font-family: 'DejaVu', sans-serif; }}
-            .planet {{ margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }}
-        </style>
-    </head>
-    <body>
-        <h1>Карта: {user_data['name']}</h1>
-        <p>{user_data['meta']['city']} / {user_data['meta']['dt']}</p>
-        {rows}
-        <h3>Аспекты</h3>
-        {aspects_html}
-    </body>
-    </html>
-    """
+    # Регистрация шрифта с поддержкой кириллицы
+    FONT_PATH = os.path.join(BASE_DIR, "DejaVuSans.ttf")
     try:
-        with open(pdf_path, "wb") as f: pisa.CreatePDF(html, dest=f)
+        pdfmetrics.registerFont(TTFont('DejaVu', FONT_PATH))
+        font_name = 'DejaVu'
+    except:
+        font_name = 'Helvetica'  # Fallback (без кириллицы)
+    
+    try:
+        c = canvas.Canvas(pdf_path, pagesize=A4)
+        width, height = A4
+        y = height - 40*mm
+        
+        # Заголовок
+        c.setFont(font_name, 18)
+        c.drawString(20*mm, y, f"Натальная карта: {user_data.get('name', 'Без имени')}")
+        y -= 10*mm
+        
+        # Мета-информация
+        c.setFont(font_name, 11)
+        meta = user_data.get('meta', {})
+        c.drawString(20*mm, y, f"Город: {meta.get('city', '—')} | Дата: {meta.get('dt', '—')}")
+        y -= 8*mm
+        
+        gender = user_data.get('gender', 'general')
+        gender_text = {'male': 'Мужчина', 'female': 'Женщина'}.get(gender, 'Не указан')
+        c.drawString(20*mm, y, f"Пол: {gender_text}")
+        y -= 12*mm
+        
+        # Планеты
+        c.setFont(font_name, 14)
+        c.drawString(20*mm, y, "Планеты в знаках:")
+        y -= 8*mm
+        
+        c.setFont(font_name, 10)
+        for p in user_data.get('planets', []):
+            if y < 30*mm:  # Новая страница
+                c.showPage()
+                c.setFont(font_name, 10)
+                y = height - 30*mm
+            
+            # Планета и позиция
+            line = f"{p.get('icon', '')} {p.get('name', '')}: {p.get('sign', '')} {p.get('pos', '')}°"
+            c.drawString(20*mm, y, line)
+            y -= 5*mm
+            
+            # Интерпретация (если есть)
+            text = p.get('text', '')
+            if text and len(text) > 5:
+                # Разбиваем длинный текст на строки
+                words = text.split()
+                current_line = ""
+                for word in words:
+                    test_line = current_line + " " + word if current_line else word
+                    if len(test_line) < 90:
+                        current_line = test_line
+                    else:
+                        if y < 30*mm:
+                            c.showPage()
+                            c.setFont(font_name, 10)
+                            y = height - 30*mm
+                        c.setFillColorRGB(0.4, 0.4, 0.4)
+                        c.drawString(25*mm, y, current_line)
+                        y -= 4*mm
+                        current_line = word
+                if current_line:
+                    if y < 30*mm:
+                        c.showPage()
+                        c.setFont(font_name, 10)
+                        y = height - 30*mm
+                    c.setFillColorRGB(0.4, 0.4, 0.4)
+                    c.drawString(25*mm, y, current_line)
+                    y -= 4*mm
+                c.setFillColorRGB(0, 0, 0)
+            y -= 3*mm
+        
+        # Аспекты
+        y -= 5*mm
+        if y < 50*mm:
+            c.showPage()
+            y = height - 30*mm
+        
+        c.setFont(font_name, 14)
+        c.drawString(20*mm, y, "Аспекты:")
+        y -= 8*mm
+        
+        c.setFont(font_name, 10)
+        for a in user_data.get('aspects', []):
+            if y < 20*mm:
+                c.showPage()
+                c.setFont(font_name, 10)
+                y = height - 30*mm
+            line = f"• {a.get('p1', '')} {a.get('type', '')} {a.get('p2', '')} ({a.get('orb', '')}°)"
+            c.drawString(20*mm, y, line)
+            y -= 5*mm
+        
+        c.save()
         return pdf_path
-    except: return None
+    except Exception as e:
+        print(f"PDF generation error: {e}")
+        return None

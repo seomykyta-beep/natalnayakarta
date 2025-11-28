@@ -39,6 +39,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), na
 
 class UserData(BaseModel):
     name: str
+    gender: Optional[str] = "male"  # male / female
     year: int
     month: int
     day: int
@@ -91,9 +92,12 @@ async def api_calculate(data: UserData):
         transit_day=data.transit_day,
         transit_hour=data.transit_hour,
         transit_minute=data.transit_minute,
-        custom_orbs=custom_orbs if custom_orbs else None
+        custom_orbs=custom_orbs if custom_orbs else None,
+        gender=data.gender
     )
     
+    # Добавляем gender в результат для PDF
+    result['gender'] = data.gender
     generate_pdf(result)
     return result
 
