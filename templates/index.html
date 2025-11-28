@@ -69,19 +69,6 @@
         .legend-retro { color: #ff5555; }
         .transit-meta { text-align: center; color: #bbb; font-size: 12px; margin-top: 8px; }
 
-        /* Orbs Settings */
-        .orbs-block { margin-top: 15px; border: 1px solid #333; border-radius: 10px; overflow: hidden; }
-        .orbs-header { background: rgba(255,255,255,0.05); padding: 12px 15px; cursor: pointer; }
-        .orbs-header h3 { margin: 0; font-size: 14px; color: #888; display: flex; justify-content: space-between; align-items: center; }
-        .orbs-header:hover { background: rgba(255,255,255,0.08); }
-        .orbs-settings { padding: 15px; background: rgba(0,0,0,0.2); }
-        .orbs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        @media (max-width: 600px) { .orbs-grid { grid-template-columns: repeat(2, 1fr); } }
-        .orb-item label { font-size: 11px; color: #888; display: block; margin-bottom: 4px; }
-        .orb-item input { width: 100%; padding: 8px; background: var(--card); border: 1px solid #444; color: white; border-radius: 6px; text-align: center; font-size: 14px; }
-        .reset-orbs-btn { margin-top: 12px; padding: 8px 16px; background: #444; border: none; color: #aaa; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .reset-orbs-btn:hover { background: #555; }
-
         /* Afetics (Planet Strength) */
         .afetic-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; }
         .afetic-positive { background: #1b5e20; color: #a5d6a7; }
@@ -165,42 +152,6 @@
                             <input type="number" id="t_minute" placeholder="ММ" class="col">
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Настройка орбисов -->
-            <div class="orbs-block">
-                <div class="orbs-header" onclick="toggleOrbs()">
-                    <h3>⚙️ Настройка орбисов <span id="orbsToggle">▼</span></h3>
-                </div>
-                <div id="orbsSettings" class="orbs-settings" style="display: none;">
-                    <div class="orbs-grid">
-                        <div class="orb-item">
-                            <label>☌ Соединение (0°)</label>
-                            <input type="number" id="orb_conj" value="8" min="1" max="15">
-                        </div>
-                        <div class="orb-item">
-                            <label>✶ Секстиль (60°)</label>
-                            <input type="number" id="orb_sext" value="6" min="1" max="12">
-                        </div>
-                        <div class="orb-item">
-                            <label>□ Квадрат (90°)</label>
-                            <input type="number" id="orb_sqr" value="8" min="1" max="12">
-                        </div>
-                        <div class="orb-item">
-                            <label>△ Тригон (120°)</label>
-                            <input type="number" id="orb_tri" value="8" min="1" max="12">
-                        </div>
-                        <div class="orb-item">
-                            <label>⤻ Квинконс (150°)</label>
-                            <input type="number" id="orb_quin" value="4" min="1" max="8">
-                        </div>
-                        <div class="orb-item">
-                            <label>☍ Оппозиция (180°)</label>
-                            <input type="number" id="orb_opp" value="8" min="1" max="12">
-                        </div>
-                    </div>
-                    <button type="button" onclick="resetOrbs()" class="reset-orbs-btn">Сбросить по умолчанию</button>
                 </div>
             </div>
 
@@ -304,38 +255,6 @@
         window.addEventListener('load', setDefaultTransitFields);
 
         // Orbs toggle
-        function toggleOrbs() {
-            const settings = document.getElementById('orbsSettings');
-            const toggle = document.getElementById('orbsToggle');
-            if (settings.style.display === 'none') {
-                settings.style.display = 'block';
-                toggle.textContent = '▲';
-            } else {
-                settings.style.display = 'none';
-                toggle.textContent = '▼';
-            }
-        }
-
-        function resetOrbs() {
-            document.getElementById('orb_conj').value = 8;
-            document.getElementById('orb_sext').value = 6;
-            document.getElementById('orb_sqr').value = 8;
-            document.getElementById('orb_tri').value = 8;
-            document.getElementById('orb_quin').value = 4;
-            document.getElementById('orb_opp').value = 8;
-        }
-
-        function getOrbValues() {
-            return {
-                orb_conjunction: parseInt(document.getElementById('orb_conj').value) || null,
-                orb_sextile: parseInt(document.getElementById('orb_sext').value) || null,
-                orb_square: parseInt(document.getElementById('orb_sqr').value) || null,
-                orb_trine: parseInt(document.getElementById('orb_tri').value) || null,
-                orb_quincunx: parseInt(document.getElementById('orb_quin').value) || null,
-                orb_opposition: parseInt(document.getElementById('orb_opp').value) || null
-            };
-        }
-
         // City Search
         let timer;
         function suggestCity() {
@@ -394,7 +313,6 @@
             errorDiv.style.display = 'none';
             document.getElementById('result').style.display = 'none';
             
-            const orbValues = getOrbValues();
             const genderRadio = document.querySelector('input[name="gender"]:checked');
             const data = {
                 name: document.getElementById('name').value || "Пользователь",
@@ -411,8 +329,7 @@
                 transit_month: parseInt(document.getElementById('t_month').value),
                 transit_day: parseInt(document.getElementById('t_day').value),
                 transit_hour: parseInt(document.getElementById('t_hour').value),
-                transit_minute: parseInt(document.getElementById('t_minute').value),
-                ...orbValues
+                transit_minute: parseInt(document.getElementById('t_minute').value)
             };
 
             try {
