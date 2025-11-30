@@ -631,7 +631,17 @@ def generate_pdf(user_data):
     if not os.path.exists(REPORTS_DIR): 
         os.makedirs(REPORTS_DIR)
     
-    # Безопасное имя файла
+    # Словарь перевода аспектов
+    ASPECT_RU = {
+        'Conjunction': 'Соединение',
+        'Sextile': 'Секстиль',
+        'Square': 'Квадрат',
+        'Trine': 'Тригон',
+        'Quincunx': 'Квинконс',
+        'Opposition': 'Оппозиция'
+    }
+    
+    # Безопасное имя файла (только латиница и цифры)
     safe_name = "".join(c for c in user_data.get('name', 'report') if c.isalnum() or c in ' _-').strip()
     if not safe_name:
         safe_name = 'report'
@@ -639,11 +649,14 @@ def generate_pdf(user_data):
     
     # Регистрация шрифта с поддержкой кириллицы
     FONT_PATH = os.path.join(BASE_DIR, "DejaVuSans.ttf")
-    try:
-        pdfmetrics.registerFont(TTFont('DejaVu', FONT_PATH))
-        font_name = 'DejaVu'
-    except:
-        font_name = 'Helvetica'  # Fallback (без кириллицы)
+    font_name = 'Helvetica'  # По умолчанию
+    
+    if os.path.exists(FONT_PATH):
+        try:
+            pdfmetrics.registerFont(TTFont('DejaVu', FONT_PATH))
+            font_name = 'DejaVu'
+        except Exception as e:
+            print(f"Font registration error: {e}")
     
     try:
         c = canvas.Canvas(pdf_path, pagesize=A4)
@@ -652,13 +665,16 @@ def generate_pdf(user_data):
         
         # Заголовок
         c.setFont(font_name, 18)
-        c.drawString(20*mm, y, f"Натальная карта: {user_data.get('name', 'Без имени')}")
+        name = user_data.get('name', 'Без имени')
+        c.drawString(20*mm, y, f"Натальная карта: {name}")
         y -= 10*mm
         
         # Мета-информация
         c.setFont(font_name, 11)
         meta = user_data.get('meta', {})
-        c.drawString(20*mm, y, f"Город: {meta.get('city', '—')} | Дата: {meta.get('dt', '—')}")
+        city = meta.get('city', '-')
+        dt = meta.get('dt', '-')
+        c.drawString(20*mm, y, f"Город: {city} | Дата: {dt}")
         y -= 8*mm
         
         gender = user_data.get('gender', 'general')
@@ -673,25 +689,30 @@ def generate_pdf(user_data):
         
         c.setFont(font_name, 10)
         for p in user_data.get('planets', []):
-            if y < 30*mm:  # Новая страница
+            if y < 30*mm:
                 c.showPage()
                 c.setFont(font_name, 10)
                 y = height - 30*mm
             
-            # Планета и позиция
-            line = f"{p.get('icon', '')} {p.get('name', '')}: {p.get('sign', '')} {p.get('pos', '')}°"
+            # Планета и позиция (без иконок-эмодзи, они могут не отображаться)
+            p_name = p.get('name', '')
+            p_sign = p.get('sign', '')
+            p_pos = p.get('pos', '')
+            line = f"{p_name}: {p_sign} {p_pos}"
             c.drawString(20*mm, y, line)
             y -= 5*mm
             
             # Интерпретация (если есть)
             text = p.get('text', '')
             if text and len(text) > 5:
+                # Убираем переносы строк и лишние пробелы
+                text = ' '.join(text.replace('\\n', ' ').split())
                 # Разбиваем длинный текст на строки
                 words = text.split()
                 current_line = ""
                 for word in words:
                     test_line = current_line + " " + word if current_line else word
-                    if len(test_line) < 90:
+                    if len(test_line) < 85:
                         current_line = test_line
                     else:
                         if y < 30*mm:
@@ -729,7 +750,16 @@ def generate_pdf(user_data):
                 c.showPage()
                 c.setFont(font_name, 10)
                 y = height - 30*mm
-            line = f"• {a.get('p1', '')} {a.get('type', '')} {a.get('p2', '')} ({a.get('orb', '')}°)"
+            
+            # Переводим тип аспекта на русский
+            asp_type = a.get('type', '')
+            asp_type_ru = ASPECT_RU.get(asp_type, asp_type)
+            
+            p1 = a.get('p1', '')
+            p2 = a.get('p2', '')
+            orb = a.get('orb', '')
+            
+            line = f"- {p1} {asp_type_ru} {p2} ({orb})"
             c.drawString(20*mm, y, line)
             y -= 5*mm
         
@@ -737,4 +767,6 @@ def generate_pdf(user_data):
         return pdf_path
     except Exception as e:
         print(f"PDF generation error: {e}")
+        import traceback
+        traceback.print_exc()
         return None
