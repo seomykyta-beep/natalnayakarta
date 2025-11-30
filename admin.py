@@ -1,11 +1,10 @@
 """
 Админка для управления текстами интерпретаций натальной карты.
 Расширенная версия с поддержкой:
-- Планеты в знаках (с разделением по полу)
-- Планеты в домах (с разделением по полу)
+- Планеты в знаках и домах (объединённый раздел с разделением по полу)
 - Аспекты
-- Стихии
-- Знаки зодиака (отдельно)
+- Стихии (с разбивкой по знакам и полу)
+- Планеты (описания отдельных планет)
 - Дома (отдельно)
 - Градусы (1-30 для каждого знака)
 - Королевские и разрушительные градусы
@@ -55,6 +54,8 @@ PLANET_NAMES = {
     "South_node": "☋ Юж. узел"
 }
 
+PLANET_KEYS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Lilith", "North_node", "South_node"]
+
 SIGN_NAMES = {
     "Ari": "♈ Овен",
     "Tau": "♉ Телец",
@@ -69,6 +70,8 @@ SIGN_NAMES = {
     "Aqu": "♒ Водолей",
     "Pis": "♓ Рыбы"
 }
+
+SIGN_KEYS = ["Ari", "Tau", "Gem", "Cnc", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
 
 SIGN_NAMES_RU = {
     "Ari": "Овен", "Tau": "Телец", "Gem": "Близнецы", "Cnc": "Рак",
@@ -86,11 +89,12 @@ ASPECT_NAMES = {
     "Оппозиция": "☍ Оппозиция"
 }
 
-ELEMENT_NAMES = {
-    "fire": "🔥 Огонь",
-    "earth": "🌍 Земля",
-    "air": "💨 Воздух",
-    "water": "💧 Вода"
+# Стихии с их знаками
+ELEMENTS = {
+    "fire": {"name": "🔥 Огонь", "signs": ["Ari", "Leo", "Sag"]},
+    "earth": {"name": "🌍 Земля", "signs": ["Tau", "Vir", "Cap"]},
+    "air": {"name": "💨 Воздух", "signs": ["Gem", "Lib", "Aqu"]},
+    "water": {"name": "💧 Вода", "signs": ["Cnc", "Sco", "Pis"]}
 }
 
 DIGNITY_NAMES = {
@@ -154,6 +158,8 @@ button { margin-top: 10px; }
 .nav-card h3 { color: #ffd700; margin: 0 0 8px 0; font-size: 16px; }
 .nav-card p { color: #888; margin: 0; font-size: 13px; }
 .section-title { border-bottom: 2px solid #e94560; padding-bottom: 10px; margin: 30px 0 20px 0; }
+.combo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+.small-textarea { min-height: 60px; }
 """
 
 
@@ -234,13 +240,9 @@ async def admin_home(request: Request):
             
             <h2 class="section-title">📁 Основные разделы</h2>
             <div class="nav-grid">
-                <a href="/admin/signs" class="nav-card">
-                    <h3>🪐 Планеты в знаках</h3>
-                    <p>Солнце в Овне, Луна в Тельце... (с разделением по полу)</p>
-                </a>
-                <a href="/admin/houses" class="nav-card">
-                    <h3>🏠 Планеты в домах</h3>
-                    <p>Солнце в 1 доме, Луна во 2 доме... (с разделением по полу)</p>
+                <a href="/admin/planet-sign-house" class="nav-card">
+                    <h3>🪐 Планеты в знаках и домах</h3>
+                    <p>Солнце в Овне в 1 доме (муж/жен)</p>
                 </a>
                 <a href="/admin/aspects" class="nav-card">
                     <h3>⭐ Аспекты</h3>
@@ -252,11 +254,11 @@ async def admin_home(request: Request):
             <div class="nav-grid">
                 <a href="/admin/elements" class="nav-card">
                     <h3>🔥 Стихии</h3>
-                    <p>Огонь, Земля, Воздух, Вода</p>
+                    <p>Огонь-Овен (муж/жен), Земля-Телец...</p>
                 </a>
-                <a href="/admin/zodiac" class="nav-card">
-                    <h3>♈ Знаки зодиака</h3>
-                    <p>12 знаков отдельно</p>
+                <a href="/admin/planets-info" class="nav-card">
+                    <h3>🪐 Планеты</h3>
+                    <p>Описания планет (Солнце, Луна...)</p>
                 </a>
                 <a href="/admin/houses-general" class="nav-card">
                     <h3>🏛️ Дома</h3>
@@ -302,48 +304,70 @@ async def admin_home(request: Request):
     return HTMLResponse(content=html)
 
 
-# === Планеты в знаках (с разделением по полу) ===
-@app.get("/admin/signs", response_class=HTMLResponse)
-async def admin_signs(request: Request, planet: str = None, gender: str = "general"):
+# === ОБЪЕДИНЁННЫЙ РАЗДЕЛ: Планеты в знаках и домах ===
+@app.get("/admin/planet-sign-house", response_class=HTMLResponse)
+async def admin_planet_sign_house(request: Request, planet: str = None, sign: str = None, gender: str = "male"):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/admin/login", status_code=303)
     
     texts = load_texts()
-    signs_data = texts.get("signs", {})
     
+    # Инициализируем структуру если нет
+    if "sign_house_combos" not in texts:
+        texts["sign_house_combos"] = {}
+    
+    # Табы планет
     planets_list = "".join([
-        f'<a href="/admin/signs?planet={p}&gender={gender}" class="tab-btn {"active" if planet == p else ""}">{PLANET_NAMES.get(p, p)}</a>'
-        for p in signs_data.keys()
+        f'<a href="/admin/planet-sign-house?planet={p}&sign={sign or "Ari"}&gender={gender}" class="tab-btn {"active" if planet == p else ""}">{PLANET_NAMES.get(p, p)}</a>'
+        for p in PLANET_KEYS
     ])
     
-    gender_tabs = f"""
-    <div class="gender-tabs" style="margin: 20px 0;">
-        <a href="/admin/signs?planet={planet}&gender=general" class="tab-btn {'active' if gender == 'general' else ''}">👤 Общее</a>
-        <a href="/admin/signs?planet={planet}&gender=male" class="tab-btn {'active' if gender == 'male' else ''}">♂️ Мужчина</a>
-        <a href="/admin/signs?planet={planet}&gender=female" class="tab-btn {'active' if gender == 'female' else ''}">♀️ Женщина</a>
-    </div>
-    """ if planet else ""
+    # Табы знаков (если выбрана планета)
+    signs_list = ""
+    if planet:
+        signs_list = "".join([
+            f'<a href="/admin/planet-sign-house?planet={planet}&sign={s}&gender={gender}" class="tab-btn {"active" if sign == s else ""}">{SIGN_NAMES.get(s, s)}</a>'
+            for s in SIGN_KEYS
+        ])
     
+    # Табы пола
+    gender_tabs = ""
+    if planet and sign:
+        gender_tabs = f"""
+        <div class="gender-tabs" style="margin: 20px 0;">
+            <a href="/admin/planet-sign-house?planet={planet}&sign={sign}&gender=male" class="tab-btn {'active' if gender == 'male' else ''}">♂️ Мужчина</a>
+            <a href="/admin/planet-sign-house?planet={planet}&sign={sign}&gender=female" class="tab-btn {'active' if gender == 'female' else ''}">♀️ Женщина</a>
+        </div>
+        """
+    
+    # Форма редактирования домов
     form_html = ""
-    if planet and planet in signs_data:
-        form_html = f"<h2>{PLANET_NAMES.get(planet, planet)} в знаках ({gender})</h2>"
-        for sign, text_data in signs_data[planet].items():
-            # Получаем текст в зависимости от структуры
-            if isinstance(text_data, dict):
-                text = text_data.get(gender, text_data.get("general", ""))
-            else:
-                text = text_data if gender == "general" else ""
+    if planet and sign:
+        planet_name = PLANET_NAMES.get(planet, planet)
+        sign_name = SIGN_NAMES.get(sign, sign)
+        gender_name = "Мужчина" if gender == "male" else "Женщина"
+        
+        form_html = f"<h2>{planet_name} в {sign_name} ({gender_name})</h2>"
+        form_html += '<div class="combo-grid">'
+        
+        # Получаем или создаём данные
+        combo_data = texts.get("sign_house_combos", {}).get(planet, {}).get(sign, {}).get(gender, {})
+        
+        for house_num in range(1, 13):
+            house_key = str(house_num)
+            text = combo_data.get(house_key, "")
+            is_empty = "ЗАПОЛНИТЬ" in str(text) or not text or len(text) < 10
             
-            is_empty = "ЗАПОЛНИТЬ" in str(text) or "ДОПОЛНИТЬ" in str(text) or not text
             form_html += f"""
             <div class="text-block {'empty' if is_empty else 'filled'}">
-                <label>{SIGN_NAMES.get(sign, sign)}</label>
-                <textarea name="{planet}_{sign}_{gender}" rows="4">{text}</textarea>
-                <button type="button" onclick="generateText('{planet}', '{sign}', '{gender}', this)" class="generate-btn">🤖 Сгенерировать</button>
+                <label>В {house_num} доме</label>
+                <textarea name="{house_key}" rows="3" class="small-textarea">{text}</textarea>
             </div>
             """
-        form_html = f'<form method="POST" action="/admin/signs/save?planet={planet}&gender={gender}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
+        
+        form_html += '</div>'
+        form_html = f'<form method="POST" action="/admin/planet-sign-house/save?planet={planet}&sign={sign}&gender={gender}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
     
     html = f"""
     <!DOCTYPE html>
@@ -351,46 +375,33 @@ async def admin_signs(request: Request, planet: str = None, gender: str = "gener
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Планеты в знаках - Админка</title>
+        <title>Планеты в знаках и домах - Админка</title>
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
     <body>
         <main class="container">
-            <h1>🪐 Планеты в знаках</h1>
+            <h1>🪐 Планеты в знаках и домах</h1>
             <a href="/admin" class="back-link">← Назад в админку</a>
             
+            <p style="color: #888;">Выберите планету → знак → пол, затем заполните тексты для каждого дома</p>
+            
+            <h3 style="color: #ffd700; margin-top: 20px;">Планета:</h3>
             <div class="nav-tabs">{planets_list}</div>
+            
+            {'<h3 style="color: #ffd700; margin-top: 20px;">Знак:</h3><div class="nav-tabs">' + signs_list + '</div>' if signs_list else ''}
+            
             {gender_tabs}
-            {form_html if form_html else '<p style="color: #888;">Выберите планету для редактирования</p>'}
+            {form_html if form_html else '<p style="color: #888; margin-top: 30px;">Выберите планету для начала редактирования</p>'}
         </main>
-        
-        <script>
-        async function generateText(planet, sign, gender, btn) {{
-            btn.innerHTML = '⏳...';
-            btn.disabled = true;
-            try {{
-                const resp = await fetch('/admin/api/generate', {{
-                    method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{type: 'sign', planet, sign, gender}}),
-                    credentials: 'include'
-                }});
-                const data = await resp.json();
-                if (data.text) btn.parentElement.querySelector('textarea').value = data.text;
-            }} catch(e) {{ alert('Ошибка: ' + e.message); }}
-            btn.innerHTML = '🤖 Сгенерировать';
-            btn.disabled = false;
-        }}
-        </script>
     </body>
     </html>
     """
     return HTMLResponse(content=html)
 
 
-@app.post("/admin/signs/save")
-async def save_signs(request: Request, planet: str, gender: str = "general"):
+@app.post("/admin/planet-sign-house/save")
+async def save_planet_sign_house(request: Request, planet: str, sign: str, gender: str):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/admin/login", status_code=303)
@@ -398,144 +409,21 @@ async def save_signs(request: Request, planet: str, gender: str = "general"):
     form = await request.form()
     texts = load_texts()
     
-    if planet not in texts.get("signs", {}):
-        texts["signs"][planet] = {}
+    # Инициализируем структуру
+    if "sign_house_combos" not in texts:
+        texts["sign_house_combos"] = {}
+    if planet not in texts["sign_house_combos"]:
+        texts["sign_house_combos"][planet] = {}
+    if sign not in texts["sign_house_combos"][planet]:
+        texts["sign_house_combos"][planet][sign] = {}
+    if gender not in texts["sign_house_combos"][planet][sign]:
+        texts["sign_house_combos"][planet][sign][gender] = {}
     
     for key, value in form.items():
-        parts = key.split("_")
-        if len(parts) >= 3 and parts[0] == planet:
-            sign = parts[1]
-            g = parts[2]
-            
-            if sign not in texts["signs"][planet]:
-                texts["signs"][planet][sign] = {"general": "", "male": "", "female": ""}
-            
-            if isinstance(texts["signs"][planet][sign], str):
-                old_text = texts["signs"][planet][sign]
-                texts["signs"][planet][sign] = {"general": old_text, "male": "", "female": ""}
-            
-            texts["signs"][planet][sign][g] = value
+        texts["sign_house_combos"][planet][sign][gender][key] = value
     
     save_texts(texts)
-    return RedirectResponse(url=f"/admin/signs?planet={planet}&gender={gender}", status_code=303)
-
-
-# === Планеты в домах (с разделением по полу) ===
-@app.get("/admin/houses", response_class=HTMLResponse)
-async def admin_houses(request: Request, planet: str = None, gender: str = "general"):
-    user = get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/admin/login", status_code=303)
-    
-    texts = load_texts()
-    houses_data = texts.get("houses", {})
-    
-    planets_list = "".join([
-        f'<a href="/admin/houses?planet={p}&gender={gender}" class="tab-btn {"active" if planet == p else ""}">{PLANET_NAMES.get(p, p)}</a>'
-        for p in houses_data.keys()
-    ])
-    
-    gender_tabs = f"""
-    <div class="gender-tabs" style="margin: 20px 0;">
-        <a href="/admin/houses?planet={planet}&gender=general" class="tab-btn {'active' if gender == 'general' else ''}">👤 Общее</a>
-        <a href="/admin/houses?planet={planet}&gender=male" class="tab-btn {'active' if gender == 'male' else ''}">♂️ Мужчина</a>
-        <a href="/admin/houses?planet={planet}&gender=female" class="tab-btn {'active' if gender == 'female' else ''}">♀️ Женщина</a>
-    </div>
-    """ if planet else ""
-    
-    form_html = ""
-    if planet and planet in houses_data:
-        form_html = f"<h2>{PLANET_NAMES.get(planet, planet)} в домах ({gender})</h2>"
-        for house in [str(i) for i in range(1, 13)]:
-            text_data = houses_data[planet].get(house, {})
-            if isinstance(text_data, dict):
-                text = text_data.get(gender, text_data.get("general", ""))
-            else:
-                text = text_data if gender == "general" else ""
-            
-            is_empty = "ЗАПОЛНИТЬ" in str(text) or "ДОПОЛНИТЬ" in str(text) or not text
-            form_html += f"""
-            <div class="text-block {'empty' if is_empty else 'filled'}">
-                <label>{HOUSE_NAMES.get(house, house)}</label>
-                <textarea name="{planet}_{house}_{gender}" rows="4">{text}</textarea>
-                <button type="button" onclick="generateText('{planet}', '{house}', '{gender}', this)" class="generate-btn">🤖 Сгенерировать</button>
-            </div>
-            """
-        form_html = f'<form method="POST" action="/admin/houses/save?planet={planet}&gender={gender}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
-    
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Планеты в домах - Админка</title>
-        <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
-        <style>{COMMON_STYLES}</style>
-    </head>
-    <body>
-        <main class="container">
-            <h1>🏠 Планеты в домах</h1>
-            <a href="/admin" class="back-link">← Назад в админку</a>
-            
-            <div class="nav-tabs">{planets_list}</div>
-            {gender_tabs}
-            {form_html if form_html else '<p style="color: #888;">Выберите планету для редактирования</p>'}
-        </main>
-        
-        <script>
-        async function generateText(planet, house, gender, btn) {{
-            btn.innerHTML = '⏳...';
-            btn.disabled = true;
-            try {{
-                const resp = await fetch('/admin/api/generate', {{
-                    method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{type: 'house', planet, house, gender}}),
-                    credentials: 'include'
-                }});
-                const data = await resp.json();
-                if (data.text) btn.parentElement.querySelector('textarea').value = data.text;
-            }} catch(e) {{ alert('Ошибка: ' + e.message); }}
-            btn.innerHTML = '🤖 Сгенерировать';
-            btn.disabled = false;
-        }}
-        </script>
-    </body>
-    </html>
-    """
-    return HTMLResponse(content=html)
-
-
-@app.post("/admin/houses/save")
-async def save_houses(request: Request, planet: str, gender: str = "general"):
-    user = get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/admin/login", status_code=303)
-    
-    form = await request.form()
-    texts = load_texts()
-    
-    if planet not in texts.get("houses", {}):
-        texts["houses"][planet] = {}
-    
-    for key, value in form.items():
-        parts = key.split("_")
-        if len(parts) >= 3 and parts[0] == planet:
-            house = parts[1]
-            g = parts[2]
-            
-            if house not in texts["houses"][planet]:
-                texts["houses"][planet][house] = {"general": "", "male": "", "female": ""}
-            
-            if isinstance(texts["houses"][planet][house], str):
-                old_text = texts["houses"][planet][house]
-                texts["houses"][planet][house] = {"general": old_text, "male": "", "female": ""}
-            
-            texts["houses"][planet][house][g] = value
-    
-    save_texts(texts)
-    return RedirectResponse(url=f"/admin/houses?planet={planet}&gender={gender}", status_code=303)
+    return RedirectResponse(url=f"/admin/planet-sign-house?planet={planet}&sign={sign}&gender={gender}", status_code=303)
 
 
 # === Аспекты ===
@@ -562,7 +450,6 @@ async def admin_aspects(request: Request, pair: str = None):
             <div class="text-block {'empty' if is_empty else 'filled'}">
                 <label>{ASPECT_NAMES.get(asp, asp)}</label>
                 <textarea name="{pair}_{asp}" rows="4">{text}</textarea>
-                <button type="button" onclick="generateAspect('{pair}', '{asp}', this)" class="generate-btn">🤖 Сгенерировать</button>
             </div>
             """
         form_html = f'<form method="POST" action="/admin/aspects/save?pair={pair}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
@@ -585,25 +472,6 @@ async def admin_aspects(request: Request, pair: str = None):
             <div class="nav-tabs" style="max-height: 300px; overflow-y: auto;">{pairs_list}</div>
             {form_html if form_html else '<p style="color: #888;">Выберите пару планет для редактирования</p>'}
         </main>
-        
-        <script>
-        async function generateAspect(pair, aspect, btn) {{
-            btn.innerHTML = '⏳...';
-            btn.disabled = true;
-            try {{
-                const resp = await fetch('/admin/api/generate', {{
-                    method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{type: 'aspect', pair, aspect}}),
-                    credentials: 'include'
-                }});
-                const data = await resp.json();
-                if (data.text) btn.parentElement.querySelector('textarea').value = data.text;
-            }} catch(e) {{ alert('Ошибка: ' + e.message); }}
-            btn.innerHTML = '🤖 Сгенерировать';
-            btn.disabled = false;
-        }}
-        </script>
     </body>
     </html>
     """
@@ -634,32 +502,56 @@ async def save_aspects(request: Request, pair: str):
     return RedirectResponse(url=f"/admin/aspects?pair={pair}", status_code=303)
 
 
-# === Стихии ===
+# === Стихии (расширенные: Стихия × Знак × Пол) ===
 @app.get("/admin/elements", response_class=HTMLResponse)
-async def admin_elements(request: Request):
+async def admin_elements(request: Request, element: str = "fire", gender: str = "male"):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/admin/login", status_code=303)
     
     texts = load_texts()
-    elements_data = texts.get("elements", {})
     
-    form_html = ""
-    for elem_key, elem_data in elements_data.items():
-        elem_name = ELEMENT_NAMES.get(elem_key, elem_key)
-        signs = ", ".join([SIGN_NAMES_RU.get(s, s) for s in elem_data.get("signs", [])])
+    # Инициализируем структуру если нет
+    if "elements_extended" not in texts:
+        texts["elements_extended"] = {}
+    
+    # Табы стихий
+    element_tabs = "".join([
+        f'<a href="/admin/elements?element={e}&gender={gender}" class="tab-btn {"active" if element == e else ""}">{ELEMENTS[e]["name"]}</a>'
+        for e in ELEMENTS.keys()
+    ])
+    
+    # Табы пола
+    gender_tabs = f"""
+    <div class="gender-tabs" style="margin: 20px 0;">
+        <a href="/admin/elements?element={element}&gender=male" class="tab-btn {'active' if gender == 'male' else ''}">♂️ Мужчина</a>
+        <a href="/admin/elements?element={element}&gender=female" class="tab-btn {'active' if gender == 'female' else ''}">♀️ Женщина</a>
+    </div>
+    """
+    
+    # Форма для знаков этой стихии
+    elem_data = ELEMENTS.get(element, {})
+    elem_name = elem_data.get("name", element)
+    signs = elem_data.get("signs", [])
+    gender_name = "Мужчина" if gender == "male" else "Женщина"
+    
+    form_html = f"<h2>{elem_name} — {gender_name}</h2>"
+    
+    elem_texts = texts.get("elements_extended", {}).get(element, {})
+    
+    for sign_key in signs:
+        sign_name = SIGN_NAMES.get(sign_key, sign_key)
+        text = elem_texts.get(sign_key, {}).get(gender, "")
+        is_empty = not text or len(text) < 10
         
         form_html += f"""
-        <div class="text-block">
-            <label>{elem_name} ({signs})</label>
-            <p style="color: #888; font-size: 12px;">Общее описание:</p>
-            <textarea name="{elem_key}_description" rows="3">{elem_data.get('description', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для мужчины:</p>
-            <textarea name="{elem_key}_description_male" rows="3">{elem_data.get('description_male', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для женщины:</p>
-            <textarea name="{elem_key}_description_female" rows="3">{elem_data.get('description_female', '')}</textarea>
+        <div class="text-block {'empty' if is_empty else 'filled'}">
+            <label>{elem_name} — {sign_name}</label>
+            <textarea name="{sign_key}" rows="4">{text}</textarea>
         </div>
         """
+    
+    form_html = f'<form method="POST" action="/admin/elements/save?element={element}&gender={gender}">{form_html}<button type="submit">💾 Сохранить все</button></form>'
     
     html = f"""
     <!DOCTYPE html>
@@ -675,10 +567,12 @@ async def admin_elements(request: Request):
         <main class="container">
             <h1>🔥 Стихии</h1>
             <a href="/admin" class="back-link">← Назад в админку</a>
-            <form method="POST" action="/admin/elements/save">
-                {form_html}
-                <button type="submit">💾 Сохранить все</button>
-            </form>
+            
+            <p style="color: #888;">Стихия × Знак × Пол</p>
+            
+            <div class="nav-tabs">{element_tabs}</div>
+            {gender_tabs}
+            {form_html}
         </main>
     </body>
     </html>
@@ -687,7 +581,7 @@ async def admin_elements(request: Request):
 
 
 @app.post("/admin/elements/save")
-async def save_elements(request: Request):
+async def save_elements(request: Request, element: str, gender: str):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/admin/login", status_code=303)
@@ -695,41 +589,40 @@ async def save_elements(request: Request):
     form = await request.form()
     texts = load_texts()
     
+    if "elements_extended" not in texts:
+        texts["elements_extended"] = {}
+    if element not in texts["elements_extended"]:
+        texts["elements_extended"][element] = {}
+    
     for key, value in form.items():
-        parts = key.split("_", 1)
-        if len(parts) == 2:
-            elem_key, field = parts
-            if elem_key in texts.get("elements", {}):
-                texts["elements"][elem_key][field] = value
+        if key not in texts["elements_extended"][element]:
+            texts["elements_extended"][element][key] = {}
+        texts["elements_extended"][element][key][gender] = value
     
     save_texts(texts)
-    return RedirectResponse(url="/admin/elements", status_code=303)
+    return RedirectResponse(url=f"/admin/elements?element={element}&gender={gender}", status_code=303)
 
 
-# === Знаки зодиака ===
-@app.get("/admin/zodiac", response_class=HTMLResponse)
-async def admin_zodiac(request: Request):
+# === Планеты (описания отдельных планет) ===
+@app.get("/admin/planets-info", response_class=HTMLResponse)
+async def admin_planets_info(request: Request):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/admin/login", status_code=303)
     
     texts = load_texts()
-    zodiac_data = texts.get("zodiac_signs", {})
+    planets_data = texts.get("planets_info", {})
     
     form_html = ""
-    for sign_key in ["Ari", "Tau", "Gem", "Cnc", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]:
-        sign_data = zodiac_data.get(sign_key, {})
-        sign_name = SIGN_NAMES.get(sign_key, sign_key)
+    for planet_key in PLANET_KEYS:
+        planet_name = PLANET_NAMES.get(planet_key, planet_key)
+        text = planets_data.get(planet_key, {}).get("description", "")
+        is_empty = not text or len(text) < 10
         
         form_html += f"""
-        <div class="text-block">
-            <label>{sign_name}</label>
-            <p style="color: #888; font-size: 12px;">Общее описание:</p>
-            <textarea name="{sign_key}_description" rows="3">{sign_data.get('description', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для мужчины:</p>
-            <textarea name="{sign_key}_description_male" rows="3">{sign_data.get('description_male', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для женщины:</p>
-            <textarea name="{sign_key}_description_female" rows="3">{sign_data.get('description_female', '')}</textarea>
+        <div class="text-block {'empty' if is_empty else 'filled'}">
+            <label>{planet_name}</label>
+            <textarea name="{planet_key}" rows="4">{text}</textarea>
         </div>
         """
     
@@ -739,15 +632,18 @@ async def admin_zodiac(request: Request):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Знаки зодиака - Админка</title>
+        <title>Планеты - Админка</title>
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
     <body>
         <main class="container">
-            <h1>♈ Знаки зодиака</h1>
+            <h1>🪐 Планеты</h1>
             <a href="/admin" class="back-link">← Назад в админку</a>
-            <form method="POST" action="/admin/zodiac/save">
+            
+            <p style="color: #888;">Общие описания планет</p>
+            
+            <form method="POST" action="/admin/planets-info/save">
                 {form_html}
                 <button type="submit">💾 Сохранить все</button>
             </form>
@@ -758,8 +654,8 @@ async def admin_zodiac(request: Request):
     return HTMLResponse(content=html)
 
 
-@app.post("/admin/zodiac/save")
-async def save_zodiac(request: Request):
+@app.post("/admin/planets-info/save")
+async def save_planets_info(request: Request):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/admin/login", status_code=303)
@@ -767,19 +663,14 @@ async def save_zodiac(request: Request):
     form = await request.form()
     texts = load_texts()
     
-    if "zodiac_signs" not in texts:
-        texts["zodiac_signs"] = {}
+    if "planets_info" not in texts:
+        texts["planets_info"] = {}
     
     for key, value in form.items():
-        parts = key.split("_", 1)
-        if len(parts) == 2:
-            sign_key, field = parts
-            if sign_key not in texts["zodiac_signs"]:
-                texts["zodiac_signs"][sign_key] = {"name": SIGN_NAMES_RU.get(sign_key, sign_key)}
-            texts["zodiac_signs"][sign_key][field] = value
+        texts["planets_info"][key] = {"description": value}
     
     save_texts(texts)
-    return RedirectResponse(url="/admin/zodiac", status_code=303)
+    return RedirectResponse(url="/admin/planets-info", status_code=303)
 
 
 # === Дома (общие) ===
@@ -796,16 +687,13 @@ async def admin_houses_general(request: Request):
     for i in range(1, 13):
         house_key = str(i)
         house_data = houses_data.get(house_key, {})
+        desc = house_data.get('description', '') if isinstance(house_data, dict) else house_data
+        is_empty = not desc or len(desc) < 10
         
         form_html += f"""
-        <div class="text-block">
+        <div class="text-block {'empty' if is_empty else 'filled'}">
             <label>{i} дом</label>
-            <p style="color: #888; font-size: 12px;">Общее описание:</p>
-            <textarea name="{house_key}_description" rows="3">{house_data.get('description', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для мужчины:</p>
-            <textarea name="{house_key}_description_male" rows="3">{house_data.get('description_male', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для женщины:</p>
-            <textarea name="{house_key}_description_female" rows="3">{house_data.get('description_female', '')}</textarea>
+            <textarea name="{house_key}" rows="4">{desc}</textarea>
         </div>
         """
     
@@ -847,12 +735,7 @@ async def save_houses_general(request: Request):
         texts["houses_general"] = {}
     
     for key, value in form.items():
-        parts = key.split("_", 1)
-        if len(parts) == 2:
-            house_key, field = parts
-            if house_key not in texts["houses_general"]:
-                texts["houses_general"][house_key] = {"name": f"{house_key} дом"}
-            texts["houses_general"][house_key][field] = value
+        texts["houses_general"][key] = {"description": value}
     
     save_texts(texts)
     return RedirectResponse(url="/admin/houses-general", status_code=303)
@@ -875,18 +758,15 @@ async def admin_dignities(request: Request, dignity: str = "domicile"):
     
     form_html = f"<h2>{DIGNITY_NAMES.get(dignity, dignity)}</h2>"
     for key, data in dignities_data.items():
-        planet = data.get("planet", "")
+        planet = data.get("planet", key)
         sign = data.get("sign", "")
+        desc = data.get("description", "")
+        is_empty = not desc or len(desc) < 10
         
         form_html += f"""
-        <div class="text-block">
+        <div class="text-block {'empty' if is_empty else 'filled'}">
             <label>{planet} в {sign}</label>
-            <p style="color: #888; font-size: 12px;">Общее описание:</p>
-            <textarea name="{key}_description" rows="3">{data.get('description', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для мужчины:</p>
-            <textarea name="{key}_description_male" rows="3">{data.get('description_male', '')}</textarea>
-            <p style="color: #888; font-size: 12px; margin-top: 10px;">Для женщины:</p>
-            <textarea name="{key}_description_female" rows="3">{data.get('description_female', '')}</textarea>
+            <textarea name="{key}" rows="4">{desc}</textarea>
         </div>
         """
     
@@ -933,11 +813,8 @@ async def save_dignities(request: Request, dignity: str):
         texts["planet_dignities"][dignity] = {}
     
     for key, value in form.items():
-        parts = key.rsplit("_", 1)
-        if len(parts) == 2:
-            item_key, field = parts
-            if item_key in texts["planet_dignities"][dignity]:
-                texts["planet_dignities"][dignity][item_key][field] = value
+        if key in texts["planet_dignities"][dignity]:
+            texts["planet_dignities"][dignity][key]["description"] = value
     
     save_texts(texts)
     return RedirectResponse(url=f"/admin/dignities?dignity={dignity}", status_code=303)
@@ -955,7 +832,7 @@ async def admin_degrees(request: Request, sign: str = "Ari"):
     
     sign_tabs = "".join([
         f'<a href="/admin/degrees?sign={s}" class="tab-btn {"active" if sign == s else ""}">{SIGN_NAMES.get(s, s)}</a>'
-        for s in ["Ari", "Tau", "Gem", "Cnc", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        for s in SIGN_KEYS
     ])
     
     form_html = f"<h2>{SIGN_NAMES.get(sign, sign)}</h2>"
@@ -1032,10 +909,14 @@ async def admin_royal_degrees(request: Request):
     
     form_html = ""
     for key, data in royal_data.items():
+        name = data.get('name', key) if isinstance(data, dict) else key
+        desc = data.get('description', '') if isinstance(data, dict) else data
+        is_empty = not desc or len(desc) < 10
+        
         form_html += f"""
-        <div class="text-block">
-            <label>👑 {data.get('name', key)}</label>
-            <textarea name="{key}" rows="4">{data.get('description', '')}</textarea>
+        <div class="text-block {'empty' if is_empty else 'filled'}">
+            <label>👑 {name}</label>
+            <textarea name="{key}" rows="4">{desc}</textarea>
         </div>
         """
     
@@ -1074,9 +955,15 @@ async def save_royal_degrees(request: Request):
     form = await request.form()
     texts = load_texts()
     
+    if "royal_degrees" not in texts:
+        texts["royal_degrees"] = {}
+    
     for key, value in form.items():
-        if key in texts.get("royal_degrees", {}):
-            texts["royal_degrees"][key]["description"] = value
+        if key in texts["royal_degrees"]:
+            if isinstance(texts["royal_degrees"][key], dict):
+                texts["royal_degrees"][key]["description"] = value
+            else:
+                texts["royal_degrees"][key] = {"name": key, "description": value}
     
     save_texts(texts)
     return RedirectResponse(url="/admin/royal-degrees", status_code=303)
@@ -1094,10 +981,14 @@ async def admin_destructive_degrees(request: Request):
     
     form_html = ""
     for key, data in destructive_data.items():
+        name = data.get('name', key) if isinstance(data, dict) else key
+        desc = data.get('description', '') if isinstance(data, dict) else data
+        is_empty = not desc or len(desc) < 10
+        
         form_html += f"""
-        <div class="text-block">
-            <label>💀 {data.get('name', key)}</label>
-            <textarea name="{key}" rows="4">{data.get('description', '')}</textarea>
+        <div class="text-block {'empty' if is_empty else 'filled'}">
+            <label>💀 {name}</label>
+            <textarea name="{key}" rows="4">{desc}</textarea>
         </div>
         """
     
@@ -1136,9 +1027,15 @@ async def save_destructive_degrees(request: Request):
     form = await request.form()
     texts = load_texts()
     
+    if "destructive_degrees" not in texts:
+        texts["destructive_degrees"] = {}
+    
     for key, value in form.items():
-        if key in texts.get("destructive_degrees", {}):
-            texts["destructive_degrees"][key]["description"] = value
+        if key in texts["destructive_degrees"]:
+            if isinstance(texts["destructive_degrees"][key], dict):
+                texts["destructive_degrees"][key]["description"] = value
+            else:
+                texts["destructive_degrees"][key] = {"name": key, "description": value}
     
     save_texts(texts)
     return RedirectResponse(url="/admin/destructive-degrees", status_code=303)
@@ -1172,27 +1069,26 @@ async def admin_generate_page(request: Request):
             
             <div class="warning">
                 <strong>⚠️ Важно!</strong><br>
-                Генерация текстов происходит через Cursor AI. Кнопки "Сгенерировать" работают как заглушки.
-                Для реальной генерации используйте Cursor IDE.
+                Генерация текстов происходит через Cursor AI или GPT API.
             </div>
             
             <div class="info-box">
                 <h3 style="color: #4caf50;">Как это работает:</h3>
                 <ol>
                     <li>Откройте проект в Cursor IDE</li>
-                    <li>Попросите Claude сгенерировать тексты</li>
-                    <li>Claude обновит файл <code>texts.json</code></li>
+                    <li>Попросите Claude/GPT сгенерировать тексты</li>
+                    <li>AI обновит файл <code>texts.json</code></li>
                     <li>Изменения сразу появятся в админке</li>
                 </ol>
             </div>
             
             <div class="info-box">
                 <h3 style="color: #ffd700;">Примеры промптов:</h3>
-                <p><strong>Для планет в знаках:</strong></p>
-                <textarea rows="4" style="width:100%; background:#0f1424; color:white;">Заполни texts.json: для Солнца в каждом знаке напиши 3-5 предложений. Добавь версии для мужчин и женщин. Стиль: профессиональный астрологический.</textarea>
+                <p><strong>Для планет в знаках и домах:</strong></p>
+                <textarea rows="4" style="width:100%; background:#0f1424; color:white;">Заполни texts.json раздел sign_house_combos: для Солнца в Овне в каждом доме (1-12) напиши 2-3 предложения. Отдельно для мужчин и женщин.</textarea>
                 
-                <p style="margin-top: 15px;"><strong>Для градусов:</strong></p>
-                <textarea rows="4" style="width:100%; background:#0f1424; color:white;">Заполни texts.json: для каждого градуса Овна (1-30) напиши краткое описание его значения по Сабианским символам.</textarea>
+                <p style="margin-top: 15px;"><strong>Для стихий:</strong></p>
+                <textarea rows="4" style="width:100%; background:#0f1424; color:white;">Заполни texts.json раздел elements_extended: для стихии Огонь напиши описания для Овна, Льва, Стрельца. Отдельно для мужчин и женщин.</textarea>
             </div>
         </main>
     </body>
@@ -1201,7 +1097,7 @@ async def admin_generate_page(request: Request):
     return HTMLResponse(content=html)
 
 
-# === API для генерации ===
+# === API для генерации (заглушка) ===
 @app.post("/admin/api/generate")
 async def api_generate_text(request: Request):
     user = get_current_user(request)
@@ -1211,33 +1107,7 @@ async def api_generate_text(request: Request):
     data = await request.json()
     gen_type = data.get("type")
     
-    if gen_type == "test":
-        return {"status": "ok", "message": "API работает"}
-    
-    # Заглушки для генерации
-    if gen_type == "sign":
-        planet = data.get("planet", "")
-        sign = data.get("sign", "")
-        gender = data.get("gender", "general")
-        planet_name = PLANET_NAMES.get(planet, planet)
-        sign_name = SIGN_NAMES.get(sign, sign)
-        gender_text = {"general": "", "male": " (мужчина)", "female": " (женщина)"}.get(gender, "")
-        return {"text": f"[AI] {planet_name} в {sign_name}{gender_text}: Используйте Cursor IDE для генерации."}
-    
-    if gen_type == "house":
-        planet = data.get("planet", "")
-        house = data.get("house", "")
-        gender = data.get("gender", "general")
-        planet_name = PLANET_NAMES.get(planet, planet)
-        gender_text = {"general": "", "male": " (мужчина)", "female": " (женщина)"}.get(gender, "")
-        return {"text": f"[AI] {planet_name} в {house} доме{gender_text}: Используйте Cursor IDE для генерации."}
-    
-    if gen_type == "aspect":
-        pair = data.get("pair", "")
-        aspect = data.get("aspect", "")
-        return {"text": f"[AI] {pair} ({aspect}): Используйте Cursor IDE для генерации."}
-    
-    return {"text": "", "error": "Неизвестный тип"}
+    return {"text": "[AI] Используйте Cursor IDE или GPT API для генерации.", "status": "stub"}
 
 
 if __name__ == "__main__":
