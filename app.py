@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from pydantic import BaseModel
-from engine import calculate_real_chart, generate_pdf
+from engine import calculate_real_chart, calculate_chart_with_mode, generate_pdf
 import os
 from typing import Optional
 
@@ -48,11 +48,30 @@ class UserData(BaseModel):
     city: str
     lat: Optional[float] = None
     lon: Optional[float] = None
+    
+    # Mode: natal / solar / lunar
+    mode: Optional[str] = "natal"
+    
+    # Transit params (for natal mode)
     transit_year: Optional[int] = None
     transit_month: Optional[int] = None
     transit_day: Optional[int] = None
     transit_hour: Optional[int] = None
     transit_minute: Optional[int] = None
+    
+    # Solar params
+    solar_year: Optional[int] = None
+    solar_city: Optional[str] = None
+    solar_lat: Optional[float] = None
+    solar_lon: Optional[float] = None
+    
+    # Lunar params
+    lunar_year: Optional[int] = None
+    lunar_month: Optional[int] = None
+    lunar_city: Optional[str] = None
+    lunar_lat: Optional[float] = None
+    lunar_lon: Optional[float] = None
+    
     # Настраиваемые орбисы
     orb_conjunction: Optional[int] = None
     orb_sextile: Optional[int] = None
@@ -82,18 +101,37 @@ async def api_calculate(data: UserData):
     if data.orb_opposition is not None:
         custom_orbs[180] = data.orb_opposition
     
-    # Передаем координаты и орбисы
-    result = calculate_real_chart(
-        data.name, data.year, data.month, data.day,
-        data.hour, data.minute, data.city,
-        lat=data.lat, lon=data.lon,
+    # Используем универсальную функцию с режимами
+    result = calculate_chart_with_mode(
+        name=data.name,
+        year=data.year,
+        month=data.month,
+        day=data.day,
+        hour=data.hour,
+        minute=data.minute,
+        city=data.city,
+        lat=data.lat,
+        lon=data.lon,
+        gender=data.gender,
+        mode=data.mode or "natal",
+        # Transit
         transit_year=data.transit_year,
         transit_month=data.transit_month,
         transit_day=data.transit_day,
         transit_hour=data.transit_hour,
         transit_minute=data.transit_minute,
-        custom_orbs=custom_orbs if custom_orbs else None,
-        gender=data.gender
+        # Solar
+        solar_year=data.solar_year,
+        solar_city=data.solar_city,
+        solar_lat=data.solar_lat,
+        solar_lon=data.solar_lon,
+        # Lunar
+        lunar_year=data.lunar_year,
+        lunar_month=data.lunar_month,
+        lunar_city=data.lunar_city,
+        lunar_lat=data.lunar_lat,
+        lunar_lon=data.lunar_lon,
+        custom_orbs=custom_orbs if custom_orbs else None
     )
     
     # Добавляем gender в результат для PDF
@@ -129,3 +167,4 @@ async def main():
 if __name__ == "__main__":
     try: asyncio.run(main())
     except (KeyboardInterrupt, SystemExit): pass
+

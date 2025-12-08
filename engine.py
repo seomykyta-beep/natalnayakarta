@@ -770,3 +770,249 @@ def generate_pdf(user_data):
         import traceback
         traceback.print_exc()
         return None
+
+
+# === SOLAR RETURN (СОЛЯР) ===
+def find_solar_return(natal_sun_pos, target_year, latitude, longitude, tz_str, natal_month, natal_day):
+    """
+    Находит момент соляра - когда Солнце возвращается в натальную позицию.
+    natal_sun_pos: абсолютная позиция Солнца в натале (0-360)
+    target_year: год для соляра
+    """
+    if not SKYFIELD_AVAILABLE:
+        return None
+    
+    tz = pytz.timezone(tz_str) if tz_str else pytz.UTC
+    
+    # Начинаем поиск за день до дня рождения
+    search_start = tz.localize(datetime(target_year, natal_month, natal_day, 0, 0)) - timedelta(days=1)
+    
+    # Бинарный поиск момента возвращения
+    t_start = ts.from_datetime(search_start.astimezone(pytz.UTC))
+    
+    best_time = None
+    best_diff = 360
+    
+    # Грубый поиск (по часам)
+    for hours in range(72):  # 3 дня
+        current_dt = search_start + timedelta(hours=hours)
+        t = ts.from_datetime(current_dt.astimezone(pytz.UTC))
+        astrometric = earth.at(t).observe(planets['sun'])
+        apparent = astrometric.apparent()
+        lat_ecl, lon_ecl, _ = apparent.ecliptic_latlon()
+        sun_pos = lon_ecl.degrees % 360
+        
+        diff = abs(sun_pos - natal_sun_pos)
+        if diff > 180:
+            diff = 360 - diff
+        
+        if diff < best_diff:
+            best_diff = diff
+            best_time = current_dt
+    
+    # Точный поиск (по минутам) вокруг лучшего времени
+    if best_time:
+        for minutes in range(-60, 61):
+            current_dt = best_time + timedelta(minutes=minutes)
+            t = ts.from_datetime(current_dt.astimezone(pytz.UTC))
+            astrometric = earth.at(t).observe(planets['sun'])
+            apparent = astrometric.apparent()
+            lat_ecl, lon_ecl, _ = apparent.ecliptic_latlon()
+            sun_pos = lon_ecl.degrees % 360
+            
+            diff = abs(sun_pos - natal_sun_pos)
+            if diff > 180:
+                diff = 360 - diff
+            
+            if diff < best_diff:
+                best_diff = diff
+                best_time = current_dt
+    
+    return best_time
+
+
+# === LUNAR RETURN (ЛУНАР) ===
+def find_lunar_return(natal_moon_pos, target_year, target_month, latitude, longitude, tz_str):
+    """
+    Находит момент лунара - когда Луна возвращается в натальную позицию.
+    natal_moon_pos: абсолютная позиция Луны в натале (0-360)
+    target_year, target_month: месяц для лунара
+    """
+    if not SKYFIELD_AVAILABLE:
+        return None
+    
+    tz = pytz.timezone(tz_str) if tz_str else pytz.UTC
+    
+    # Начинаем с 1-го числа месяца
+    search_start = tz.localize(datetime(target_year, target_month, 1, 0, 0))
+    
+    best_time = None
+    best_diff = 360
+    
+    # Грубый поиск (по часам) - лунный месяц ~27.3 дня
+    for hours in range(31 * 24):  # весь месяц
+        current_dt = search_start + timedelta(hours=hours)
+        t = ts.from_datetime(current_dt.astimezone(pytz.UTC))
+        astrometric = earth.at(t).observe(moon)
+        apparent = astrometric.apparent()
+        lat_ecl, lon_ecl, _ = apparent.ecliptic_latlon()
+        moon_pos = lon_ecl.degrees % 360
+        
+        diff = abs(moon_pos - natal_moon_pos)
+        if diff > 180:
+            diff = 360 - diff
+        
+        if diff < best_diff:
+            best_diff = diff
+            best_time = current_dt
+    
+    # Точный поиск (по минутам)
+    if best_time:
+        for minutes in range(-60, 61):
+            current_dt = best_time + timedelta(minutes=minutes)
+            t = ts.from_datetime(current_dt.astimezone(pytz.UTC))
+            astrometric = earth.at(t).observe(moon)
+            apparent = astrometric.apparent()
+            lat_ecl, lon_ecl, _ = apparent.ecliptic_latlon()
+            moon_pos = lon_ecl.degrees % 360
+            
+            diff = abs(moon_pos - natal_moon_pos)
+            if diff > 180:
+                diff = 360 - diff
+            
+            if diff < best_diff:
+                best_diff = diff
+                best_time = current_dt
+    
+    return best_time
+
+
+# === UNIFIED CHART CALCULATION (для всех режимов) ===
+def calculate_chart_with_mode(name, year, month, day, hour, minute, city,
+                              lat=None, lon=None, gender="male", mode="natal",
+                              # Transit params
+                              transit_year=None, transit_month=None, transit_day=None,
+                              transit_hour=None, transit_minute=None,
+                              # Solar params
+                              solar_year=None, solar_city=None, solar_lat=None, solar_lon=None,
+                              # Lunar params
+                              lunar_year=None, lunar_month=None, lunar_city=None, lunar_lat=None, lunar_lon=None,
+                              custom_orbs=None):
+    """
+    Универсальный расчёт карты с поддержкой режимов:
+    - natal: натальная карта + транзиты
+    - solar: натальная карта + соляр
+    - lunar: натальная карта + лунар
+    """
+    if not SKYFIELD_AVAILABLE:
+        return {
+            'name': name,
+            'gender': gender,
+            'planets': [],
+            'aspects': [],
+            'houses': [0]*12,
+            'meta': {'city': 'Error', 'coords': '0,0', 'dt': 'System Unavailable'},
+            'error': 'Skyfield data not loaded'
+        }
+
+    # Получаем координаты для натала
+    r_lat, r_lon, tz_str = get_city_info(city, lat, lon)
+    if not r_lat:
+        r_lat, r_lon, tz_str = 55.75, 37.61, 'Europe/Moscow'
+
+    tz = pytz.timezone(tz_str) if tz_str else pytz.UTC
+    natal_dt = tz.localize(datetime(year, month, day, hour, minute))
+    natal_chart = build_chart(natal_dt, r_lat, r_lon, city, gender=gender)
+
+    if custom_orbs:
+        natal_chart['aspects'] = find_aspects(natal_chart['planets'], custom_orbs)
+    
+    result = {
+        'name': name,
+        'gender': gender,
+        'mode': mode,
+        'planets': natal_chart['planets'],
+        'aspects': natal_chart['aspects'],
+        'houses': natal_chart['houses'],
+        'meta': natal_chart['meta'],
+        'afetics': natal_chart.get('afetics', {}),
+        'orbs_used': custom_orbs or DEFAULT_ORBS
+    }
+
+    # === РЕЖИМ НАТАЛ + ТРАНЗИТЫ ===
+    if mode == 'natal':
+        transit_fields = [transit_year, transit_month, transit_day, transit_hour, transit_minute]
+        if all(v is not None for v in transit_fields):
+            transit_dt = tz.localize(datetime(transit_year, transit_month, transit_day, transit_hour, transit_minute))
+            transit_chart = build_chart(transit_dt, r_lat, r_lon, city, gender=gender)
+            result['transits'] = transit_chart['planets']
+            result['transit_meta'] = transit_chart['meta']
+            result['transit_aspects'] = find_transit_aspects(natal_chart['planets'], transit_chart['planets'], custom_orbs)
+        else:
+            result['transits'] = []
+            result['transit_meta'] = None
+            result['transit_aspects'] = []
+    
+    # === РЕЖИМ СОЛЯР ===
+    elif mode == 'solar' and solar_year:
+        # Находим натальную позицию Солнца
+        natal_sun = next((p for p in natal_chart['planets'] if p['key'] == 'Sun'), None)
+        if natal_sun:
+            natal_sun_pos = natal_sun['abs_pos']
+            
+            # Координаты для соляра
+            s_lat = solar_lat or r_lat
+            s_lon = solar_lon or r_lon
+            s_city = solar_city or city
+            
+            # Получаем timezone для места соляра
+            _, _, s_tz_str = get_city_info(s_city, s_lat, s_lon)
+            if not s_tz_str:
+                s_tz_str = tz_str
+            
+            # Находим момент соляра
+            solar_dt = find_solar_return(natal_sun_pos, solar_year, s_lat, s_lon, s_tz_str, month, day)
+            
+            if solar_dt:
+                solar_chart = build_chart(solar_dt, s_lat, s_lon, s_city, gender=gender)
+                result['outer_planets'] = solar_chart['planets']
+                result['outer_meta'] = solar_chart['meta']
+                result['outer_houses'] = solar_chart['houses']
+                result['transit_aspects'] = find_transit_aspects(natal_chart['planets'], solar_chart['planets'], custom_orbs)
+            else:
+                result['outer_planets'] = []
+                result['outer_meta'] = None
+                result['transit_aspects'] = []
+    
+    # === РЕЖИМ ЛУНАР ===
+    elif mode == 'lunar' and lunar_year and lunar_month:
+        # Находим натальную позицию Луны
+        natal_moon = next((p for p in natal_chart['planets'] if p['key'] == 'Moon'), None)
+        if natal_moon:
+            natal_moon_pos = natal_moon['abs_pos']
+            
+            # Координаты для лунара
+            l_lat = lunar_lat or r_lat
+            l_lon = lunar_lon or r_lon
+            l_city = lunar_city or city
+            
+            # Получаем timezone для места лунара
+            _, _, l_tz_str = get_city_info(l_city, l_lat, l_lon)
+            if not l_tz_str:
+                l_tz_str = tz_str
+            
+            # Находим момент лунара
+            lunar_dt = find_lunar_return(natal_moon_pos, lunar_year, lunar_month, l_lat, l_lon, l_tz_str)
+            
+            if lunar_dt:
+                lunar_chart = build_chart(lunar_dt, l_lat, l_lon, l_city, gender=gender)
+                result['outer_planets'] = lunar_chart['planets']
+                result['outer_meta'] = lunar_chart['meta']
+                result['outer_houses'] = lunar_chart['houses']
+                result['transit_aspects'] = find_transit_aspects(natal_chart['planets'], lunar_chart['planets'], custom_orbs)
+            else:
+                result['outer_planets'] = []
+                result['outer_meta'] = None
+                result['transit_aspects'] = []
+
+    return result
