@@ -711,15 +711,17 @@
                 drawChart(data.planets, data.houses, data.aspects, null);
             } else {
                 const outer = data.transits || data.outer_planets || [];
-                const aspects = data.transit_aspects || [];
+                const aspects = data.transit_aspects || data.aspects || [];
+                matrixTitle.textContent = currentMode === 'natal' ? 'Транзит ↔ Натал' :
+                                          currentMode === 'solar' ? 'Соляр ↔ Натал' : 'Лунар ↔ Натал';
+                const meta = data.transit_meta || data.outer_meta;
+                transitMeta.textContent = meta ? `На ${meta.dt}` : '';
                 if (outer.length > 0) {
-                    matrixTitle.textContent = currentMode === 'natal' ? 'Транзит ↔ Натал' :
-                                              currentMode === 'solar' ? 'Соляр ↔ Натал' : 'Лунар ↔ Натал';
-                    const meta = data.transit_meta || data.outer_meta;
-                    transitMeta.textContent = meta ? `На ${meta.dt}` : '';
                     renderAspectMatrix(data.planets, outer, aspects, true);
-                    drawChart(data.planets, data.houses, data.aspects, outer);
+                } else {
+                    renderAspectMatrix(data.planets, data.planets, data.aspects, false);
                 }
+                drawChart(data.planets, data.houses, data.aspects, outer.length > 0 ? outer : null);
             }
         }
 
