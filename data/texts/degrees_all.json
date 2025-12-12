@@ -1,0 +1,1802 @@
+{
+  "1": {
+    "sign": "Овен",
+    "degree": 1,
+    "description": ""
+  },
+  "2": {
+    "sign": "Овен",
+    "degree": 2,
+    "description": ""
+  },
+  "3": {
+    "sign": "Овен",
+    "degree": 3,
+    "description": ""
+  },
+  "4": {
+    "sign": "Овен",
+    "degree": 4,
+    "description": ""
+  },
+  "5": {
+    "sign": "Овен",
+    "degree": 5,
+    "description": ""
+  },
+  "6": {
+    "sign": "Овен",
+    "degree": 6,
+    "description": ""
+  },
+  "7": {
+    "sign": "Овен",
+    "degree": 7,
+    "description": ""
+  },
+  "8": {
+    "sign": "Овен",
+    "degree": 8,
+    "description": ""
+  },
+  "9": {
+    "sign": "Овен",
+    "degree": 9,
+    "description": ""
+  },
+  "10": {
+    "sign": "Овен",
+    "degree": 10,
+    "description": ""
+  },
+  "11": {
+    "sign": "Овен",
+    "degree": 11,
+    "description": ""
+  },
+  "12": {
+    "sign": "Овен",
+    "degree": 12,
+    "description": ""
+  },
+  "13": {
+    "sign": "Овен",
+    "degree": 13,
+    "description": ""
+  },
+  "14": {
+    "sign": "Овен",
+    "degree": 14,
+    "description": ""
+  },
+  "15": {
+    "sign": "Овен",
+    "degree": 15,
+    "description": ""
+  },
+  "16": {
+    "sign": "Овен",
+    "degree": 16,
+    "description": ""
+  },
+  "17": {
+    "sign": "Овен",
+    "degree": 17,
+    "description": ""
+  },
+  "18": {
+    "sign": "Овен",
+    "degree": 18,
+    "description": ""
+  },
+  "19": {
+    "sign": "Овен",
+    "degree": 19,
+    "description": ""
+  },
+  "20": {
+    "sign": "Овен",
+    "degree": 20,
+    "description": ""
+  },
+  "21": {
+    "sign": "Овен",
+    "degree": 21,
+    "description": ""
+  },
+  "22": {
+    "sign": "Овен",
+    "degree": 22,
+    "description": ""
+  },
+  "23": {
+    "sign": "Овен",
+    "degree": 23,
+    "description": ""
+  },
+  "24": {
+    "sign": "Овен",
+    "degree": 24,
+    "description": ""
+  },
+  "25": {
+    "sign": "Овен",
+    "degree": 25,
+    "description": ""
+  },
+  "26": {
+    "sign": "Овен",
+    "degree": 26,
+    "description": ""
+  },
+  "27": {
+    "sign": "Овен",
+    "degree": 27,
+    "description": ""
+  },
+  "28": {
+    "sign": "Овен",
+    "degree": 28,
+    "description": ""
+  },
+  "29": {
+    "sign": "Овен",
+    "degree": 29,
+    "description": ""
+  },
+  "30": {
+    "sign": "Овен",
+    "degree": 30,
+    "description": ""
+  },
+  "31": {
+    "sign": "Телец",
+    "degree": 1,
+    "description": ""
+  },
+  "32": {
+    "sign": "Телец",
+    "degree": 2,
+    "description": ""
+  },
+  "33": {
+    "sign": "Телец",
+    "degree": 3,
+    "description": ""
+  },
+  "34": {
+    "sign": "Телец",
+    "degree": 4,
+    "description": ""
+  },
+  "35": {
+    "sign": "Телец",
+    "degree": 5,
+    "description": ""
+  },
+  "36": {
+    "sign": "Телец",
+    "degree": 6,
+    "description": ""
+  },
+  "37": {
+    "sign": "Телец",
+    "degree": 7,
+    "description": ""
+  },
+  "38": {
+    "sign": "Телец",
+    "degree": 8,
+    "description": ""
+  },
+  "39": {
+    "sign": "Телец",
+    "degree": 9,
+    "description": ""
+  },
+  "40": {
+    "sign": "Телец",
+    "degree": 10,
+    "description": ""
+  },
+  "41": {
+    "sign": "Телец",
+    "degree": 11,
+    "description": ""
+  },
+  "42": {
+    "sign": "Телец",
+    "degree": 12,
+    "description": ""
+  },
+  "43": {
+    "sign": "Телец",
+    "degree": 13,
+    "description": ""
+  },
+  "44": {
+    "sign": "Телец",
+    "degree": 14,
+    "description": ""
+  },
+  "45": {
+    "sign": "Телец",
+    "degree": 15,
+    "description": ""
+  },
+  "46": {
+    "sign": "Телец",
+    "degree": 16,
+    "description": ""
+  },
+  "47": {
+    "sign": "Телец",
+    "degree": 17,
+    "description": ""
+  },
+  "48": {
+    "sign": "Телец",
+    "degree": 18,
+    "description": ""
+  },
+  "49": {
+    "sign": "Телец",
+    "degree": 19,
+    "description": ""
+  },
+  "50": {
+    "sign": "Телец",
+    "degree": 20,
+    "description": ""
+  },
+  "51": {
+    "sign": "Телец",
+    "degree": 21,
+    "description": ""
+  },
+  "52": {
+    "sign": "Телец",
+    "degree": 22,
+    "description": ""
+  },
+  "53": {
+    "sign": "Телец",
+    "degree": 23,
+    "description": ""
+  },
+  "54": {
+    "sign": "Телец",
+    "degree": 24,
+    "description": ""
+  },
+  "55": {
+    "sign": "Телец",
+    "degree": 25,
+    "description": ""
+  },
+  "56": {
+    "sign": "Телец",
+    "degree": 26,
+    "description": ""
+  },
+  "57": {
+    "sign": "Телец",
+    "degree": 27,
+    "description": ""
+  },
+  "58": {
+    "sign": "Телец",
+    "degree": 28,
+    "description": ""
+  },
+  "59": {
+    "sign": "Телец",
+    "degree": 29,
+    "description": ""
+  },
+  "60": {
+    "sign": "Телец",
+    "degree": 30,
+    "description": ""
+  },
+  "61": {
+    "sign": "Близнецы",
+    "degree": 1,
+    "description": ""
+  },
+  "62": {
+    "sign": "Близнецы",
+    "degree": 2,
+    "description": ""
+  },
+  "63": {
+    "sign": "Близнецы",
+    "degree": 3,
+    "description": ""
+  },
+  "64": {
+    "sign": "Близнецы",
+    "degree": 4,
+    "description": ""
+  },
+  "65": {
+    "sign": "Близнецы",
+    "degree": 5,
+    "description": ""
+  },
+  "66": {
+    "sign": "Близнецы",
+    "degree": 6,
+    "description": ""
+  },
+  "67": {
+    "sign": "Близнецы",
+    "degree": 7,
+    "description": ""
+  },
+  "68": {
+    "sign": "Близнецы",
+    "degree": 8,
+    "description": ""
+  },
+  "69": {
+    "sign": "Близнецы",
+    "degree": 9,
+    "description": ""
+  },
+  "70": {
+    "sign": "Близнецы",
+    "degree": 10,
+    "description": ""
+  },
+  "71": {
+    "sign": "Близнецы",
+    "degree": 11,
+    "description": ""
+  },
+  "72": {
+    "sign": "Близнецы",
+    "degree": 12,
+    "description": ""
+  },
+  "73": {
+    "sign": "Близнецы",
+    "degree": 13,
+    "description": ""
+  },
+  "74": {
+    "sign": "Близнецы",
+    "degree": 14,
+    "description": ""
+  },
+  "75": {
+    "sign": "Близнецы",
+    "degree": 15,
+    "description": ""
+  },
+  "76": {
+    "sign": "Близнецы",
+    "degree": 16,
+    "description": ""
+  },
+  "77": {
+    "sign": "Близнецы",
+    "degree": 17,
+    "description": ""
+  },
+  "78": {
+    "sign": "Близнецы",
+    "degree": 18,
+    "description": ""
+  },
+  "79": {
+    "sign": "Близнецы",
+    "degree": 19,
+    "description": ""
+  },
+  "80": {
+    "sign": "Близнецы",
+    "degree": 20,
+    "description": ""
+  },
+  "81": {
+    "sign": "Близнецы",
+    "degree": 21,
+    "description": ""
+  },
+  "82": {
+    "sign": "Близнецы",
+    "degree": 22,
+    "description": ""
+  },
+  "83": {
+    "sign": "Близнецы",
+    "degree": 23,
+    "description": ""
+  },
+  "84": {
+    "sign": "Близнецы",
+    "degree": 24,
+    "description": ""
+  },
+  "85": {
+    "sign": "Близнецы",
+    "degree": 25,
+    "description": ""
+  },
+  "86": {
+    "sign": "Близнецы",
+    "degree": 26,
+    "description": ""
+  },
+  "87": {
+    "sign": "Близнецы",
+    "degree": 27,
+    "description": ""
+  },
+  "88": {
+    "sign": "Близнецы",
+    "degree": 28,
+    "description": ""
+  },
+  "89": {
+    "sign": "Близнецы",
+    "degree": 29,
+    "description": ""
+  },
+  "90": {
+    "sign": "Близнецы",
+    "degree": 30,
+    "description": ""
+  },
+  "91": {
+    "sign": "Рак",
+    "degree": 1,
+    "description": ""
+  },
+  "92": {
+    "sign": "Рак",
+    "degree": 2,
+    "description": ""
+  },
+  "93": {
+    "sign": "Рак",
+    "degree": 3,
+    "description": ""
+  },
+  "94": {
+    "sign": "Рак",
+    "degree": 4,
+    "description": ""
+  },
+  "95": {
+    "sign": "Рак",
+    "degree": 5,
+    "description": ""
+  },
+  "96": {
+    "sign": "Рак",
+    "degree": 6,
+    "description": ""
+  },
+  "97": {
+    "sign": "Рак",
+    "degree": 7,
+    "description": ""
+  },
+  "98": {
+    "sign": "Рак",
+    "degree": 8,
+    "description": ""
+  },
+  "99": {
+    "sign": "Рак",
+    "degree": 9,
+    "description": ""
+  },
+  "100": {
+    "sign": "Рак",
+    "degree": 10,
+    "description": ""
+  },
+  "101": {
+    "sign": "Рак",
+    "degree": 11,
+    "description": ""
+  },
+  "102": {
+    "sign": "Рак",
+    "degree": 12,
+    "description": ""
+  },
+  "103": {
+    "sign": "Рак",
+    "degree": 13,
+    "description": ""
+  },
+  "104": {
+    "sign": "Рак",
+    "degree": 14,
+    "description": ""
+  },
+  "105": {
+    "sign": "Рак",
+    "degree": 15,
+    "description": ""
+  },
+  "106": {
+    "sign": "Рак",
+    "degree": 16,
+    "description": ""
+  },
+  "107": {
+    "sign": "Рак",
+    "degree": 17,
+    "description": ""
+  },
+  "108": {
+    "sign": "Рак",
+    "degree": 18,
+    "description": ""
+  },
+  "109": {
+    "sign": "Рак",
+    "degree": 19,
+    "description": ""
+  },
+  "110": {
+    "sign": "Рак",
+    "degree": 20,
+    "description": ""
+  },
+  "111": {
+    "sign": "Рак",
+    "degree": 21,
+    "description": ""
+  },
+  "112": {
+    "sign": "Рак",
+    "degree": 22,
+    "description": ""
+  },
+  "113": {
+    "sign": "Рак",
+    "degree": 23,
+    "description": ""
+  },
+  "114": {
+    "sign": "Рак",
+    "degree": 24,
+    "description": ""
+  },
+  "115": {
+    "sign": "Рак",
+    "degree": 25,
+    "description": ""
+  },
+  "116": {
+    "sign": "Рак",
+    "degree": 26,
+    "description": ""
+  },
+  "117": {
+    "sign": "Рак",
+    "degree": 27,
+    "description": ""
+  },
+  "118": {
+    "sign": "Рак",
+    "degree": 28,
+    "description": ""
+  },
+  "119": {
+    "sign": "Рак",
+    "degree": 29,
+    "description": ""
+  },
+  "120": {
+    "sign": "Рак",
+    "degree": 30,
+    "description": ""
+  },
+  "121": {
+    "sign": "Лев",
+    "degree": 1,
+    "description": ""
+  },
+  "122": {
+    "sign": "Лев",
+    "degree": 2,
+    "description": ""
+  },
+  "123": {
+    "sign": "Лев",
+    "degree": 3,
+    "description": ""
+  },
+  "124": {
+    "sign": "Лев",
+    "degree": 4,
+    "description": ""
+  },
+  "125": {
+    "sign": "Лев",
+    "degree": 5,
+    "description": ""
+  },
+  "126": {
+    "sign": "Лев",
+    "degree": 6,
+    "description": ""
+  },
+  "127": {
+    "sign": "Лев",
+    "degree": 7,
+    "description": ""
+  },
+  "128": {
+    "sign": "Лев",
+    "degree": 8,
+    "description": ""
+  },
+  "129": {
+    "sign": "Лев",
+    "degree": 9,
+    "description": ""
+  },
+  "130": {
+    "sign": "Лев",
+    "degree": 10,
+    "description": ""
+  },
+  "131": {
+    "sign": "Лев",
+    "degree": 11,
+    "description": ""
+  },
+  "132": {
+    "sign": "Лев",
+    "degree": 12,
+    "description": ""
+  },
+  "133": {
+    "sign": "Лев",
+    "degree": 13,
+    "description": ""
+  },
+  "134": {
+    "sign": "Лев",
+    "degree": 14,
+    "description": ""
+  },
+  "135": {
+    "sign": "Лев",
+    "degree": 15,
+    "description": ""
+  },
+  "136": {
+    "sign": "Лев",
+    "degree": 16,
+    "description": ""
+  },
+  "137": {
+    "sign": "Лев",
+    "degree": 17,
+    "description": ""
+  },
+  "138": {
+    "sign": "Лев",
+    "degree": 18,
+    "description": ""
+  },
+  "139": {
+    "sign": "Лев",
+    "degree": 19,
+    "description": ""
+  },
+  "140": {
+    "sign": "Лев",
+    "degree": 20,
+    "description": ""
+  },
+  "141": {
+    "sign": "Лев",
+    "degree": 21,
+    "description": ""
+  },
+  "142": {
+    "sign": "Лев",
+    "degree": 22,
+    "description": ""
+  },
+  "143": {
+    "sign": "Лев",
+    "degree": 23,
+    "description": ""
+  },
+  "144": {
+    "sign": "Лев",
+    "degree": 24,
+    "description": ""
+  },
+  "145": {
+    "sign": "Лев",
+    "degree": 25,
+    "description": ""
+  },
+  "146": {
+    "sign": "Лев",
+    "degree": 26,
+    "description": ""
+  },
+  "147": {
+    "sign": "Лев",
+    "degree": 27,
+    "description": ""
+  },
+  "148": {
+    "sign": "Лев",
+    "degree": 28,
+    "description": ""
+  },
+  "149": {
+    "sign": "Лев",
+    "degree": 29,
+    "description": ""
+  },
+  "150": {
+    "sign": "Лев",
+    "degree": 30,
+    "description": ""
+  },
+  "151": {
+    "sign": "Дева",
+    "degree": 1,
+    "description": ""
+  },
+  "152": {
+    "sign": "Дева",
+    "degree": 2,
+    "description": ""
+  },
+  "153": {
+    "sign": "Дева",
+    "degree": 3,
+    "description": ""
+  },
+  "154": {
+    "sign": "Дева",
+    "degree": 4,
+    "description": ""
+  },
+  "155": {
+    "sign": "Дева",
+    "degree": 5,
+    "description": ""
+  },
+  "156": {
+    "sign": "Дева",
+    "degree": 6,
+    "description": ""
+  },
+  "157": {
+    "sign": "Дева",
+    "degree": 7,
+    "description": ""
+  },
+  "158": {
+    "sign": "Дева",
+    "degree": 8,
+    "description": ""
+  },
+  "159": {
+    "sign": "Дева",
+    "degree": 9,
+    "description": ""
+  },
+  "160": {
+    "sign": "Дева",
+    "degree": 10,
+    "description": ""
+  },
+  "161": {
+    "sign": "Дева",
+    "degree": 11,
+    "description": ""
+  },
+  "162": {
+    "sign": "Дева",
+    "degree": 12,
+    "description": ""
+  },
+  "163": {
+    "sign": "Дева",
+    "degree": 13,
+    "description": ""
+  },
+  "164": {
+    "sign": "Дева",
+    "degree": 14,
+    "description": ""
+  },
+  "165": {
+    "sign": "Дева",
+    "degree": 15,
+    "description": ""
+  },
+  "166": {
+    "sign": "Дева",
+    "degree": 16,
+    "description": ""
+  },
+  "167": {
+    "sign": "Дева",
+    "degree": 17,
+    "description": ""
+  },
+  "168": {
+    "sign": "Дева",
+    "degree": 18,
+    "description": ""
+  },
+  "169": {
+    "sign": "Дева",
+    "degree": 19,
+    "description": ""
+  },
+  "170": {
+    "sign": "Дева",
+    "degree": 20,
+    "description": ""
+  },
+  "171": {
+    "sign": "Дева",
+    "degree": 21,
+    "description": ""
+  },
+  "172": {
+    "sign": "Дева",
+    "degree": 22,
+    "description": ""
+  },
+  "173": {
+    "sign": "Дева",
+    "degree": 23,
+    "description": ""
+  },
+  "174": {
+    "sign": "Дева",
+    "degree": 24,
+    "description": ""
+  },
+  "175": {
+    "sign": "Дева",
+    "degree": 25,
+    "description": ""
+  },
+  "176": {
+    "sign": "Дева",
+    "degree": 26,
+    "description": ""
+  },
+  "177": {
+    "sign": "Дева",
+    "degree": 27,
+    "description": ""
+  },
+  "178": {
+    "sign": "Дева",
+    "degree": 28,
+    "description": ""
+  },
+  "179": {
+    "sign": "Дева",
+    "degree": 29,
+    "description": ""
+  },
+  "180": {
+    "sign": "Дева",
+    "degree": 30,
+    "description": ""
+  },
+  "181": {
+    "sign": "Весы",
+    "degree": 1,
+    "description": ""
+  },
+  "182": {
+    "sign": "Весы",
+    "degree": 2,
+    "description": ""
+  },
+  "183": {
+    "sign": "Весы",
+    "degree": 3,
+    "description": ""
+  },
+  "184": {
+    "sign": "Весы",
+    "degree": 4,
+    "description": ""
+  },
+  "185": {
+    "sign": "Весы",
+    "degree": 5,
+    "description": ""
+  },
+  "186": {
+    "sign": "Весы",
+    "degree": 6,
+    "description": ""
+  },
+  "187": {
+    "sign": "Весы",
+    "degree": 7,
+    "description": ""
+  },
+  "188": {
+    "sign": "Весы",
+    "degree": 8,
+    "description": ""
+  },
+  "189": {
+    "sign": "Весы",
+    "degree": 9,
+    "description": ""
+  },
+  "190": {
+    "sign": "Весы",
+    "degree": 10,
+    "description": ""
+  },
+  "191": {
+    "sign": "Весы",
+    "degree": 11,
+    "description": ""
+  },
+  "192": {
+    "sign": "Весы",
+    "degree": 12,
+    "description": ""
+  },
+  "193": {
+    "sign": "Весы",
+    "degree": 13,
+    "description": ""
+  },
+  "194": {
+    "sign": "Весы",
+    "degree": 14,
+    "description": ""
+  },
+  "195": {
+    "sign": "Весы",
+    "degree": 15,
+    "description": ""
+  },
+  "196": {
+    "sign": "Весы",
+    "degree": 16,
+    "description": ""
+  },
+  "197": {
+    "sign": "Весы",
+    "degree": 17,
+    "description": ""
+  },
+  "198": {
+    "sign": "Весы",
+    "degree": 18,
+    "description": ""
+  },
+  "199": {
+    "sign": "Весы",
+    "degree": 19,
+    "description": ""
+  },
+  "200": {
+    "sign": "Весы",
+    "degree": 20,
+    "description": ""
+  },
+  "201": {
+    "sign": "Весы",
+    "degree": 21,
+    "description": ""
+  },
+  "202": {
+    "sign": "Весы",
+    "degree": 22,
+    "description": ""
+  },
+  "203": {
+    "sign": "Весы",
+    "degree": 23,
+    "description": ""
+  },
+  "204": {
+    "sign": "Весы",
+    "degree": 24,
+    "description": ""
+  },
+  "205": {
+    "sign": "Весы",
+    "degree": 25,
+    "description": ""
+  },
+  "206": {
+    "sign": "Весы",
+    "degree": 26,
+    "description": ""
+  },
+  "207": {
+    "sign": "Весы",
+    "degree": 27,
+    "description": ""
+  },
+  "208": {
+    "sign": "Весы",
+    "degree": 28,
+    "description": ""
+  },
+  "209": {
+    "sign": "Весы",
+    "degree": 29,
+    "description": ""
+  },
+  "210": {
+    "sign": "Весы",
+    "degree": 30,
+    "description": ""
+  },
+  "211": {
+    "sign": "Скорпион",
+    "degree": 1,
+    "description": ""
+  },
+  "212": {
+    "sign": "Скорпион",
+    "degree": 2,
+    "description": ""
+  },
+  "213": {
+    "sign": "Скорпион",
+    "degree": 3,
+    "description": ""
+  },
+  "214": {
+    "sign": "Скорпион",
+    "degree": 4,
+    "description": ""
+  },
+  "215": {
+    "sign": "Скорпион",
+    "degree": 5,
+    "description": ""
+  },
+  "216": {
+    "sign": "Скорпион",
+    "degree": 6,
+    "description": ""
+  },
+  "217": {
+    "sign": "Скорпион",
+    "degree": 7,
+    "description": ""
+  },
+  "218": {
+    "sign": "Скорпион",
+    "degree": 8,
+    "description": ""
+  },
+  "219": {
+    "sign": "Скорпион",
+    "degree": 9,
+    "description": ""
+  },
+  "220": {
+    "sign": "Скорпион",
+    "degree": 10,
+    "description": ""
+  },
+  "221": {
+    "sign": "Скорпион",
+    "degree": 11,
+    "description": ""
+  },
+  "222": {
+    "sign": "Скорпион",
+    "degree": 12,
+    "description": ""
+  },
+  "223": {
+    "sign": "Скорпион",
+    "degree": 13,
+    "description": ""
+  },
+  "224": {
+    "sign": "Скорпион",
+    "degree": 14,
+    "description": ""
+  },
+  "225": {
+    "sign": "Скорпион",
+    "degree": 15,
+    "description": ""
+  },
+  "226": {
+    "sign": "Скорпион",
+    "degree": 16,
+    "description": ""
+  },
+  "227": {
+    "sign": "Скорпион",
+    "degree": 17,
+    "description": ""
+  },
+  "228": {
+    "sign": "Скорпион",
+    "degree": 18,
+    "description": ""
+  },
+  "229": {
+    "sign": "Скорпион",
+    "degree": 19,
+    "description": ""
+  },
+  "230": {
+    "sign": "Скорпион",
+    "degree": 20,
+    "description": ""
+  },
+  "231": {
+    "sign": "Скорпион",
+    "degree": 21,
+    "description": ""
+  },
+  "232": {
+    "sign": "Скорпион",
+    "degree": 22,
+    "description": ""
+  },
+  "233": {
+    "sign": "Скорпион",
+    "degree": 23,
+    "description": ""
+  },
+  "234": {
+    "sign": "Скорпион",
+    "degree": 24,
+    "description": ""
+  },
+  "235": {
+    "sign": "Скорпион",
+    "degree": 25,
+    "description": ""
+  },
+  "236": {
+    "sign": "Скорпион",
+    "degree": 26,
+    "description": ""
+  },
+  "237": {
+    "sign": "Скорпион",
+    "degree": 27,
+    "description": ""
+  },
+  "238": {
+    "sign": "Скорпион",
+    "degree": 28,
+    "description": ""
+  },
+  "239": {
+    "sign": "Скорпион",
+    "degree": 29,
+    "description": ""
+  },
+  "240": {
+    "sign": "Скорпион",
+    "degree": 30,
+    "description": ""
+  },
+  "241": {
+    "sign": "Стрелец",
+    "degree": 1,
+    "description": ""
+  },
+  "242": {
+    "sign": "Стрелец",
+    "degree": 2,
+    "description": ""
+  },
+  "243": {
+    "sign": "Стрелец",
+    "degree": 3,
+    "description": ""
+  },
+  "244": {
+    "sign": "Стрелец",
+    "degree": 4,
+    "description": ""
+  },
+  "245": {
+    "sign": "Стрелец",
+    "degree": 5,
+    "description": ""
+  },
+  "246": {
+    "sign": "Стрелец",
+    "degree": 6,
+    "description": ""
+  },
+  "247": {
+    "sign": "Стрелец",
+    "degree": 7,
+    "description": ""
+  },
+  "248": {
+    "sign": "Стрелец",
+    "degree": 8,
+    "description": ""
+  },
+  "249": {
+    "sign": "Стрелец",
+    "degree": 9,
+    "description": ""
+  },
+  "250": {
+    "sign": "Стрелец",
+    "degree": 10,
+    "description": ""
+  },
+  "251": {
+    "sign": "Стрелец",
+    "degree": 11,
+    "description": ""
+  },
+  "252": {
+    "sign": "Стрелец",
+    "degree": 12,
+    "description": ""
+  },
+  "253": {
+    "sign": "Стрелец",
+    "degree": 13,
+    "description": ""
+  },
+  "254": {
+    "sign": "Стрелец",
+    "degree": 14,
+    "description": ""
+  },
+  "255": {
+    "sign": "Стрелец",
+    "degree": 15,
+    "description": ""
+  },
+  "256": {
+    "sign": "Стрелец",
+    "degree": 16,
+    "description": ""
+  },
+  "257": {
+    "sign": "Стрелец",
+    "degree": 17,
+    "description": ""
+  },
+  "258": {
+    "sign": "Стрелец",
+    "degree": 18,
+    "description": ""
+  },
+  "259": {
+    "sign": "Стрелец",
+    "degree": 19,
+    "description": ""
+  },
+  "260": {
+    "sign": "Стрелец",
+    "degree": 20,
+    "description": ""
+  },
+  "261": {
+    "sign": "Стрелец",
+    "degree": 21,
+    "description": ""
+  },
+  "262": {
+    "sign": "Стрелец",
+    "degree": 22,
+    "description": ""
+  },
+  "263": {
+    "sign": "Стрелец",
+    "degree": 23,
+    "description": ""
+  },
+  "264": {
+    "sign": "Стрелец",
+    "degree": 24,
+    "description": ""
+  },
+  "265": {
+    "sign": "Стрелец",
+    "degree": 25,
+    "description": ""
+  },
+  "266": {
+    "sign": "Стрелец",
+    "degree": 26,
+    "description": ""
+  },
+  "267": {
+    "sign": "Стрелец",
+    "degree": 27,
+    "description": ""
+  },
+  "268": {
+    "sign": "Стрелец",
+    "degree": 28,
+    "description": ""
+  },
+  "269": {
+    "sign": "Стрелец",
+    "degree": 29,
+    "description": ""
+  },
+  "270": {
+    "sign": "Стрелец",
+    "degree": 30,
+    "description": ""
+  },
+  "271": {
+    "sign": "Козерог",
+    "degree": 1,
+    "description": ""
+  },
+  "272": {
+    "sign": "Козерог",
+    "degree": 2,
+    "description": ""
+  },
+  "273": {
+    "sign": "Козерог",
+    "degree": 3,
+    "description": ""
+  },
+  "274": {
+    "sign": "Козерог",
+    "degree": 4,
+    "description": ""
+  },
+  "275": {
+    "sign": "Козерог",
+    "degree": 5,
+    "description": ""
+  },
+  "276": {
+    "sign": "Козерог",
+    "degree": 6,
+    "description": ""
+  },
+  "277": {
+    "sign": "Козерог",
+    "degree": 7,
+    "description": ""
+  },
+  "278": {
+    "sign": "Козерог",
+    "degree": 8,
+    "description": ""
+  },
+  "279": {
+    "sign": "Козерог",
+    "degree": 9,
+    "description": ""
+  },
+  "280": {
+    "sign": "Козерог",
+    "degree": 10,
+    "description": ""
+  },
+  "281": {
+    "sign": "Козерог",
+    "degree": 11,
+    "description": ""
+  },
+  "282": {
+    "sign": "Козерог",
+    "degree": 12,
+    "description": ""
+  },
+  "283": {
+    "sign": "Козерог",
+    "degree": 13,
+    "description": ""
+  },
+  "284": {
+    "sign": "Козерог",
+    "degree": 14,
+    "description": ""
+  },
+  "285": {
+    "sign": "Козерог",
+    "degree": 15,
+    "description": ""
+  },
+  "286": {
+    "sign": "Козерог",
+    "degree": 16,
+    "description": ""
+  },
+  "287": {
+    "sign": "Козерог",
+    "degree": 17,
+    "description": ""
+  },
+  "288": {
+    "sign": "Козерог",
+    "degree": 18,
+    "description": ""
+  },
+  "289": {
+    "sign": "Козерог",
+    "degree": 19,
+    "description": ""
+  },
+  "290": {
+    "sign": "Козерог",
+    "degree": 20,
+    "description": ""
+  },
+  "291": {
+    "sign": "Козерог",
+    "degree": 21,
+    "description": ""
+  },
+  "292": {
+    "sign": "Козерог",
+    "degree": 22,
+    "description": ""
+  },
+  "293": {
+    "sign": "Козерог",
+    "degree": 23,
+    "description": ""
+  },
+  "294": {
+    "sign": "Козерог",
+    "degree": 24,
+    "description": ""
+  },
+  "295": {
+    "sign": "Козерог",
+    "degree": 25,
+    "description": ""
+  },
+  "296": {
+    "sign": "Козерог",
+    "degree": 26,
+    "description": ""
+  },
+  "297": {
+    "sign": "Козерог",
+    "degree": 27,
+    "description": ""
+  },
+  "298": {
+    "sign": "Козерог",
+    "degree": 28,
+    "description": ""
+  },
+  "299": {
+    "sign": "Козерог",
+    "degree": 29,
+    "description": ""
+  },
+  "300": {
+    "sign": "Козерог",
+    "degree": 30,
+    "description": ""
+  },
+  "301": {
+    "sign": "Водолей",
+    "degree": 1,
+    "description": ""
+  },
+  "302": {
+    "sign": "Водолей",
+    "degree": 2,
+    "description": ""
+  },
+  "303": {
+    "sign": "Водолей",
+    "degree": 3,
+    "description": ""
+  },
+  "304": {
+    "sign": "Водолей",
+    "degree": 4,
+    "description": ""
+  },
+  "305": {
+    "sign": "Водолей",
+    "degree": 5,
+    "description": ""
+  },
+  "306": {
+    "sign": "Водолей",
+    "degree": 6,
+    "description": ""
+  },
+  "307": {
+    "sign": "Водолей",
+    "degree": 7,
+    "description": ""
+  },
+  "308": {
+    "sign": "Водолей",
+    "degree": 8,
+    "description": ""
+  },
+  "309": {
+    "sign": "Водолей",
+    "degree": 9,
+    "description": ""
+  },
+  "310": {
+    "sign": "Водолей",
+    "degree": 10,
+    "description": ""
+  },
+  "311": {
+    "sign": "Водолей",
+    "degree": 11,
+    "description": ""
+  },
+  "312": {
+    "sign": "Водолей",
+    "degree": 12,
+    "description": ""
+  },
+  "313": {
+    "sign": "Водолей",
+    "degree": 13,
+    "description": ""
+  },
+  "314": {
+    "sign": "Водолей",
+    "degree": 14,
+    "description": ""
+  },
+  "315": {
+    "sign": "Водолей",
+    "degree": 15,
+    "description": ""
+  },
+  "316": {
+    "sign": "Водолей",
+    "degree": 16,
+    "description": ""
+  },
+  "317": {
+    "sign": "Водолей",
+    "degree": 17,
+    "description": ""
+  },
+  "318": {
+    "sign": "Водолей",
+    "degree": 18,
+    "description": ""
+  },
+  "319": {
+    "sign": "Водолей",
+    "degree": 19,
+    "description": ""
+  },
+  "320": {
+    "sign": "Водолей",
+    "degree": 20,
+    "description": ""
+  },
+  "321": {
+    "sign": "Водолей",
+    "degree": 21,
+    "description": ""
+  },
+  "322": {
+    "sign": "Водолей",
+    "degree": 22,
+    "description": ""
+  },
+  "323": {
+    "sign": "Водолей",
+    "degree": 23,
+    "description": ""
+  },
+  "324": {
+    "sign": "Водолей",
+    "degree": 24,
+    "description": ""
+  },
+  "325": {
+    "sign": "Водолей",
+    "degree": 25,
+    "description": ""
+  },
+  "326": {
+    "sign": "Водолей",
+    "degree": 26,
+    "description": ""
+  },
+  "327": {
+    "sign": "Водолей",
+    "degree": 27,
+    "description": ""
+  },
+  "328": {
+    "sign": "Водолей",
+    "degree": 28,
+    "description": ""
+  },
+  "329": {
+    "sign": "Водолей",
+    "degree": 29,
+    "description": ""
+  },
+  "330": {
+    "sign": "Водолей",
+    "degree": 30,
+    "description": ""
+  },
+  "331": {
+    "sign": "Рыбы",
+    "degree": 1,
+    "description": ""
+  },
+  "332": {
+    "sign": "Рыбы",
+    "degree": 2,
+    "description": ""
+  },
+  "333": {
+    "sign": "Рыбы",
+    "degree": 3,
+    "description": ""
+  },
+  "334": {
+    "sign": "Рыбы",
+    "degree": 4,
+    "description": ""
+  },
+  "335": {
+    "sign": "Рыбы",
+    "degree": 5,
+    "description": ""
+  },
+  "336": {
+    "sign": "Рыбы",
+    "degree": 6,
+    "description": ""
+  },
+  "337": {
+    "sign": "Рыбы",
+    "degree": 7,
+    "description": ""
+  },
+  "338": {
+    "sign": "Рыбы",
+    "degree": 8,
+    "description": ""
+  },
+  "339": {
+    "sign": "Рыбы",
+    "degree": 9,
+    "description": ""
+  },
+  "340": {
+    "sign": "Рыбы",
+    "degree": 10,
+    "description": ""
+  },
+  "341": {
+    "sign": "Рыбы",
+    "degree": 11,
+    "description": ""
+  },
+  "342": {
+    "sign": "Рыбы",
+    "degree": 12,
+    "description": ""
+  },
+  "343": {
+    "sign": "Рыбы",
+    "degree": 13,
+    "description": ""
+  },
+  "344": {
+    "sign": "Рыбы",
+    "degree": 14,
+    "description": ""
+  },
+  "345": {
+    "sign": "Рыбы",
+    "degree": 15,
+    "description": ""
+  },
+  "346": {
+    "sign": "Рыбы",
+    "degree": 16,
+    "description": ""
+  },
+  "347": {
+    "sign": "Рыбы",
+    "degree": 17,
+    "description": ""
+  },
+  "348": {
+    "sign": "Рыбы",
+    "degree": 18,
+    "description": ""
+  },
+  "349": {
+    "sign": "Рыбы",
+    "degree": 19,
+    "description": ""
+  },
+  "350": {
+    "sign": "Рыбы",
+    "degree": 20,
+    "description": ""
+  },
+  "351": {
+    "sign": "Рыбы",
+    "degree": 21,
+    "description": ""
+  },
+  "352": {
+    "sign": "Рыбы",
+    "degree": 22,
+    "description": ""
+  },
+  "353": {
+    "sign": "Рыбы",
+    "degree": 23,
+    "description": ""
+  },
+  "354": {
+    "sign": "Рыбы",
+    "degree": 24,
+    "description": ""
+  },
+  "355": {
+    "sign": "Рыбы",
+    "degree": 25,
+    "description": ""
+  },
+  "356": {
+    "sign": "Рыбы",
+    "degree": 26,
+    "description": ""
+  },
+  "357": {
+    "sign": "Рыбы",
+    "degree": 27,
+    "description": ""
+  },
+  "358": {
+    "sign": "Рыбы",
+    "degree": 28,
+    "description": ""
+  },
+  "359": {
+    "sign": "Рыбы",
+    "degree": 29,
+    "description": ""
+  },
+  "360": {
+    "sign": "Рыбы",
+    "degree": 30,
+    "description": ""
+  }
+}
