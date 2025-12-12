@@ -3,7 +3,11 @@ import json
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent
-TEXTS_DIR = BASE_DIR / 'data' / 'texts'
+TEXTS_DIR = BASE_DIR / 'texts'
+
+# Fallback на старый путь
+if not TEXTS_DIR.exists():
+    TEXTS_DIR = BASE_DIR / 'data' / 'texts'
 
 
 def load_json(filename):
@@ -39,35 +43,42 @@ TEXTS = {
 }
 
 
-def get_text(category, key, gender='general'):
-    """Получить текст по категории и ключу"""
+def get_text(category, planet_key, sub_key=None, gender='general'):
+    """Получить текст по категории и ключу
+    
+    Args:
+        category: 'signs' или 'houses' или 'aspects'
+        planet_key: ключ планеты (Sun, Moon, etc)
+        sub_key: знак/дом (Овен, House1) или None
+        gender: 'general', 'male', 'female'
+    """
     if category == 'signs':
+        # Ключ: Sun_Овен
+        key = f'{planet_key}_{sub_key}' if sub_key else planet_key
         data = PLANETS_IN_SIGNS.get(key, {})
     elif category == 'houses':
+        # Ключ: Sun_House1
+        key = f'{planet_key}_{sub_key}' if sub_key else planet_key
         data = PLANETS_IN_HOUSES.get(key, {})
     elif category == 'aspects':
-        return ASPECTS.get(key, {})
+        return ASPECTS.get(planet_key, {})
     else:
         return ''
     
     if isinstance(data, dict):
         return data.get(gender) or data.get('general', '')
-    return str(data)
+    return str(data) if data else ''
 
 
-def get_interpretation(planet_key, sign=None, house=None, gender='general'):
-    """Получить интерпретацию для планеты"""
-    result = {}
-    
+def get_interpretation(planet_key, sign=None, gender='general'):
+    """Получить интерпретацию планеты в знаке"""
     if sign:
         key = f'{planet_key}_{sign}'
-        result['sign_text'] = get_text('signs', key, gender)
-    
-    if house:
-        key = f'{planet_key}_House{house}'
-        result['house_text'] = get_text('houses', key, gender)
-    
-    return result
+        data = PLANETS_IN_SIGNS.get(key, {})
+        if isinstance(data, dict):
+            return data.get(gender) or data.get('general', '')
+        return str(data) if data else ''
+    return ''
 
 
 def get_aspect_text(planet1, planet2, aspect_type):
@@ -104,29 +115,26 @@ def get_degree_info(abs_degree):
     """Получить информацию о градусе"""
     deg = str(int(abs_degree) + 1)
     
-    # Проверяем особые градусы
     if deg in DEGREES_ROYAL:
         return {'type': 'royal', **DEGREES_ROYAL[deg]}
     if deg in DEGREES_DESTRUCTIVE:
         return {'type': 'destructive', **DEGREES_DESTRUCTIVE[deg]}
     
-    # Обычный градус
     return DEGREES_ALL.get(deg, {})
 
 
 def is_royal_degree(abs_degree):
-    """Проверить, является ли градус королевским"""
+    """Проверить королевский градус"""
     return str(int(abs_degree) + 1) in DEGREES_ROYAL
 
 
 def is_destructive_degree(abs_degree):
-    """Проверить, является ли градус разрушительным"""
+    """Проверить разрушительный градус"""
     return str(int(abs_degree) + 1) in DEGREES_DESTRUCTIVE
 
 
-# Функции для сохранения
+# Функции сохранения
 def save_json(filename, data):
-    """Сохранить JSON файл"""
     path = TEXTS_DIR / filename
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
