@@ -30,7 +30,8 @@ import uvicorn
 
 # Конфигурация
 BASE_DIR = Path(__file__).parent
-TEXTS_FILE = BASE_DIR / "texts.json"
+TEXTS_DIR = BASE_DIR / "data" / "texts"
+TEXTS_FILE = BASE_DIR / "data" / "texts.json"  # legacy
 # ADMIN_USER из config.py
 # ADMIN_PASS из config.py
 SESSION_SECRET = secrets.token_hex(32)
@@ -117,10 +118,27 @@ def require_auth(request: Request) -> str:
 
 
 def load_texts() -> dict:
-    if TEXTS_FILE.exists():
-        with open(TEXTS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+    """Загружает тексты из разбитых JSON файлов"""
+    texts = {'signs': {}, 'houses': {}, 'aspects': {}}
+    
+    # Загружаем из новых файлов
+    signs_file = TEXTS_DIR / 'planets_in_signs.json'
+    houses_file = TEXTS_DIR / 'planets_in_houses.json'
+    aspects_file = TEXTS_DIR / 'aspects.json'
+    
+    if signs_file.exists():
+        with open(signs_file, 'r', encoding='utf-8') as f:
+            texts['signs'] = json.load(f)
+    
+    if houses_file.exists():
+        with open(houses_file, 'r', encoding='utf-8') as f:
+            texts['houses'] = json.load(f)
+    
+    if aspects_file.exists():
+        with open(aspects_file, 'r', encoding='utf-8') as f:
+            texts['aspects'] = json.load(f)
+    
+    return texts
 
 
 
@@ -136,8 +154,20 @@ def count_texts_stats():
     return stats
 
 def save_texts(data: dict):
-    with open(TEXTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    """Сохраняет тексты в разбитые JSON файлы"""
+    TEXTS_DIR.mkdir(parents=True, exist_ok=True)
+    
+    if 'signs' in data:
+        with open(TEXTS_DIR / 'planets_in_signs.json', 'w', encoding='utf-8') as f:
+            json.dump(data['signs'], f, ensure_ascii=False, indent=2)
+    
+    if 'houses' in data:
+        with open(TEXTS_DIR / 'planets_in_houses.json', 'w', encoding='utf-8') as f:
+            json.dump(data['houses'], f, ensure_ascii=False, indent=2)
+    
+    if 'aspects' in data:
+        with open(TEXTS_DIR / 'aspects.json', 'w', encoding='utf-8') as f:
+            json.dump(data['aspects'], f, ensure_ascii=False, indent=2)
 
 
 # === Общие стили ===
