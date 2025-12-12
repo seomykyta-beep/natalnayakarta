@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Транзиты. Онлайн расчет</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="/static/chart.js?v=8"></script>
+    <script src="/static/chart.js?v=10"></script>
     <style>
         :root { --bg:#1a1a2e; --card:#16213e; --text:#e0e0e0; --accent:#e94560; --blue:#4fc3f7; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
@@ -203,6 +203,102 @@
         .extra-settings { display: none; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; }
         .extra-settings.visible { display: block; }
         .extra-settings h4 { color: #ffd700; margin: 0 0 15px 0; font-size: 15px; }
+    
+        /* === АДАПТИВНЫЙ ДИЗАЙН === */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 0 5px; }
+            h1 { font-size: 22px; }
+            .subtitle { font-size: 12px; }
+            
+            .form-table td:first-child { 
+                display: block; 
+                width: 100%; 
+                padding: 10px 15px 5px; 
+                font-size: 12px;
+            }
+            .form-table td { 
+                display: block; 
+                padding: 5px 15px 15px; 
+            }
+            .form-table input, .form-table select { 
+                font-size: 14px; 
+                padding: 8px 10px; 
+            }
+            .form-table input[type="number"] { width: 60px; }
+            .form-table input.city-input { max-width: 100%; }
+            
+            .row { flex-wrap: wrap; gap: 8px; }
+            
+            .calc-btn { 
+                max-width: 100%; 
+                padding: 15px 20px; 
+                font-size: 16px; 
+            }
+            
+            .mode-tabs { 
+                flex-wrap: wrap; 
+                gap: 10px; 
+                justify-content: center; 
+            }
+            .mode-tab { 
+                font-size: 16px; 
+                padding: 8px 15px; 
+            }
+            
+            #chartDiv { 
+                max-width: 100%; 
+                height: auto !important; 
+                min-height: 350px;
+                aspect-ratio: 1; 
+            }
+            
+            .view-tabs { 
+                max-width: 100%; 
+                flex-direction: row; 
+            }
+            .view-tab { 
+                font-size: 12px; 
+                padding: 10px 15px; 
+            }
+            
+            .data-table { font-size: 11px; }
+            .data-table th, .data-table td { padding: 6px; }
+            
+            .aspect-matrix-table th, .aspect-matrix-table td { 
+                width: 26px; 
+                height: 26px; 
+                font-size: 10px; 
+            }
+            .matrix-icon { font-size: 12px; }
+            
+            .planet-text-block { padding: 15px; }
+            .planet-text-header { font-size: 14px; }
+            .planet-text-body { font-size: 13px; }
+            
+            .extra-settings { padding: 10px; }
+            .extra-settings h4 { font-size: 14px; }
+            
+            .aspect-legend { 
+                grid-template-columns: repeat(2, 1fr); 
+                font-size: 11px; 
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: 18px; }
+            .form-table input[type="number"] { width: 50px; }
+            .mode-tab { font-size: 14px; }
+            .aspect-matrix-table th, .aspect-matrix-table td { 
+                width: 22px; 
+                height: 22px; 
+                font-size: 9px; 
+            }
+            .aspect-legend { 
+                grid-template-columns: 1fr; 
+            }
+        }
+
     </style>
 </head>
 <body>

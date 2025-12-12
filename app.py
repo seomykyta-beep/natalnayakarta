@@ -13,6 +13,7 @@ import logging
 
 from config import BOT_TOKEN, HOST, PORT, CHARTS_DIR, REPORTS_DIR, TEMPLATES_DIR, STATIC_DIR
 from engine import calculate_chart_with_mode, generate_pdf
+from core.auth import create_user, authenticate, create_session, get_user_by_token, update_profile, delete_session
 
 # Логирование
 logging.basicConfig(
@@ -87,9 +88,144 @@ class UserData(BaseModel):
 
 
 @app.get('/')
+async def landing(request: Request):
+    """Landing page"""
+    return templates.TemplateResponse('landing.html', {'request': request})
+
+
+@app.get('/app')
 async def home(request: Request):
-    """Главная страница"""
+    """Приложение"""
     return templates.TemplateResponse('index.html', {'request': request})
+
+
+
+
+
+
+@app.get('/profile')
+async def profile_page(request: Request):
+    """Страница профиля"""
+    return templates.TemplateResponse('profile.html', {'request': request})
+
+
+@app.get('/auth')
+async def auth_page(request: Request):
+    """Страница авторизации"""
+    return templates.TemplateResponse('auth.html', {'request': request})
+
+
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+
+class RegisterData(BaseModel):
+    name: str
+    email: str
+    password: str
+
+
+@app.post('/api/auth/register')
+async def api_register(data: RegisterData):
+    """Регистрация"""
+    if len(data.password) < 6:
+        return {'success': False, 'error': 'Пароль минимум 6 символов'}
+    
+    user_id = create_user(data.email, data.password, data.name)
+    if user_id:
+        return {'success': True}
+    return {'success': False, 'error': 'Email уже занят'}
+
+
+@app.post('/api/auth/login')
+async def api_login(data: LoginData):
+    """Вход"""
+    user = authenticate(data.email, data.password)
+    if user:
+        token = create_session(user['id'])
+        return {
+            'success': True,
+            'token': token,
+            'user': {
+                'id': user['id'],
+                'email': user['email'],
+                'name': user['name'],
+                'is_premium': bool(user['is_premium']),
+                'birth_date': user['birth_date'],
+                'birth_time': user['birth_time'],
+                'birth_city': user['birth_city'],
+                'gender': user['gender']
+            }
+        }
+    return {'success': False, 'error': 'Неверный email или пароль'}
+
+
+
+
+class ProfileData(BaseModel):
+    token: str
+    name: Optional[str] = None
+    birth_date: Optional[str] = None
+    birth_time: Optional[str] = None
+    birth_city: Optional[str] = None
+    birth_lat: Optional[float] = None
+    birth_lon: Optional[float] = None
+    gender: Optional[str] = None
+
+
+@app.post('/api/profile/update')
+async def api_update_profile(data: ProfileData):
+    """Обновление профиля"""
+    user = get_user_by_token(data.token)
+    if not user:
+        return {'success': False, 'error': 'Не авторизован'}
+    
+    profile_data = {
+        'name': data.name,
+        'birth_date': data.birth_date,
+        'birth_time': data.birth_time,
+        'birth_city': data.birth_city,
+        'birth_lat': data.birth_lat,
+        'birth_lon': data.birth_lon,
+        'gender': data.gender
+    }
+    # Убираем None значения
+    profile_data = {k: v for k, v in profile_data.items() if v is not None}
+    
+    update_profile(user['id'], profile_data)
+    return {'success': True}
+
+
+@app.get('/api/profile')
+async def api_get_profile(token: str):
+    """Получение профиля"""
+    user = get_user_by_token(token)
+    if not user:
+        return {'success': False, 'error': 'Не авторизован'}
+    
+    return {
+        'success': True,
+        'user': {
+            'id': user['id'],
+            'email': user['email'],
+            'name': user['name'],
+            'is_premium': bool(user['is_premium']),
+            'birth_date': user['birth_date'],
+            'birth_time': user['birth_time'],
+            'birth_city': user['birth_city'],
+            'birth_lat': user['birth_lat'],
+            'birth_lon': user['birth_lon'],
+            'gender': user['gender']
+        }
+    }
+
+
+@app.post('/api/auth/logout')
+async def api_logout(token: str):
+    """Выход"""
+    delete_session(token)
+    return {'success': True}
 
 
 @app.post('/api/calculate')

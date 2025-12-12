@@ -123,6 +123,18 @@ def load_texts() -> dict:
     return {}
 
 
+
+def count_texts_stats():
+    texts = load_texts()
+    stats = {}
+    signs_filled = sum(1 for k,v in texts.get('signs',{}).items() if isinstance(v,dict) for g in ['general','male','female'] if v.get(g) and len(str(v.get(g,'')))>10)
+    stats['signs'] = {'filled': signs_filled, 'total': 468}
+    houses_filled = sum(1 for k,v in texts.get('houses',{}).items() if isinstance(v,dict) for g in ['general','male','female'] if v.get(g) and len(str(v.get(g,'')))>10)
+    stats['houses'] = {'filled': houses_filled, 'total': 468}
+    aspects_filled = sum(1 for p,v in texts.get('aspects',{}).items() if isinstance(v,dict) for t,txt in v.items() if txt and len(str(txt))>10)
+    stats['aspects'] = {'filled': aspects_filled, 'total': 630}
+    return stats
+
 def save_texts(data: dict):
     with open(TEXTS_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)

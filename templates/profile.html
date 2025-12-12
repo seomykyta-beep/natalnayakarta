@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - Натальная Карта</title>
+    <style>
+        :root { --bg: #0a0a1a; --card: #12122a; --text: #e0e0e0; --accent: #ffd700; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { color: var(--accent); font-size: 24px; }
+        .nav-links a { color: #888; text-decoration: none; margin-left: 20px; }
+        .nav-links a:hover { color: var(--accent); }
+        .card { background: var(--card); padding: 30px; border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255,215,0,0.1); }
+        .card h2 { color: var(--accent); font-size: 18px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; color: #888; font-size: 13px; margin-bottom: 8px; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 15px; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn { padding: 12px 25px; background: linear-gradient(135deg, var(--accent) 0%, #ff9100 100%); border: none; border-radius: 8px; color: var(--bg); font-weight: bold; cursor: pointer; }
+        .btn:hover { opacity: 0.9; }
+        .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+        .premium-badge { display: inline-block; padding: 5px 12px; background: linear-gradient(135deg, #7c4dff 0%, #e040fb 100%); border-radius: 20px; font-size: 12px; margin-left: 10px; }
+        .status { padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; }
+        .status.success { background: rgba(76, 175, 80, 0.2); color: #4caf50; display: block; }
+        .status.error { background: rgba(239, 83, 80, 0.2); color: #ef5350; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👤 Профиль <span id="premiumBadge" class="premium-badge" style="display:none">Premium</span></h1>
+            <div class="nav-links">
+                <a href="/app">📊 Карта</a>
+                <a href="#" onclick="logout()">🚪 Выйти</a>
+            </div>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="card">
+            <h2>📧 Аккаунт</h2>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="email" readonly>
+            </div>
+            <div class="input-group">
+                <label>Имя</label>
+                <input type="text" id="name" placeholder="Ваше имя">
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>🎂 Данные рождения</h2>
+            <p style="color:#888; font-size:13px; margin-bottom:20px">Сохраните данные, чтобы не вводить их каждый раз</p>
+            
+            <div class="row">
+                <div class="input-group">
+                    <label>Дата рождения</label>
+                    <input type="date" id="birthDate">
+                </div>
+                <div class="input-group">
+                    <label>Время рождения</label>
+                    <input type="time" id="birthTime">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Город рождения</label>
+                <input type="text" id="birthCity" placeholder="Москва">
+            </div>
+            
+            <div class="input-group">
+                <label>Пол</label>
+                <select id="gender">
+                    <option value="male">Мужской</option>
+                    <option value="female">Женский</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="saveProfile()">💾 Сохранить</button>
+        </div>
+        
+        <div class="card">
+            <h2>💎 Подписка</h2>
+            <p id="subscriptionStatus" style="margin-bottom:15px">Бесплатный тариф</p>
+            <button class="btn btn-outline">Перейти на Premium</button>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/auth';
+        
+        async function loadProfile() {
+            const res = await fetch('/api/profile?token=' + token);
+            const data = await res.json();
+            
+            if (!data.success) {
+                localStorage.clear();
+                window.location.href = '/auth';
+                return;
+            }
+            
+            const user = data.user;
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('name').value = user.name || '';
+            document.getElementById('birthDate').value = user.birth_date || '';
+            document.getElementById('birthTime').value = user.birth_time || '';
+            document.getElementById('birthCity').value = user.birth_city || '';
+            document.getElementById('gender').value = user.gender || 'male';
+            
+            if (user.is_premium) {
+                document.getElementById('premiumBadge').style.display = 'inline-block';
+                document.getElementById('subscriptionStatus').textContent = 'Premium активен';
+            }
+        }
+        
+        async function saveProfile() {
+            const data = {
+                token: token,
+                name: document.getElementById('name').value,
+                birth_date: document.getElementById('birthDate').value,
+                birth_time: document.getElementById('birthTime').value,
+                birth_city: document.getElementById('birthCity').value,
+                gender: document.getElementById('gender').value
+            };
+            
+            const res = await fetch('/api/profile/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            
+            const result = await res.json();
+            const status = document.getElementById('status');
+            
+            if (result.success) {
+                status.className = 'status success';
+                status.textContent = '✅ Профиль сохранён';
+            } else {
+                status.className = 'status error';
+                status.textContent = '❌ ' + (result.error || 'Ошибка');
+            }
+            
+            setTimeout(() => { status.style.display = 'none'; }, 3000);
+        }
+        
+        function logout() {
+            fetch('/api/auth/logout?token=' + token, {method: 'POST'});
+            localStorage.clear();
+            window.location.href = '/';
+        }
+        
+        loadProfile();
+    </script>
+</body>
+</html>

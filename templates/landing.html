@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Натальная Карта - Ваш персональный астрологический прогноз</title>
+    <meta name="description" content="Рассчитайте свою натальную карту, транзиты, соляр и лунар. Персональные астрологические прогнозы на каждый день.">
+    <style>
+        :root {
+            --bg: #0a0a1a;
+            --card: #12122a;
+            --text: #e0e0e0;
+            --accent: #ffd700;
+            --blue: #4fc3f7;
+            --purple: #7c4dff;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(180deg, #0a0a1a 0%, #1a1a3a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffd700' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        
+        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        
+        .logo {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .tagline {
+            font-size: 20px;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, var(--accent) 0%, #ff9100 100%);
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+        
+        /* Features */
+        .features {
+            padding: 80px 20px;
+            background: var(--card);
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            color: var(--accent);
+            margin-bottom: 60px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: var(--bg);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .feature-icon { font-size: 48px; margin-bottom: 20px; }
+        .feature-card h3 { color: var(--accent); margin-bottom: 15px; font-size: 22px; }
+        .feature-card p { color: #888; font-size: 15px; }
+        
+        /* How it works */
+        .how-it-works {
+            padding: 80px 20px;
+            background: var(--bg);
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 50px;
+        }
+        
+        .step {
+            text-align: center;
+            max-width: 250px;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        
+        .step h4 { color: var(--accent); margin-bottom: 10px; }
+        .step p { color: #888; font-size: 14px; }
+        
+        /* Pricing */
+        .pricing {
+            padding: 80px 20px;
+            background: var(--card);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .price-card {
+            background: var(--bg);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .price-card.featured {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .price-card h3 { color: var(--accent); font-size: 24px; margin-bottom: 10px; }
+        .price { font-size: 48px; color: white; margin: 20px 0; }
+        .price span { font-size: 16px; color: #888; }
+        
+        .price-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .price-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: #aaa;
+        }
+        
+        .price-features li::before {
+            content: '✓';
+            color: var(--accent);
+            margin-right: 10px;
+        }
+        
+        .price-btn {
+            display: block;
+            padding: 15px 30px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .price-btn:hover, .price-card.featured .price-btn {
+            background: var(--accent);
+            color: var(--bg);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 40px 20px;
+            text-align: center;
+            background: var(--bg);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        footer p { color: #666; font-size: 14px; }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            h1 { font-size: 32px; }
+            .logo { font-size: 56px; }
+            .tagline { font-size: 16px; }
+            .cta-btn { padding: 15px 35px; font-size: 16px; }
+            .section-title { font-size: 28px; }
+            .price-card.featured { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo">🌌</div>
+            <h1>Натальная Карта</h1>
+            <p class="tagline">Раскройте тайны звёзд. Узнайте своё предназначение.<br>Персональные прогнозы на каждый день.</p>
+            <a href="/app" class="cta-btn">Рассчитать бесплатно</a>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">✨ Что вы получите</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Натальная карта</h3>
+                    <p>Полная карта рождения с расшифровкой всех планет, домов и аспектов</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔮</div>
+                    <h3>Транзиты</h3>
+                    <p>Узнайте, как движение планет влияет на вас прямо сейчас</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">☀️</div>
+                    <h3>Соляр</h3>
+                    <p>Персональный прогноз на год — от дня рождения до дня рождения</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌙</div>
+                    <h3>Лунар</h3>
+                    <p>Эмоциональный прогноз на месяц по лунным циклам</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Детальные описания</h3>
+                    <p>Более 1000 уникальных интерпретаций для глубокого понимания</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>PDF отчёты</h3>
+                    <p>Скачивайте красивые отчёты для печати или хранения</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">🚀 Как это работает</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Введите данные</h4>
+                    <p>Дата, время и место рождения — это всё, что нужно</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Получите карту</h4>
+                    <p>Мгновенный расчёт по точным астрономическим данным</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Изучайте себя</h4>
+                    <p>Читайте интерпретации и открывайте новое о себе</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">💎 Тарифы</h2>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>Базовый</h3>
+                    <div class="price">Бесплатно</div>
+                    <ul class="price-features">
+                        <li>Натальная карта</li>
+                        <li>Транзиты на 1 дату</li>
+                        <li>Базовые описания</li>
+                        <li>PDF отчёт</li>
+                    </ul>
+                    <a href="/app" class="price-btn">Начать</a>
+                </div>
+                <div class="price-card featured">
+                    <h3>Premium</h3>
+                    <div class="price">299₽ <span>/мес</span></div>
+                    <ul class="price-features">
+                        <li>Всё из базового</li>
+                        <li>Безлимитные транзиты</li>
+                        <li>Соляр и Лунар</li>
+                        <li>Расширенные описания</li>
+                        <li>Push-уведомления</li>
+                        <li>Синастрия (совместимость)</li>
+                    </ul>
+                    <a href="/app" class="price-btn">Подключить</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>© 2025 Натальная Карта. Раскройте свой потенциал через звёзды.</p>
+    </footer>
+</body>
+</html>
