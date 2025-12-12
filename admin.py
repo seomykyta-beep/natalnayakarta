@@ -15,6 +15,7 @@
 """
 
 import json
+from config import ADMIN_USER, ADMIN_PASS, ADMIN_PORT
 import os
 import secrets
 from pathlib import Path
@@ -30,8 +31,8 @@ import uvicorn
 # Конфигурация
 BASE_DIR = Path(__file__).parent
 TEXTS_FILE = BASE_DIR / "texts.json"
-ADMIN_USER = "admin"
-ADMIN_PASS = "astro2025"
+# ADMIN_USER из config.py
+# ADMIN_PASS из config.py
 SESSION_SECRET = secrets.token_hex(32)
 
 app = FastAPI(title="Админка Натальной Карты")
@@ -1115,4 +1116,4 @@ if __name__ == "__main__":
     print(f"📍 Адрес: http://localhost:8080/admin")
     print(f"🔐 Логин: {ADMIN_USER}")
     print(f"🔐 Пароль: {ADMIN_PASS}")
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=ADMIN_PORT)

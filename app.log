@@ -1,8 +1,5 @@
-INFO:     Started server process [790116]
+INFO:     Started server process [792602]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:56666 - "POST /api/calculate HTTP/1.1" 200 OK
-WARNING:  Invalid HTTP request received.
-INFO:     71.6.134.232:49078 - "GET / HTTP/1.1" 200 OK
-INFO:     71.6.134.232:48036 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52058 - "GET / HTTP/1.1" 200 OK

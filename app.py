@@ -1,3 +1,4 @@
+"""Основное веб-приложение натальной карты"""
 import asyncio
 import uvicorn
 from fastapi import FastAPI, Request
@@ -7,39 +8,43 @@ from fastapi.responses import FileResponse
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from pydantic import BaseModel
-from engine import calculate_real_chart, calculate_chart_with_mode, generate_pdf
-import os
 from typing import Optional
+import logging
 
-# --- СОЗДАНИЕ ПАПОК ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CHARTS_DIR = os.path.join(BASE_DIR, "charts")
-REPORTS_DIR = os.path.join(BASE_DIR, "reports")
-TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+from config import BOT_TOKEN, HOST, PORT, CHARTS_DIR, REPORTS_DIR, TEMPLATES_DIR, STATIC_DIR
+from engine import calculate_chart_with_mode, generate_pdf
 
-for d in [CHARTS_DIR, REPORTS_DIR, TEMPLATES_DIR]:
-    if not os.path.exists(d): os.makedirs(d)
+# Логирование
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-# --- КОНФИГУРАЦИЯ ---
-BOT_TOKEN = "8538039134:AAHHT_DjPFXtW-bCaI-Sv8DS4MPAqKKSs9E" 
-app = FastAPI()
+# FastAPI
+app = FastAPI(title='Натальная Карта', version='2.0')
+
+# Telegram Bot
 dp = Dispatcher()
-
-# Bot init
 bot = None
-if BOT_TOKEN != "ВАШ_ТОКЕН":
+if BOT_TOKEN:
     try:
         bot = Bot(token=BOT_TOKEN)
-    except: pass
+        logger.info('Telegram bot initialized')
+    except Exception as e:
+        logger.error(f'Failed to init bot: {e}')
 
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
-app.mount("/charts", StaticFiles(directory=CHARTS_DIR), name="charts")
-app.mount("/reports", StaticFiles(directory=REPORTS_DIR), name="reports")
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+# Templates & Static
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+app.mount('/charts', StaticFiles(directory=str(CHARTS_DIR)), name='charts')
+app.mount('/reports', StaticFiles(directory=str(REPORTS_DIR)), name='reports')
+app.mount('/static', StaticFiles(directory=str(STATIC_DIR)), name='static')
+
 
 class UserData(BaseModel):
+    """Входные данные для расчёта карты"""
     name: str
-    gender: Optional[str] = "male"  # male / female
+    gender: Optional[str] = 'male'
     year: int
     month: int
     day: int
@@ -49,30 +54,30 @@ class UserData(BaseModel):
     lat: Optional[float] = None
     lon: Optional[float] = None
     
-    # Mode: natal / solar / lunar
-    mode: Optional[str] = "natal"
+    # Режим: natal / solar / lunar
+    mode: Optional[str] = 'natal'
     
-    # Transit params (for natal mode)
+    # Транзиты
     transit_year: Optional[int] = None
     transit_month: Optional[int] = None
     transit_day: Optional[int] = None
     transit_hour: Optional[int] = None
     transit_minute: Optional[int] = None
     
-    # Solar params
+    # Соляр
     solar_year: Optional[int] = None
     solar_city: Optional[str] = None
     solar_lat: Optional[float] = None
     solar_lon: Optional[float] = None
     
-    # Lunar params
+    # Лунар
     lunar_year: Optional[int] = None
     lunar_month: Optional[int] = None
     lunar_city: Optional[str] = None
     lunar_lat: Optional[float] = None
     lunar_lon: Optional[float] = None
     
-    # Настраиваемые орбисы
+    # Орбисы
     orb_conjunction: Optional[int] = None
     orb_sextile: Optional[int] = None
     orb_square: Optional[int] = None
@@ -80,28 +85,32 @@ class UserData(BaseModel):
     orb_quincunx: Optional[int] = None
     orb_opposition: Optional[int] = None
 
-@app.get("/")
-async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/api/calculate")
+@app.get('/')
+async def home(request: Request):
+    """Главная страница"""
+    return templates.TemplateResponse('index.html', {'request': request})
+
+
+@app.post('/api/calculate')
 async def api_calculate(data: UserData):
-    # Собираем пользовательские орбисы, если заданы
-    custom_orbs = {}
-    if data.orb_conjunction is not None:
-        custom_orbs[0] = data.orb_conjunction
-    if data.orb_sextile is not None:
-        custom_orbs[60] = data.orb_sextile
-    if data.orb_square is not None:
-        custom_orbs[90] = data.orb_square
-    if data.orb_trine is not None:
-        custom_orbs[120] = data.orb_trine
-    if data.orb_quincunx is not None:
-        custom_orbs[150] = data.orb_quincunx
-    if data.orb_opposition is not None:
-        custom_orbs[180] = data.orb_opposition
+    """API расчёта натальной карты"""
+    logger.info(f'Calculate request: {data.name}, mode={data.mode}')
     
-    # Используем универсальную функцию с режимами
+    # Собираем орбисы
+    custom_orbs = {}
+    orb_mapping = {
+        0: data.orb_conjunction,
+        60: data.orb_sextile,
+        90: data.orb_square,
+        120: data.orb_trine,
+        150: data.orb_quincunx,
+        180: data.orb_opposition
+    }
+    for angle, value in orb_mapping.items():
+        if value is not None:
+            custom_orbs[angle] = value
+    
     result = calculate_chart_with_mode(
         name=data.name,
         year=data.year,
@@ -113,19 +122,16 @@ async def api_calculate(data: UserData):
         lat=data.lat,
         lon=data.lon,
         gender=data.gender,
-        mode=data.mode or "natal",
-        # Transit
+        mode=data.mode or 'natal',
         transit_year=data.transit_year,
         transit_month=data.transit_month,
         transit_day=data.transit_day,
         transit_hour=data.transit_hour,
         transit_minute=data.transit_minute,
-        # Solar
         solar_year=data.solar_year,
         solar_city=data.solar_city,
         solar_lat=data.solar_lat,
         solar_lon=data.solar_lon,
-        # Lunar
         lunar_year=data.lunar_year,
         lunar_month=data.lunar_month,
         lunar_city=data.lunar_city,
@@ -134,37 +140,52 @@ async def api_calculate(data: UserData):
         custom_orbs=custom_orbs if custom_orbs else None
     )
     
-    # Добавляем gender в результат для PDF
     result['gender'] = data.gender
     generate_pdf(result)
+    
+    logger.info(f'Calculate complete: {data.name}')
     return result
 
-@app.get("/api/pdf")
-async def get_pdf(name: str):
-    file_path = os.path.join(REPORTS_DIR, f"report_{name}.pdf")
-    if os.path.exists(file_path):
-        return FileResponse(file_path, filename=f"Horoscope_{name}.pdf")
-    return {"error": "File not found"}
 
-# --- TELEGRAM BOT ---
-@dp.message(Command("start"))
+@app.get('/api/pdf')
+async def get_pdf(name: str):
+    """Скачать PDF отчёт"""
+    file_path = REPORTS_DIR / f'report_{name}.pdf'
+    if file_path.exists():
+        return FileResponse(str(file_path), filename=f'Horoscope_{name}.pdf')
+    return {'error': 'File not found'}
+
+
+# Telegram Bot handlers
+@dp.message(Command('start'))
 async def cmd_start(message: types.Message):
-    kb = [[types.InlineKeyboardButton(text="✨ Открыть гороскоп", web_app=types.WebAppInfo(url="http://127.0.0.1:8000"))]]
+    kb = [[types.InlineKeyboardButton(
+        text='✨ Открыть гороскоп',
+        web_app=types.WebAppInfo(url=f'http://{HOST}:{PORT}')
+    )]]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=kb)
-    await message.answer("Нажми кнопку ниже:", reply_markup=keyboard)
+    await message.answer('Нажми кнопку ниже:', reply_markup=keyboard)
+
 
 async def start_bot():
-    if bot: await dp.start_polling(bot)
+    if bot:
+        logger.info('Starting Telegram bot...')
+        await dp.start_polling(bot)
+
 
 async def start_server():
-    config = uvicorn.Config(app=app, host="0.0.0.0", port=8000)
+    logger.info(f'Starting server on {HOST}:{PORT}')
+    config = uvicorn.Config(app=app, host=HOST, port=PORT, log_level='info')
     server = uvicorn.Server(config)
     await server.serve()
+
 
 async def main():
     await asyncio.gather(start_server(), start_bot())
 
-if __name__ == "__main__":
-    try: asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit): pass
 
+if __name__ == '__main__':
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        logger.info('Shutting down...')

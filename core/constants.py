@@ -1,0 +1,49 @@
+"""Константы для астрологических расчётов"""
+
+ZODIAC_SIGNS = [
+    'Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева',
+    'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
+]
+
+ZODIAC_ICONS = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓']
+
+PLANET_NAMES = {
+    'sun': 'Солнце',
+    'moon': 'Луна',
+    'mercury': 'Меркурий',
+    'venus': 'Венера',
+    'mars': 'Марс',
+    'jupiter barycenter': 'Юпитер',
+    'saturn barycenter': 'Сатурн',
+    'uranus barycenter': 'Уран',
+    'neptune barycenter': 'Нептун',
+    'pluto barycenter': 'Плутон',
+    'north_node': 'Северный Узел',
+    'south_node': 'Южный Узел',
+    'lilith': 'Лилит'
+}
+
+PLANET_ICONS = {
+    'sun': '☉',
+    'moon': '☾',
+    'mercury': '☿',
+    'venus': '♀',
+    'mars': '♂',
+    'jupiter barycenter': '♃',
+    'saturn barycenter': '♄',
+    'uranus barycenter': '♅',
+    'neptune barycenter': '♆',
+    'pluto barycenter': '♇',
+    'north_node': '☊',
+    'south_node': '☋',
+    'lilith': '⚸'
+}
+
+DEFAULT_ORBS = {
+    0: 8,    # Соединение
+    60: 6,   # Секстиль
+    90: 8,   # Квадрат
+    120: 8,  # Тригон
+    150: 4,  # Квинконс
+    180: 8   # Оппозиция
+}
