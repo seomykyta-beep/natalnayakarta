@@ -52,7 +52,7 @@ PLANET_NAMES = {
     'sun': 'Солнце', 'moon': 'Луна', 'mercury': 'Меркурий', 'venus': 'Венера',
     'mars': 'Марс', 'jupiter barycenter': 'Юпитер', 'saturn barycenter': 'Сатурн',
     'uranus barycenter': 'Уран', 'neptune barycenter': 'Нептун', 'pluto barycenter': 'Плутон',
-    'north_node': 'Сев. Узел', 'south_node': 'Южн. Узел', 'lilith': 'Лилит'
+    'north_node': 'Северный Узел', 'south_node': 'Южный Узел', 'lilith': 'Лилит'
 }
 PLANET_ICONS = {
     'sun': '☉', 'moon': '☾', 'mercury': '☿', 'venus': '♀', 'mars': '♂',
@@ -561,7 +561,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender="male"):
 
     mc_sign, mc_deg, _, _ = degrees_to_zodiac(houses[9])
     planets_data.insert(1, {
-        'name': 'Сер. Неба',
+        'name': 'Середина Неба',
         'key': 'MC',
         'icon': 'M',
         'sign': mc_sign,
