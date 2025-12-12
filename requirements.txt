@@ -1,0 +1,7 @@
+aiogram
+fastapi
+uvicorn
+jinja2
+xhtml2pdf
+python-multipart
+requests
