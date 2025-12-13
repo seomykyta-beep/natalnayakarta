@@ -848,18 +848,18 @@
                 renderAspectMatrix(data.planets, data.planets, data.aspects, false);
                 drawChart(data.planets, data.houses, data.aspects, null);
             } else {
-                const outer = data.transits || data.outer_planets || [];
+                const transit = data.transit_planets || [];
                 const aspects = data.transit_aspects || data.aspects || [];
                 matrixTitle.textContent = currentMode === 'natal' ? 'Транзит ↔ Натал' :
                                           currentMode === 'solar' ? 'Соляр ↔ Натал' : 'Лунар ↔ Натал';
-                const meta = data.transit_meta || data.outer_meta;
+                const meta = data.transit_meta || data.transit_meta;
                 transitMeta.textContent = meta ? `На ${meta.dt}` : '';
-                if (outer.length > 0) {
-                    renderAspectMatrix(data.planets, outer, aspects, true);
+                if (transit.length > 0) {
+                    renderAspectMatrix(data.planets, transit, aspects, true);
                 } else {
                     renderAspectMatrix(data.planets, data.planets, data.aspects, false);
                 }
-                drawChart(data.planets, data.houses, data.aspects, outer.length > 0 ? outer : null);
+                drawChart(data.planets, data.houses, data.aspects, transit.length > 0 ? transit : null);
             }
         }
 
@@ -884,20 +884,21 @@
         function renderPlanetsTable(data) {
             const tBody = document.getElementById('planetsTableBody');
             tBody.innerHTML = '';
-            const outer = data.transits || data.outer_planets || [];
-            const outerMap = {};
-            outer.forEach(p => { if (p.key) outerMap[p.key] = p; });
+            const transit = data.transit_planets || [];
+            const transitMap = {};
+            transit.forEach(p => { if (p.key) transitMap[p.key] = p; });
 
             const formatPos = (p) => {
                 if (!p) return '—';
-                const deg = Math.floor(p.pos);
-                const min = Math.round((p.pos % 1) * 60);
+                const degree = p.degree || p.pos || 0;
+                const deg = Math.floor(degree);
+                const min = Math.round((degree % 1) * 60);
                 return `${p.sign} ${deg}°${min.toString().padStart(2,'0')}'`;
             };
 
             data.planets.forEach(p => {
                 const retro = p.is_retro ? '<span style="color:#ff5555">R</span>' : '';
-                const op = outerMap[p.key];
+                const op = transitMap[p.key];
                 const oRetro = op?.is_retro ? '<span style="color:#ff5555">R</span>' : '';
                 tBody.innerHTML += `<tr>
                     <td>${p.icon} ${p.name} ${retro}</td>
@@ -932,15 +933,15 @@
             });
         }
 
-        function drawChart(planets, cusps, aspects, outer) {
+        function drawChart(planets, cusps, aspects, transit) {
             const container = document.getElementById('chartDiv');
             const size = Math.min(container.clientWidth, 650) || 500;
             container.style.height = size + 'px';
             const chart = new NatalChart('chartDiv', size);
-            chart.draw({planets, houses: cusps, aspects, outerPlanets: outer});
+            chart.draw({planets, houses: cusps, aspects, outerPlanets: transit});
         }
 
-        function renderAspectMatrix(natal, outer, aspects, isTransit) {
+        function renderAspectMatrix(natal, transit, aspects, isTransit) {
             const table = document.getElementById('aspectMatrixTable');
             table.innerHTML = '';
             
@@ -951,9 +952,9 @@
                 {key:'North_node',icon:'☊'},{key:'ASC',icon:'AC'},{key:'MC',icon:'MC'}
             ];
             
-            const natalMap = {}, outerMap = {}, aspectMap = {};
+            const natalMap = {}, transitMap = {}, aspectMap = {};
             natal.forEach(p => { if(p.key) natalMap[p.key]=p; });
-            outer.forEach(p => { if(p.key) outerMap[p.key]=p; });
+            transit.forEach(p => { if(p.key) transitMap[p.key]=p; });
             aspects.forEach(a => {
                 if(a.p1_key && a.p2_key) {
                     aspectMap[`${a.p1_key}_${a.p2_key}`] = a;
