@@ -89,7 +89,8 @@
             box-shadow: 0 0 0 3px rgba(191, 90, 242, 0.2);
         }
         
-        .form-table input[type="number"] { width: 70px; text-align: center; }
+        .form-table input[type="number"] { width: 75px; text-align: center; }
+        .form-table input.year-input { width: 90px; }
         .form-table input.city-input { width: 100%; max-width: 280px; }
         .form-table select { 
             background: var(--input-bg); 
@@ -435,7 +436,7 @@
                                 <option value="12">Декабря</option>
                             </select>
                             <span class="separator">,</span>
-                            <input type="number" id="year" placeholder="ГГГГ" min="1900" max="2100">
+                            <input type="number" id="year" placeholder="ГГГГ" class="year-input" min="1900" max="2100">
                         </div>
                     </td>
                 </tr>
@@ -494,7 +495,7 @@
                                 <option value="12">Декабря</option>
                             </select>
                             <span class="separator">,</span>
-                            <input type="number" id="t_year" placeholder="ГГГГ" min="1900" max="2100">
+                            <input type="number" id="t_year" placeholder="ГГГГ" class="year-input" min="1900" max="2100">
                         </div>
                     </td>
                 </tr>
@@ -672,23 +673,34 @@
         let timer;
         function suggestCity() {
             clearTimeout(timer);
-            const val = document.getElementById('city').value;
+            const val = document.getElementById('city').value.trim();
             const list = document.getElementById('suggestions');
-            if(val.length < 3) { list.style.display='none'; return; }
+            if(val.length < 2) { list.style.display='none'; return; }
             
             timer = setTimeout(async () => {
                 try {
-                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru`);
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru&addressdetails=1&limit=10`);
                     const data = await res.json();
                     list.innerHTML = '';
                     if(data.length) {
                         list.style.display = 'block';
-                        data.slice(0, 5).forEach(p => {
+                        const seen = new Set();
+                        data.forEach(p => {
+                            const cityName = p.address?.city || p.address?.town || p.address?.village || p.display_name.split(',')[0];
+                            const country = p.address?.country || '';
+                            const region = p.address?.state || p.address?.region || '';
+                            const displayText = [cityName, region, country].filter(Boolean).join(', ');
+                            const uniqueKey = `${cityName}_${p.lat.substring(0,5)}_${p.lon.substring(0,5)}`;
+                            
+                            if (seen.has(uniqueKey)) return;
+                            seen.add(uniqueKey);
+                            if (seen.size > 5) return;
+                            
                             const div = document.createElement('div');
                             div.className = 'suggestion-item';
-                            div.textContent = p.display_name.split(',').slice(0,3).join(', ');
+                            div.textContent = displayText;
                             div.onclick = () => {
-                                document.getElementById('city').value = p.display_name.split(',')[0];
+                                document.getElementById('city').value = cityName;
                                 document.getElementById('lat').value = p.lat;
                                 document.getElementById('lon').value = p.lon;
                                 document.getElementById('coordsDisplay').textContent = `Широта: ${parseFloat(p.lat).toFixed(4)}, Долгота: ${parseFloat(p.lon).toFixed(4)}`;
@@ -698,7 +710,7 @@
                         });
                     }
                 } catch(e) { console.error(e); }
-            }, 500);
+            }, 250);
         }
 
         document.addEventListener('click', (e) => {
