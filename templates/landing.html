@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Транзиты Онлайн - Астрологический расчёт</title>
-    <meta name="description" content="Рассчитайте транзиты планет онлайн. Натальная карта, соляр и лунар.">
+    <title>Транзиты Онлайн</title>
+    <meta name="description" content="Персональный астрологический расчёт транзитов планет">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0a0a1a; --card: #12122a; --text: #e0e0e0; --accent: #ffd700; --blue: #4fc3f7; --purple: #7c4dff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
         
-        /* Звёздный фон */
-        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
-        .star { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 10px #ffd700; animation: twinkle var(--duration) ease-in-out infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: var(--opacity); transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } }
+        :root {
+            --bg: #000;
+            --text: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent: #bf5af2;
+            --accent-2: #5e5ce6;
+            --card-bg: rgba(29, 29, 31, 0.7);
+        }
         
-        /* Падающие звёзды */
-        .shooting-star { position: absolute; width: 150px; height: 2px; background: linear-gradient(90deg, #fff, #ffd700, transparent); box-shadow: 0 0 10px #ffd700; animation: shoot 2s linear forwards; }
-        @keyframes shoot { 0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 1; } 100% { transform: translateX(600px) translateY(400px) rotate(45deg); opacity: 0; } }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
         
         /* Hero */
         .hero {
@@ -27,265 +37,398 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
-            background: radial-gradient(ellipse at center, #1a1a3a 0%, #0a0a1a 70%);
+            padding: 120px 24px 80px;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15), transparent);
             position: relative;
             overflow: hidden;
         }
         
-        .hero-content { position: relative; max-width: 800px; }
-        
-        /* Анимированный логотип */
-        .logo-container { position: relative; margin-bottom: 20px; }
-        .logo { font-size: 80px; animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
-        .orbit { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 50%; animation: rotate 20s linear infinite; }
-        .orbit::after { content: '✦'; position: absolute; top: -8px; left: 50%; font-size: 16px; color: var(--accent); }
-        .orbit:nth-child(2) { width: 200px; height: 200px; animation-duration: 30s; animation-direction: reverse; border-color: rgba(79, 195, 247, 0.2); }
-        .orbit:nth-child(2)::after { content: '☆'; color: var(--blue); }
-        
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        
-        h1 { font-size: 52px; color: var(--accent); margin-bottom: 15px; text-shadow: 0 0 40px rgba(255, 215, 0, 0.4); animation: glow 3s ease-in-out infinite; }
-        @keyframes glow { 0%, 100% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.4); } 50% { text-shadow: 0 0 60px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.3); } }
-        
-        .tagline { font-size: 20px; color: #aaa; margin-bottom: 40px; }
-        
-        .cta-btn {
-            display: inline-block;
-            padding: 20px 55px;
-            background: linear-gradient(135deg, var(--accent) 0%, #ff9100 100%);
-            color: #1a1a2e;
-            text-decoration: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        .cta-btn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px rgba(255, 215, 0, 0.5); }
-        @keyframes pulse { 0%, 100% { box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4); } 50% { box-shadow: 0 10px 50px rgba(255, 215, 0, 0.6); } }
-        
-        /* Зодиакальные символы */
-        .zodiac-ring {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            font-size: 24px;
-            opacity: 0.3;
-            animation: slideIn 1s ease-out;
-        }
-        .zodiac-ring span { animation: float 3s ease-in-out infinite; }
-        .zodiac-ring span:nth-child(odd) { animation-delay: 0.5s; }
-        
-        /* About transits */
-        .about-transits {
-            padding: 80px 20px;
-            background: var(--bg);
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-        .about-transits .container { max-width: 800px; margin: 0 auto; }
-        .about-transits h2 { color: var(--accent); font-size: 32px; margin-bottom: 25px; }
-        .about-transits p { color: #aaa; font-size: 17px; line-height: 1.9; }
-        
-        /* Features */
-        .features { padding: 80px 20px; background: var(--card); position: relative; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .section-title { text-align: center; font-size: 36px; color: var(--accent); margin-bottom: 60px; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .feature-card {
-            background: var(--bg);
-            padding: 40px 30px;
-            border-radius: 20px;
-            text-align: center;
-            transition: all 0.4s;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        .feature-card::before {
+        .hero::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.05), transparent);
-            transition: 0.5s;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1200px;
+            height: 600px;
+            background: radial-gradient(ellipse at center, rgba(191, 90, 242, 0.08) 0%, transparent 70%);
+            pointer-events: none;
         }
-        .feature-card:hover::before { left: 100%; }
-        .feature-card:hover { transform: translateY(-10px); border-color: rgba(255, 215, 0, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .feature-icon { font-size: 50px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
-        .feature-card:nth-child(even) .feature-icon { animation-delay: 1s; }
-        .feature-card h3 { color: var(--accent); margin-bottom: 15px; font-size: 22px; }
-        .feature-card p { color: #888; font-size: 15px; }
         
-        /* How it works */
-        .how-it-works { padding: 80px 20px; background: var(--bg); position: relative; }
-        .steps { display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px; }
-        .step { text-align: center; max-width: 280px; }
+        .eyebrow {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards;
+        }
+        
+        h1 {
+            font-size: clamp(48px, 10vw, 96px);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin-bottom: 24px;
+            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.1s forwards;
+        }
+        
+        .tagline {
+            font-size: clamp(19px, 3vw, 28px);
+            font-weight: 400;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+        
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.3s forwards;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 18px 32px;
+            border-radius: 980px;
+            font-size: 17px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.04);
+            box-shadow: 0 12px 40px rgba(191, 90, 242, 0.35);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            backdrop-filter: blur(20px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        
+        /* Section common */
+        section {
+            padding: 120px 24px;
+        }
+        
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+        
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        
+        .section-desc {
+            font-size: 19px;
+            color: var(--text-secondary);
+            max-width: 640px;
+            line-height: 1.6;
+        }
+        
+        /* About */
+        .about {
+            background: linear-gradient(180deg, transparent 0%, rgba(29, 29, 31, 0.5) 100%);
+            text-align: center;
+        }
+        
+        .about .section-desc {
+            margin: 0 auto 48px;
+        }
+        
+        .visual-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+            font-size: 120px;
+        }
+        
+        /* Features */
+        .features {
+            background: var(--bg);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 64px;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 40px 32px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(191, 90, 242, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        
+        .feature-icon {
+            font-size: 44px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 21px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .feature-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Steps */
+        .steps {
+            background: linear-gradient(180deg, rgba(29, 29, 31, 0.5) 0%, transparent 100%);
+        }
+        
+        .steps-container {
+            display: flex;
+            gap: 32px;
+            margin-top: 64px;
+            flex-wrap: wrap;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+            padding: 40px 24px;
+        }
+        
         .step-number {
-            width: 70px; height: 70px;
-            background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; font-weight: bold; margin: 0 auto 25px;
-            box-shadow: 0 10px 30px rgba(124, 77, 255, 0.3);
-            animation: pulse 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 24px;
         }
-        .step:nth-child(2) .step-number { animation-delay: 0.5s; }
-        .step:nth-child(3) .step-number { animation-delay: 1s; }
-        .step h4 { color: var(--accent); margin-bottom: 12px; font-size: 20px; }
-        .step p { color: #888; font-size: 15px; }
         
-        footer { padding: 50px 20px; text-align: center; background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); position: relative; }
-        footer p { color: #555; font-size: 14px; }
+        .step h4 {
+            font-size: 21px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+        
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            padding: 160px 24px;
+            background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(191, 90, 242, 0.1), transparent);
+        }
+        
+        .cta-section h2 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 32px;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 48px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        
+        footer p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
         
         @media (max-width: 768px) {
-            h1 { font-size: 36px; }
-            .logo { font-size: 60px; }
-            .tagline { font-size: 16px; }
-            .cta-btn { padding: 16px 40px; font-size: 16px; }
-            .section-title { font-size: 28px; }
-            .orbit { display: none; }
-            .zodiac-ring { font-size: 18px; gap: 12px; }
+            section { padding: 80px 20px; }
+            .visual-card { min-height: 240px; font-size: 80px; padding: 32px; }
+            .feature-card { padding: 32px 24px; }
         }
     </style>
 </head>
 <body>
-    <div class="stars-container" id="stars"></div>
-    
     <section class="hero">
-        <div class="hero-content">
-            <div class="logo-container">
-                <div class="orbit"></div>
-                <div class="orbit"></div>
-                <div class="logo">🌌</div>
-            </div>
-            <h1>Транзиты Онлайн</h1>
-            <p class="tagline">Раскройте влияние планет на вашу жизнь прямо сейчас</p>
-            <a href="/app" class="cta-btn">Рассчитать транзиты</a>
-        </div>
-        <div class="zodiac-ring">
-            <span>♈</span><span>♉</span><span>♊</span><span>♋</span><span>♌</span><span>♍</span>
-            <span>♎</span><span>♏</span><span>♐</span><span>♑</span><span>♒</span><span>♓</span>
+        <p class="eyebrow">Астрология</p>
+        <h1>Транзиты Онлайн</h1>
+        <p class="tagline">Узнайте, как движение планет влияет на вашу жизнь. Точный расчёт транзитов в реальном времени.</p>
+        <div class="cta-group">
+            <a href="/app" class="btn btn-primary">Рассчитать транзиты</a>
+            <a href="#about" class="btn btn-secondary">Узнать больше</a>
         </div>
     </section>
     
-    <section class="about-transits">
+    <section class="about" id="about">
         <div class="container">
-            <h2>🔮 Что такое транзиты?</h2>
-            <p>
-                Транзиты — это движение планет в реальном времени относительно вашей натальной карты. 
-                Когда транзитные планеты образуют аспекты с вашими натальными точками, 
-                они активируют определённые сферы жизни и запускают события. 
-                Анализируя эти аспекты, можно предсказать благоприятные периоды для важных решений.
+            <p class="section-label fade-in">Что такое транзиты</p>
+            <h2 class="section-title fade-in">Движение планет.<br>Влияние на жизнь.</h2>
+            <p class="section-desc fade-in">
+                Транзиты — это положение планет в реальном времени относительно вашей натальной карты. 
+                Они активируют события и открывают возможности для важных решений.
             </p>
+            <div class="visual-card fade-in">🪐</div>
         </div>
     </section>
     
     <section class="features">
         <div class="container">
-            <h2 class="section-title">✨ Возможности</h2>
+            <p class="section-label fade-in">Возможности</p>
+            <h2 class="section-title fade-in">Всё для понимания<br>вашей карты.</h2>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">🗺️</div>
                     <h3>Натальная карта</h3>
                     <p>Полная карта рождения с расшифровкой планет, домов и аспектов</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">🔮</div>
                     <h3>Транзиты</h3>
-                    <p>Узнайте, как движение планет влияет на вас прямо сейчас</p>
+                    <p>Текущее положение планет и их влияние на вашу карту</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">☀️</div>
                     <h3>Соляр</h3>
-                    <p>Персональный прогноз на год — от дня рождения до дня рождения</p>
+                    <p>Годовой прогноз от дня рождения до дня рождения</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">🌙</div>
                     <h3>Лунар</h3>
-                    <p>Эмоциональный прогноз на месяц по лунным циклам</p>
+                    <p>Месячный эмоциональный прогноз по лунным циклам</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">📊</div>
-                    <h3>Детальные описания</h3>
-                    <p>Уникальные интерпретации для глубокого понимания</p>
+                    <h3>Интерпретации</h3>
+                    <p>Подробные описания каждого аспекта и положения</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">📄</div>
                     <h3>PDF отчёты</h3>
-                    <p>Скачивайте отчёты для печати или хранения</p>
+                    <p>Сохраняйте и распечатывайте результаты расчётов</p>
                 </div>
             </div>
         </div>
     </section>
     
-    <section class="how-it-works">
+    <section class="steps">
         <div class="container">
-            <h2 class="section-title">🚀 Как это работает</h2>
-            <div class="steps">
-                <div class="step">
+            <p class="section-label fade-in">Как это работает</p>
+            <h2 class="section-title fade-in">Три простых шага.</h2>
+            <div class="steps-container">
+                <div class="step fade-in">
                     <div class="step-number">1</div>
                     <h4>Введите данные</h4>
-                    <p>Дата, время и место рождения — это всё, что нужно</p>
+                    <p>Дата, время и место рождения</p>
                 </div>
-                <div class="step">
+                <div class="step fade-in">
                     <div class="step-number">2</div>
                     <h4>Получите карту</h4>
-                    <p>Мгновенный расчёт по точным астрономическим данным</p>
+                    <p>Мгновенный точный расчёт</p>
                 </div>
-                <div class="step">
+                <div class="step fade-in">
                     <div class="step-number">3</div>
-                    <h4>Изучайте прогноз</h4>
-                    <p>Читайте интерпретации и планируйте важные события</p>
+                    <h4>Изучите прогноз</h4>
+                    <p>Планируйте важные события</p>
                 </div>
             </div>
+        </div>
+    </section>
+    
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="fade-in">Начните прямо сейчас.</h2>
+            <a href="/app" class="btn btn-primary fade-in">Рассчитать транзиты</a>
         </div>
     </section>
     
     <footer>
-        <p>© 2025 Транзиты Онлайн. Познайте влияние звёзд на вашу жизнь.</p>
+        <p>© 2025 Транзиты Онлайн</p>
     </footer>
 
     <script>
-        // Создаём звёзды
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 150; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            const size = Math.random() * 3 + 1;
-            star.style.width = size + 'px';
-            star.style.height = size + 'px';
-            star.style.setProperty('--opacity', Math.random() * 0.5 + 0.3);
-            star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-            star.style.animationDelay = Math.random() * 3 + 's';
-            starsContainer.appendChild(star);
-        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         
-        // Падающие звёзды
-        function createShootingStar() {
-            const star = document.createElement('div');
-            star.className = 'shooting-star';
-            star.style.left = Math.random() * 50 + '%';
-            star.style.top = Math.random() * 50 + '%';
-            star.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            starsContainer.appendChild(star);
-            setTimeout(() => star.remove(), 4000);
-        }
-        setInterval(createShootingStar, 4000);
-        setTimeout(createShootingStar, 1000);
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
