@@ -689,8 +689,8 @@
             
             for (let i = 0; i < localCities.length && startsWithVal.length < 8; i++) {
                 const c = localCities[i];
-                const nameLower = c.name.toLowerCase();
-                const asciiLower = c.ascii || '';
+                const nameLower = (c.n || c.name || '').toLowerCase();
+                const asciiLower = (c.a || c.ascii || '').toLowerCase();
                 
                 if (nameLower.startsWith(val) || asciiLower.startsWith(val)) {
                     startsWithVal.push(c);
@@ -712,11 +712,14 @@
             list.innerHTML = '';
             list.style.display = 'block';
             cities.forEach(c => {
+                const name = c.n || c.name;
+                const region = c.r || c.region;
+                const lat = c.t || c.lat;
+                const lon = c.g || c.lon;
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                const pop = c.pop > 1000000 ? `${(c.pop/1000000).toFixed(1)}M` : c.pop > 1000 ? `${Math.round(c.pop/1000)}K` : '';
-                div.innerHTML = `<span>${c.name}</span><span style="color:#666;font-size:12px;margin-left:8px">${c.region}${pop ? ' · ' + pop : ''}</span>`;
-                div.onclick = () => selectCity(c.name, c.lat, c.lon);
+                div.innerHTML = `<span>${name}</span><span style="color:#666;font-size:12px;margin-left:8px">${region}</span>`;
+                div.onclick = () => selectCity(name, lat, lon);
                 list.appendChild(div);
             });
         }
