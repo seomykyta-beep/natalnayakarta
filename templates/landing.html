@@ -11,13 +11,13 @@
         body { font-family: 'Segoe UI', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
         
         /* Звёздный фон */
-        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) ease-in-out infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: var(--opacity); transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+        .star { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 10px #ffd700; animation: twinkle var(--duration) ease-in-out infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: var(--opacity); transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } }
         
         /* Падающие звёзды */
-        .shooting-star { position: absolute; width: 100px; height: 2px; background: linear-gradient(90deg, white, transparent); animation: shoot 3s ease-in-out infinite; opacity: 0; }
-        @keyframes shoot { 0% { transform: translateX(0) translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateX(500px) translateY(300px); opacity: 0; } }
+        .shooting-star { position: absolute; width: 150px; height: 2px; background: linear-gradient(90deg, #fff, #ffd700, transparent); box-shadow: 0 0 10px #ffd700; animation: shoot 2s linear forwards; }
+        @keyframes shoot { 0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 1; } 100% { transform: translateX(600px) translateY(400px) rotate(45deg); opacity: 0; } }
         
         /* Hero */
         .hero {
@@ -33,7 +33,7 @@
             overflow: hidden;
         }
         
-        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        .hero-content { position: relative; max-width: 800px; }
         
         /* Анимированный логотип */
         .logo-container { position: relative; margin-bottom: 20px; }
@@ -97,7 +97,7 @@
         .about-transits p { color: #aaa; font-size: 17px; line-height: 1.9; }
         
         /* Features */
-        .features { padding: 80px 20px; background: var(--card); position: relative; z-index: 1; }
+        .features { padding: 80px 20px; background: var(--card); position: relative; }
         .container { max-width: 1200px; margin: 0 auto; }
         .section-title { text-align: center; font-size: 36px; color: var(--accent); margin-bottom: 60px; }
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
@@ -129,7 +129,7 @@
         .feature-card p { color: #888; font-size: 15px; }
         
         /* How it works */
-        .how-it-works { padding: 80px 20px; background: var(--bg); position: relative; z-index: 1; }
+        .how-it-works { padding: 80px 20px; background: var(--bg); position: relative; }
         .steps { display: flex; justify-content: center; flex-wrap: wrap; gap: 50px; margin-top: 50px; }
         .step { text-align: center; max-width: 280px; }
         .step-number {
@@ -146,7 +146,7 @@
         .step h4 { color: var(--accent); margin-bottom: 12px; font-size: 20px; }
         .step p { color: #888; font-size: 15px; }
         
-        footer { padding: 50px 20px; text-align: center; background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 1; }
+        footer { padding: 50px 20px; text-align: center; background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); position: relative; }
         footer p { color: #555; font-size: 14px; }
         
         @media (max-width: 768px) {
