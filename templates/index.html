@@ -91,7 +91,17 @@
         
         .form-table input[type="number"] { width: 70px; text-align: center; }
         .form-table input.city-input { width: 100%; max-width: 280px; }
-        .form-table select { background: var(--input-bg); cursor: pointer; }
+        .form-table select { 
+            background: var(--input-bg); 
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2386868b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
         
         .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .separator { color: var(--text-secondary); margin: 0 4px; }
@@ -604,9 +614,45 @@
         let globalData = null;
         let birthData = {};
 
+
+        // Автоматический переход между полями
+        function setupAutoFocus() {
+            const fieldGroups = [
+                ['day', 'month', 'year', 'hour', 'minute', 'city'],
+                ['t_day', 't_month', 't_year', 't_hour', 't_minute']
+            ];
+            
+            fieldGroups.forEach(group => {
+                group.forEach((fieldId, index) => {
+                    const field = document.getElementById(fieldId);
+                    if (!field) return;
+                    
+                    if (field.tagName === 'INPUT' && field.type === 'number') {
+                        field.addEventListener('input', function() {
+                            const maxLen = this.placeholder === 'ГГГГ' ? 4 : 2;
+                            if (this.value.length >= maxLen && index < group.length - 1) {
+                                const nextField = document.getElementById(group[index + 1]);
+                                if (nextField) nextField.focus();
+                            }
+                        });
+                    }
+                    
+                    if (field.tagName === 'SELECT') {
+                        field.addEventListener('change', function() {
+                            if (index < group.length - 1) {
+                                const nextField = document.getElementById(group[index + 1]);
+                                if (nextField) nextField.focus();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
         // Init
         window.addEventListener('load', () => {
             setDefaultDates();
+            setupAutoFocus();
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
