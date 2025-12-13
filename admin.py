@@ -172,35 +172,45 @@ def save_texts(data: dict):
 
 # === Общие стили ===
 COMMON_STYLES = """
-:root { --pico-primary: #e94560; }
-body { background: #1a1a2e; }
+:root { 
+    --pico-primary: #bf5af2;
+    --pico-background-color: #000;
+    --pico-card-background-color: rgba(29, 29, 31, 0.8);
+    --pico-muted-color: #86868b;
+    --pico-secondary: #5e5ce6;
+}
+body { 
+    background: #000; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
 .container { max-width: 1200px; padding: 20px; }
-h1, h2, h3 { color: #ffd700; }
-.back-link { color: #e94560; display: inline-block; margin-bottom: 20px; }
+h1, h2, h3 { color: #bf5af2; }
+.back-link { color: #bf5af2; display: inline-block; margin-bottom: 20px; }
 .nav-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
-.tab-btn { padding: 10px 15px; background: #16213e; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; }
-.tab-btn:hover, .tab-btn.active { background: #e94560; }
-.text-block { background: #16213e; padding: 15px; border-radius: 10px; margin: 15px 0; }
+.tab-btn { padding: 10px 15px; background: rgba(29, 29, 31, 0.8); color: white; text-decoration: none; border-radius: 8px; font-size: 14px; }
+.tab-btn:hover, .tab-btn.active { background: #bf5af2; }
+.text-block { background: rgba(29, 29, 31, 0.8); padding: 15px; border-radius: 10px; margin: 15px 0; }
 .text-block.empty { border-left: 4px solid #ff5252; }
 .text-block.filled { border-left: 4px solid #4caf50; }
-.text-block label { color: #ffd700; font-weight: bold; display: block; margin-bottom: 10px; }
-textarea { width: 100%; background: #0f1424; border: 1px solid #333; color: white; padding: 10px; border-radius: 5px; min-height: 100px; }
+.text-block label { color: #bf5af2; font-weight: bold; display: block; margin-bottom: 10px; }
+textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 5px; min-height: 100px; }
 button { margin-top: 10px; }
 .generate-btn { background: #4caf50; padding: 8px 15px; font-size: 14px; margin-left: 10px; }
 .gender-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
-.gender-tab { padding: 5px 10px; background: #0f1424; border: 1px solid #333; color: #888; cursor: pointer; border-radius: 4px; font-size: 12px; }
-.gender-tab.active { background: #e94560; color: white; border-color: #e94560; }
+.gender-tab { padding: 5px 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #888; cursor: pointer; border-radius: 4px; font-size: 12px; }
+.gender-tab.active { background: #bf5af2; color: white; border-color: #bf5af2; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
-.stat-card { background: #16213e; padding: 15px; border-radius: 10px; text-align: center; }
-.stat-card h4 { color: #ffd700; margin: 0 0 10px 0; font-size: 14px; }
+.stat-card { background: rgba(29, 29, 31, 0.8); padding: 15px; border-radius: 10px; text-align: center; }
+.stat-card h4 { color: #bf5af2; margin: 0 0 10px 0; font-size: 14px; }
 .stat-filled { color: #4caf50; font-size: 20px; font-weight: bold; }
 .stat-empty { color: #ff5252; font-size: 20px; font-weight: bold; }
 .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-.nav-card { background: #16213e; padding: 20px; border-radius: 10px; text-decoration: none; color: white; transition: transform 0.2s; }
-.nav-card:hover { transform: translateY(-3px); background: #1f2b4a; }
-.nav-card h3 { color: #ffd700; margin: 0 0 8px 0; font-size: 16px; }
+.nav-card { background: rgba(29, 29, 31, 0.8); padding: 20px; border-radius: 10px; text-decoration: none; color: white; transition: transform 0.2s; }
+.nav-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.05); }
+.nav-card h3 { color: #bf5af2; margin: 0 0 8px 0; font-size: 16px; }
 .nav-card p { color: #888; margin: 0; font-size: 13px; }
-.section-title { border-bottom: 2px solid #e94560; padding-bottom: 10px; margin: 30px 0 20px 0; }
+.section-title { border-bottom: 2px solid #bf5af2; padding-bottom: 10px; margin: 30px 0 20px 0; }
 .combo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
 .small-textarea { min-height: 60px; }
 """
@@ -217,20 +227,22 @@ async def login_page(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Вход - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
     <body>
         <main class="container" style="max-width: 500px; margin-top: 100px;">
-            <article style="background: #16213e; padding: 30px; border-radius: 15px;">
+            <article style="background: rgba(29, 29, 31, 0.8); padding: 30px; border-radius: 15px;">
                 <hgroup>
                     <h1 style="text-align: center;">🔐 Вход в админку</h1>
                     <h2 style="text-align: center; color: #888;">Натальная Карта</h2>
                 </hgroup>
                 {'<p style="color: #ff5252; text-align: center;">' + error + '</p>' if error else ''}
                 <form method="POST" action="/admin/login">
-                    <input type="text" name="username" placeholder="Логин" required autofocus style="background: #0f1424; border-color: #333;">
-                    <input type="password" name="password" placeholder="Пароль" required style="background: #0f1424; border-color: #333;">
+                    <input type="text" name="username" placeholder="Логин" required autofocus style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.1);">
+                    <input type="password" name="password" placeholder="Пароль" required style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.1);">
                     <button type="submit" style="width: 100%;">Войти</button>
                 </form>
             </article>
@@ -271,6 +283,8 @@ async def admin_home(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Админка - Натальная Карта</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -278,7 +292,7 @@ async def admin_home(request: Request):
         <main class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1>🌌 Админка Натальной Карты</h1>
-                <a href="/admin/logout" style="color: #e94560;">Выйти ({user}) →</a>
+                <a href="/admin/logout" style="color: #bf5af2;">Выйти ({user}) →</a>
             </div>
             
             <h2 class="section-title">📁 Основные разделы</h2>
@@ -419,6 +433,8 @@ async def admin_planet_sign_house(request: Request, planet: str = None, sign: st
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Планеты в знаках и домах - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -429,10 +445,10 @@ async def admin_planet_sign_house(request: Request, planet: str = None, sign: st
             
             <p style="color: #888;">Выберите планету → знак → пол, затем заполните тексты для каждого дома</p>
             
-            <h3 style="color: #ffd700; margin-top: 20px;">Планета:</h3>
+            <h3 style="color: #bf5af2; margin-top: 20px;">Планета:</h3>
             <div class="nav-tabs">{planets_list}</div>
             
-            {'<h3 style="color: #ffd700; margin-top: 20px;">Знак:</h3><div class="nav-tabs">' + signs_list + '</div>' if signs_list else ''}
+            {'<h3 style="color: #bf5af2; margin-top: 20px;">Знак:</h3><div class="nav-tabs">' + signs_list + '</div>' if signs_list else ''}
             
             {gender_tabs}
             {form_html if form_html else '<p style="color: #888; margin-top: 30px;">Выберите планету для начала редактирования</p>'}
@@ -504,6 +520,8 @@ async def admin_aspects(request: Request, pair: str = None):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Аспекты - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -603,6 +621,8 @@ async def admin_elements(request: Request, element: str = "fire", gender: str = 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Стихии - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -676,6 +696,8 @@ async def admin_planets_info(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Планеты - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -747,6 +769,8 @@ async def admin_houses_general(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Дома - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -820,6 +844,8 @@ async def admin_dignities(request: Request, dignity: str = "domicile"):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Достоинства планет - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -898,6 +924,8 @@ async def admin_degrees(request: Request, sign: str = "Ari"):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Градусы - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -970,6 +998,8 @@ async def admin_royal_degrees(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Королевские градусы - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -1042,6 +1072,8 @@ async def admin_destructive_degrees(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Разрушительные градусы - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}</style>
     </head>
@@ -1098,11 +1130,13 @@ async def admin_generate_page(request: Request):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AI Генерация - Админка</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
         <style>{COMMON_STYLES}
-        .info-box {{ background: #16213e; padding: 20px; border-radius: 10px; margin: 20px 0; }}
+        .info-box {{ background: rgba(29, 29, 31, 0.8); padding: 20px; border-radius: 10px; margin: 20px 0; }}
         .warning {{ background: #ff525233; border-left: 4px solid #ff5252; padding: 15px; border-radius: 5px; margin: 20px 0; }}
-        code {{ background: #0f1424; padding: 2px 8px; border-radius: 4px; }}
+        code {{ background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; }}
         </style>
     </head>
     <body>
@@ -1126,12 +1160,12 @@ async def admin_generate_page(request: Request):
             </div>
             
             <div class="info-box">
-                <h3 style="color: #ffd700;">Примеры промптов:</h3>
+                <h3 style="color: #bf5af2;">Примеры промптов:</h3>
                 <p><strong>Для планет в знаках и домах:</strong></p>
-                <textarea rows="4" style="width:100%; background:#0f1424; color:white;">Заполни texts.json раздел sign_house_combos: для Солнца в Овне в каждом доме (1-12) напиши 2-3 предложения. Отдельно для мужчин и женщин.</textarea>
+                <textarea rows="4" style="width:100%; background:rgba(0,0,0,0.4); color:white;">Заполни texts.json раздел sign_house_combos: для Солнца в Овне в каждом доме (1-12) напиши 2-3 предложения. Отдельно для мужчин и женщин.</textarea>
                 
                 <p style="margin-top: 15px;"><strong>Для стихий:</strong></p>
-                <textarea rows="4" style="width:100%; background:#0f1424; color:white;">Заполни texts.json раздел elements_extended: для стихии Огонь напиши описания для Овна, Льва, Стрельца. Отдельно для мужчин и женщин.</textarea>
+                <textarea rows="4" style="width:100%; background:rgba(0,0,0,0.4); color:white;">Заполни texts.json раздел elements_extended: для стихии Огонь напиши описания для Овна, Льва, Стрельца. Отдельно для мужчин и женщин.</textarea>
             </div>
         </main>
     </body>
