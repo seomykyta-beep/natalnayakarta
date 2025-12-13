@@ -669,40 +669,49 @@
             document.getElementById('t_minute').value = now.getMinutes();
         }
 
-        // City search - 33000 городов мира
+        // City search - 226000 населённых пунктов мира
         let localCities = [];
         let citiesLoaded = false;
         
-        // Загружаем базу городов
+        // Загружаем базу городов (формат: [name, ascii, region, country, lat, lon])
         fetch('/static/cities.json')
             .then(r => r.json())
-            .then(data => { localCities = data; citiesLoaded = true; console.log('🌍 Загружено', data.length, 'городов'); });
+            .then(data => { 
+                localCities = data; 
+                citiesLoaded = true; 
+                console.log('🌍 Загружено', data.length, 'населённых пунктов'); 
+            });
         
         function suggestCity() {
             const val = document.getElementById('city').value.trim().toLowerCase();
             const list = document.getElementById('suggestions');
-            if(val.length < 1 || !citiesLoaded) { list.style.display='none'; return; }
+            if(val.length < 2 || !citiesLoaded) { 
+                if(val.length < 2) list.style.display='none'; 
+                return; 
+            }
             
-            // Быстрый поиск: сначала по началу названия, потом по вхождению
-            const startsWithVal = [];
-            const containsVal = [];
+            const results = [];
+            const startsMatch = [];
+            const containsMatch = [];
             
-            for (let i = 0; i < localCities.length && startsWithVal.length < 8; i++) {
-                const c = localCities[i];
-                const nameLower = (c.n || c.name || '').toLowerCase();
-                const asciiLower = (c.a || c.ascii || '').toLowerCase();
+            for (let i = 0; i < localCities.length; i++) {
+                if (startsMatch.length >= 10) break;
                 
-                if (nameLower.startsWith(val) || asciiLower.startsWith(val)) {
-                    startsWithVal.push(c);
-                } else if (containsVal.length < 4 && (nameLower.includes(val) || asciiLower.includes(val))) {
-                    containsVal.push(c);
+                const c = localCities[i];
+                const name = c[0].toLowerCase();
+                const ascii = c[1] || '';
+                
+                if (name.startsWith(val) || ascii.startsWith(val)) {
+                    startsMatch.push(c);
+                } else if (containsMatch.length < 5 && (name.includes(val) || ascii.includes(val))) {
+                    containsMatch.push(c);
                 }
             }
             
-            const results = [...startsWithVal, ...containsVal].slice(0, 8);
+            const final = [...startsMatch, ...containsMatch].slice(0, 10);
             
-            if (results.length > 0) {
-                renderCities(results, list);
+            if (final.length > 0) {
+                renderCities(final, list);
             } else {
                 list.style.display = 'none';
             }
@@ -712,13 +721,17 @@
             list.innerHTML = '';
             list.style.display = 'block';
             cities.forEach(c => {
-                const name = c.n || c.name;
-                const region = c.r || c.region;
-                const lat = c.t || c.lat;
-                const lon = c.g || c.lon;
+                // c = [name, ascii, region, country, lat, lon]
+                const name = c[0];
+                const region = c[2];
+                const country = c[3];
+                const lat = c[4];
+                const lon = c[5];
+                
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                div.innerHTML = `<span>${name}</span><span style="color:#666;font-size:12px;margin-left:8px">${region}</span>`;
+                const location = [region, country].filter(Boolean).join(', ');
+                div.innerHTML = `<span>${name}</span><span style="color:#86868b;font-size:12px;margin-left:8px">${location}</span>`;
                 div.onclick = () => selectCity(name, lat, lon);
                 list.appendChild(div);
             });
