@@ -669,68 +669,85 @@
             document.getElementById('t_minute').value = now.getMinutes();
         }
 
-        // City search - мгновенный с кэшем и отменой
+        // City search - локальная база + API fallback
+        let localCities = [];
         let abortController = null;
-        const cityCache = new Map();
         
-        async function suggestCity() {
-            const val = document.getElementById('city').value.trim();
+        // Загружаем локальную базу при старте
+        fetch('/static/cities.json').then(r => r.json()).then(data => { localCities = data; });
+        
+        function suggestCity() {
+            const val = document.getElementById('city').value.trim().toLowerCase();
             const list = document.getElementById('suggestions');
-            if(val.length < 2) { list.style.display='none'; return; }
+            if(val.length < 1) { list.style.display='none'; return; }
             
-            // Проверяем кэш
-            if (cityCache.has(val)) {
-                renderCities(cityCache.get(val), list);
-                return;
-            }
+            // Ищем в локальной базе (мгновенно)
+            const local = localCities.filter(c => 
+                c.name.toLowerCase().startsWith(val) || 
+                c.name.toLowerCase().includes(val)
+            ).slice(0, 6);
             
-            // Отменяем предыдущий запрос
-            if (abortController) abortController.abort();
-            abortController = new AbortController();
-            
-            try {
-                const res = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru&addressdetails=1&limit=10`,
-                    { signal: abortController.signal }
-                );
-                const data = await res.json();
-                cityCache.set(val, data); // Кэшируем
-                renderCities(data, list);
-            } catch(e) { 
-                if (e.name !== 'AbortError') console.error(e);
+            if (local.length > 0) {
+                renderLocalCities(local, list);
+            } else if (val.length >= 3) {
+                // Только если не нашли локально - идём в API
+                searchOnline(val, list);
+            } else {
+                list.style.display = 'none';
             }
         }
         
-        function renderCities(data, list) {
+        function renderLocalCities(cities, list) {
+            list.innerHTML = '';
+            list.style.display = 'block';
+            cities.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = `${c.name}, ${c.region}`;
+                div.onclick = () => selectCity(c.name, c.lat, c.lon);
+                list.appendChild(div);
+            });
+        }
+        
+        async function searchOnline(val, list) {
+            if (abortController) abortController.abort();
+            abortController = new AbortController();
+            try {
+                const res = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru&addressdetails=1&limit=6`,
+                    { signal: abortController.signal }
+                );
+                const data = await res.json();
+                renderOnlineCities(data, list);
+            } catch(e) { if (e.name !== 'AbortError') console.error(e); }
+        }
+        
+        function renderOnlineCities(data, list) {
             list.innerHTML = '';
             if (!data.length) { list.style.display='none'; return; }
-            
             list.style.display = 'block';
             const seen = new Set();
-            
             data.forEach(p => {
                 const cityName = p.address?.city || p.address?.town || p.address?.village || p.display_name.split(',')[0];
                 const country = p.address?.country || '';
-                const region = p.address?.state || p.address?.region || '';
-                const displayText = [cityName, region, country].filter(Boolean).join(', ');
-                const uniqueKey = `${cityName}_${p.lat.substring(0,5)}_${p.lon.substring(0,5)}`;
-                
+                const uniqueKey = cityName + '_' + String(p.lat).substring(0,5);
                 if (seen.has(uniqueKey)) return;
                 seen.add(uniqueKey);
                 if (seen.size > 5) return;
-                
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                div.textContent = displayText;
-                div.onclick = () => {
-                    document.getElementById('city').value = cityName;
-                    document.getElementById('lat').value = p.lat;
-                    document.getElementById('lon').value = p.lon;
-                    document.getElementById('coordsDisplay').textContent = `Широта: ${parseFloat(p.lat).toFixed(4)}, Долгота: ${parseFloat(p.lon).toFixed(4)}`;
-                    list.style.display = 'none';
-                }
+                div.textContent = `${cityName}, ${country}`;
+                div.onclick = () => selectCity(cityName, p.lat, p.lon);
                 list.appendChild(div);
             });
+        }
+        
+        function selectCity(name, lat, lon) {
+            document.getElementById('city').value = name;
+            document.getElementById('lat').value = lat;
+            document.getElementById('lon').value = lon;
+            document.getElementById('coordsDisplay').textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
+            document.getElementById('suggestions').style.display = 'none';
         }
 
         document.addEventListener('click', (e) => {
