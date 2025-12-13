@@ -669,75 +669,54 @@
             document.getElementById('t_minute').value = now.getMinutes();
         }
 
-        // City search - локальная база + API fallback
+        // City search - 33000 городов мира
         let localCities = [];
-        let abortController = null;
+        let citiesLoaded = false;
         
-        // Загружаем локальную базу при старте
-        fetch('/static/cities.json').then(r => r.json()).then(data => { localCities = data; });
+        // Загружаем базу городов
+        fetch('/static/cities.json')
+            .then(r => r.json())
+            .then(data => { localCities = data; citiesLoaded = true; console.log('🌍 Загружено', data.length, 'городов'); });
         
         function suggestCity() {
             const val = document.getElementById('city').value.trim().toLowerCase();
             const list = document.getElementById('suggestions');
-            if(val.length < 1) { list.style.display='none'; return; }
+            if(val.length < 1 || !citiesLoaded) { list.style.display='none'; return; }
             
-            // Ищем в локальной базе (мгновенно)
-            const local = localCities.filter(c => 
-                c.name.toLowerCase().startsWith(val) || 
-                c.name.toLowerCase().includes(val)
-            ).slice(0, 6);
+            // Быстрый поиск: сначала по началу названия, потом по вхождению
+            const startsWithVal = [];
+            const containsVal = [];
             
-            if (local.length > 0) {
-                renderLocalCities(local, list);
-            } else if (val.length >= 3) {
-                // Только если не нашли локально - идём в API
-                searchOnline(val, list);
+            for (let i = 0; i < localCities.length && startsWithVal.length < 8; i++) {
+                const c = localCities[i];
+                const nameLower = c.name.toLowerCase();
+                const asciiLower = c.ascii || '';
+                
+                if (nameLower.startsWith(val) || asciiLower.startsWith(val)) {
+                    startsWithVal.push(c);
+                } else if (containsVal.length < 4 && (nameLower.includes(val) || asciiLower.includes(val))) {
+                    containsVal.push(c);
+                }
+            }
+            
+            const results = [...startsWithVal, ...containsVal].slice(0, 8);
+            
+            if (results.length > 0) {
+                renderCities(results, list);
             } else {
                 list.style.display = 'none';
             }
         }
         
-        function renderLocalCities(cities, list) {
+        function renderCities(cities, list) {
             list.innerHTML = '';
             list.style.display = 'block';
             cities.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                div.textContent = `${c.name}, ${c.region}`;
+                const pop = c.pop > 1000000 ? `${(c.pop/1000000).toFixed(1)}M` : c.pop > 1000 ? `${Math.round(c.pop/1000)}K` : '';
+                div.innerHTML = `<span>${c.name}</span><span style="color:#666;font-size:12px;margin-left:8px">${c.region}${pop ? ' · ' + pop : ''}</span>`;
                 div.onclick = () => selectCity(c.name, c.lat, c.lon);
-                list.appendChild(div);
-            });
-        }
-        
-        async function searchOnline(val, list) {
-            if (abortController) abortController.abort();
-            abortController = new AbortController();
-            try {
-                const res = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru&addressdetails=1&limit=6`,
-                    { signal: abortController.signal }
-                );
-                const data = await res.json();
-                renderOnlineCities(data, list);
-            } catch(e) { if (e.name !== 'AbortError') console.error(e); }
-        }
-        
-        function renderOnlineCities(data, list) {
-            list.innerHTML = '';
-            if (!data.length) { list.style.display='none'; return; }
-            list.style.display = 'block';
-            const seen = new Set();
-            data.forEach(p => {
-                const cityName = p.address?.city || p.address?.town || p.address?.village || p.display_name.split(',')[0];
-                const country = p.address?.country || '';
-                const uniqueKey = cityName + '_' + String(p.lat).substring(0,5);
-                if (seen.has(uniqueKey)) return;
-                seen.add(uniqueKey);
-                if (seen.size > 5) return;
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.textContent = `${cityName}, ${country}`;
-                div.onclick = () => selectCity(cityName, p.lat, p.lon);
                 list.appendChild(div);
             });
         }
