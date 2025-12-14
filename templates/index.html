@@ -526,21 +526,21 @@
             </div>
 
             <!-- Extra settings for Solar/Lunar -->
-            <div id="solarSettings" class="extra-settings">
+            <div id="solarSettings" class="extra-settings" style="display:none;">
                 <h4>☀️ Соляр — укажите год</h4>
                 <div class="row">
                     <span>Год соляра:</span>
                     <input type="number" id="solar_year" style="width:100px">
-                    <button onclick="calculateSolar()" style="padding:8px 15px; background:var(--blue); border:none; color:white; border-radius:5px; cursor:pointer;">Рассчитать соляр</button>
+                    <button onclick="calculateSolar()" style="padding:12px 24px; background:linear-gradient(135deg, #ffd60a, #ff9500); border:none; color:#000; border-radius:10px; cursor:pointer; font-weight:600; font-size:14px;">Рассчитать соляр</button>
                 </div>
             </div>
-            <div id="lunarSettings" class="extra-settings">
+            <div id="lunarSettings" class="extra-settings" style="display:none;">
                 <h4>🌙 Лунар — укажите месяц</h4>
                 <div class="row">
                     <span>Месяц:</span>
                     <input type="number" id="lunar_month" style="width:60px" placeholder="ММ">
                     <input type="number" id="lunar_year" style="width:100px" placeholder="ГГГГ">
-                    <button onclick="calculateLunar()" style="padding:8px 15px; background:var(--blue); border:none; color:white; border-radius:5px; cursor:pointer;">Рассчитать лунар</button>
+                    <button onclick="calculateLunar()" style="padding:12px 24px; background:linear-gradient(135deg, #a8dadc, #457b9d); border:none; color:#fff; border-radius:10px; cursor:pointer; font-weight:600; font-size:14px;">Рассчитать лунар</button>
                 </div>
             </div>
             <!-- Synastry Form -->
@@ -667,7 +667,23 @@
                                 if (nextField) nextField.focus();
                             }
                         });
-                    }
+                    
+            // Автопереход для полей синастрии
+            const synFields = ['partner_day', 'partner_month', 'partner_year', 'partner_hour', 'partner_minute', 'partner_city'];
+            synFields.forEach((fieldId, index) => {
+                const field = document.getElementById(fieldId);
+                if (!field) return;
+                if (field.type === 'number') {
+                    field.addEventListener('input', function() {
+                        const maxLen = fieldId.includes('year') ? 4 : 2;
+                        if (this.value.length >= maxLen && index < synFields.length - 1) {
+                            const next = document.getElementById(synFields[index + 1]);
+                            if (next) next.focus();
+                        }
+                    });
+                }
+            });
+}
                 });
             });
         }
@@ -755,7 +771,37 @@
             }
         }
         
-                function selectCity(name, lat, lon) {
+                
+        // Поиск города партнёра
+        function suggestPartnerCity() {
+            const val = document.getElementById('partner_city').value.trim();
+            // Используем ту же логику что и для основного города
+            if (val.length >= 2) {
+                searchNominatim(val, document.getElementById('partner_suggestions') || createPartnerSuggestions());
+            }
+        }
+        
+        function createPartnerSuggestions() {
+            const input = document.getElementById('partner_city');
+            let sugg = document.getElementById('partner_suggestions');
+            if (!sugg) {
+                sugg = document.createElement('div');
+                sugg.id = 'partner_suggestions';
+                sugg.className = 'suggestions';
+                input.parentNode.appendChild(sugg);
+            }
+            return sugg;
+        }
+        
+        function selectPartnerCity(name, lat, lon) {
+            document.getElementById('partner_city').value = name;
+            document.getElementById('partner_lat').value = lat;
+            document.getElementById('partner_lon').value = lon;
+            const sugg = document.getElementById('partner_suggestions');
+            if (sugg) sugg.style.display = 'none';
+        }
+
+function selectCity(name, lat, lon) {
             document.getElementById('city').value = name;
             document.getElementById('lat').value = lat;
             document.getElementById('lon').value = lon;
@@ -846,13 +892,27 @@
         // Mode switching
         function setMode(mode) {
             currentMode = mode;
-            document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.mode-tab[data-mode="${mode}"]`).classList.add('active');
+            // Обновляем стили всех вкладок
+            document.querySelectorAll('.main-tab').forEach(t => {
+                if (t.dataset.mode === mode) {
+                    t.style.background = 'var(--accent)';
+                    t.style.color = '#fff';
+                    t.style.border = 'none';
+                } else {
+                    t.style.background = 'rgba(255,255,255,0.1)';
+                    t.style.color = 'var(--text)';
+                    t.style.border = '1px solid var(--border)';
+                }
+            });
             
-            document.getElementById('solarSettings').classList.toggle('visible', mode === 'solar');
-            document.getElementById('lunarSettings').classList.toggle('visible', mode === 'lunar');
-            const synForm = document.getElementById('synastryForm');
-            if (synForm) synForm.style.display = mode === 'synastry' ? 'block' : 'none';
+            // Показываем/скрываем формы
+            const solarEl = document.getElementById('solarSettings');
+            const lunarEl = document.getElementById('lunarSettings');
+            const synEl = document.getElementById('synastryForm');
+            
+            if (solarEl) solarEl.style.display = mode === 'solar' ? 'block' : 'none';
+            if (lunarEl) lunarEl.style.display = mode === 'lunar' ? 'block' : 'none';
+            if (synEl) synEl.style.display = mode === 'synastry' ? 'block' : 'none';
             
             if (mode === 'natal' && globalData) {
                 updateDisplay();
@@ -969,7 +1029,7 @@
             
             document.getElementById("textsList").innerHTML = html;
             document.getElementById("result").style.display = "block";
-            document.getElementById("form").style.display = "none";
+            const formEl = document.getElementById("inputSection"); if(formEl) formEl.style.display = "none";
         }
 
 function setView(view) {
