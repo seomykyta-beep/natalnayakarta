@@ -712,9 +712,42 @@
             
             if (final.length > 0) {
                 renderCities(final, list);
+            } else if (val.length >= 3) {
+                // Fallback на Nominatim API
+                searchOnline(val, list);
             } else {
                 list.style.display = 'none';
             }
+        }
+        
+        let abortCtrl = null;
+        async function searchOnline(val, list) {
+            if (abortCtrl) abortCtrl.abort();
+            abortCtrl = new AbortController();
+            try {
+                const res = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept_language=ru&addressdetails=1&limit=6`,
+                    { signal: abortCtrl.signal }
+                );
+                const data = await res.json();
+                if (!data.length) { list.style.display='none'; return; }
+                list.innerHTML = '';
+                list.style.display = 'block';
+                const seen = new Set();
+                data.forEach(p => {
+                    const cityName = p.address?.city || p.address?.town || p.address?.village || p.display_name.split(',')[0];
+                    const region = p.address?.state || '';
+                    const country = p.address?.country || '';
+                    const key = cityName + p.lat.substring(0,4);
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `<span>${cityName}</span><span style="color:#86868b;font-size:12px;margin-left:8px">${[region, country].filter(Boolean).join(', ')}</span>`;
+                    div.onclick = () => selectCity(cityName, p.lat, p.lon);
+                    list.appendChild(div);
+                });
+            } catch(e) { if (e.name !== 'AbortError') console.error(e); }
         }
         
         function renderCities(cities, list) {
