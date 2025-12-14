@@ -941,7 +941,26 @@ function selectCity(name, lat, lon) {
             
             // Для синастрии скрываем карту, таблицы и показываем только форму/результат
             if (chartDiv) chartDiv.style.display = isSynastry ? 'none' : 'block';
-            if (viewTabs) viewTabs.style.display = isSynastry ? 'none' : 'flex';
+            // Управление подвкладками в зависимости от режима
+            if (viewTabs) {
+                if (mode === 'synastry' || mode === 'natal') {
+                    viewTabs.style.display = 'none';
+                } else {
+                    viewTabs.style.display = 'flex';
+                    const btn1 = viewTabs.querySelector('[data-view="natal"]');
+                    const btn2 = viewTabs.querySelector('[data-view="transit"]');
+                    if (mode === 'solar') {
+                        if (btn1) btn1.textContent = 'Натал';
+                        if (btn2) btn2.textContent = 'Соляр';
+                    } else if (mode === 'lunar') {
+                        if (btn1) btn1.textContent = 'Натал';
+                        if (btn2) btn2.textContent = 'Лунар';
+                    } else {
+                        if (btn1) btn1.textContent = 'Натальные';
+                        if (btn2) btn2.textContent = 'Транзиты';
+                    }
+                }
+            }
             if (schemeBox) schemeBox.style.display = isSynastry ? 'none' : 'block';
             if (planetsTable) planetsTable.style.display = isSynastry ? 'none' : 'block';
             
@@ -1203,7 +1222,7 @@ function setView(view) {
             data.planets.forEach(p => {
                 if (p.text && p.key !== 'ASC' && p.key !== 'MC') {
                     container.innerHTML += `<div class="planet-text-block">
-                        <div class="planet-text-header">${p.icon} ${p.name} в ${p.sign}, ${p.house} дом</div>
+                        <div class="planet-text-header">${p.icon} ${p.name} в ${p.sign_locative || p.sign}, ${p.house} дом</div>
                         <div class="planet-text-body">${p.text}</div>
                     </div>`;
                 }
@@ -1222,10 +1241,14 @@ function setView(view) {
 
         function drawChart(planets, cusps, aspects, transit) {
             const container = document.getElementById('chartDiv');
-            const size = Math.min(container.clientWidth - 40, 540) || 450;
-            container.style.height = size + 'px';
-            const chart = new NatalChart('chartDiv', size);
-            chart.draw({planets, houses: cusps, aspects, outerPlanets: transit});
+            // Используем requestAnimationFrame чтобы контейнер уже был отрисован
+            requestAnimationFrame(() => {
+                const width = container.clientWidth || container.offsetWidth || 500;
+                const size = Math.min(width - 40, 540);
+                container.style.height = (size + 40) + 'px';
+                const chart = new NatalChart('chartDiv', size);
+                chart.draw({planets, houses: cusps, aspects, outerPlanets: transit});
+            });
         }
 
         function renderAspectMatrix(natal, transit, aspects, isTransit) {

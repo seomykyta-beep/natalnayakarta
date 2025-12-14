@@ -6,7 +6,7 @@ import pytz
 
 from skyfield.api import load
 
-from .constants import ZODIAC_SIGNS, ZODIAC_ICONS, PLANET_NAMES, PLANET_ICONS
+from .constants import ZODIAC_SIGNS, ZODIAC_ICONS, PLANET_NAMES, PLANET_ICONS, ZODIAC_SIGNS_LOCATIVE
 from .texts import TEXTS, get_text, get_interpretation
 from .aspects import find_aspects, find_transit_aspects
 from .houses import calculate_houses, get_house_placement
@@ -95,6 +95,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
                 'key': key,
                 'icon': PLANET_ICONS.get(body_name, ''),
                 'sign': sign,
+                'sign_locative': ZODIAC_SIGNS_LOCATIVE.get(sign, sign),
                 'sign_icon': icon,
                 'degree': round(deg, 2),
                 'abs_pos': round(lon, 2),
@@ -118,6 +119,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'key': 'North_node',
         'icon': '☊',
         'sign': sign,
+        'sign_locative': ZODIAC_SIGNS_LOCATIVE.get(sign, sign),
         'sign_icon': icon,
         'degree': round(deg, 2),
         'abs_pos': round(mean_node, 2),
@@ -137,6 +139,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'key': 'South_node',
         'icon': '☋',
         'sign': sign,
+        'sign_locative': ZODIAC_SIGNS_LOCATIVE.get(sign, sign),
         'sign_icon': icon,
         'degree': round(deg, 2),
         'abs_pos': round(south_node, 2),
@@ -156,6 +159,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'key': 'Lilith',
         'icon': '⚸',
         'sign': sign,
+        'sign_locative': ZODIAC_SIGNS_LOCATIVE.get(sign, sign),
         'sign_icon': icon,
         'degree': round(deg, 2),
         'abs_pos': round(lilith, 2),
@@ -174,6 +178,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'key': 'ASC',
         'icon': '⬆️',
         'sign': sign,
+        'sign_locative': ZODIAC_SIGNS_LOCATIVE.get(sign, sign),
         'sign_icon': icon,
         'degree': round(deg, 2),
         'abs_pos': round(asc, 2),
@@ -191,6 +196,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'key': 'MC',
         'icon': 'M',
         'sign': sign,
+        'sign_locative': ZODIAC_SIGNS_LOCATIVE.get(sign, sign),
         'sign_icon': icon,
         'degree': round(deg, 2),
         'abs_pos': round(mc, 2),
