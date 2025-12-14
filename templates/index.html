@@ -882,24 +882,41 @@
             const matrixTitle = document.getElementById('matrixTitle');
             const transitMeta = document.getElementById('transitMeta');
             
+            // Определяем источник внешних планет в зависимости от режима
+            let outerPlanets = [];
+            let outerAspects = data.aspects;
+            let metaText = '';
+            
+            if (data.mode === 'solar' && data.solar) {
+                outerPlanets = data.solar.planets || [];
+                outerAspects = data.solar.aspects || data.aspects;
+                metaText = `Соляр: ${data.solar.datetime}`;
+            } else if (data.mode === 'lunar' && data.lunar) {
+                outerPlanets = data.lunar.planets || [];
+                outerAspects = data.lunar.aspects || data.aspects;
+                metaText = `Лунар: ${data.lunar.datetime}`;
+            } else if (data.transit_planets) {
+                outerPlanets = data.transit_planets;
+                outerAspects = data.transit_aspects || data.aspects;
+                metaText = data.transit_meta ? `Транзиты: ${data.transit_meta.dt}` : '';
+            }
+            
             if (currentView === 'natal') {
                 matrixTitle.textContent = 'Натальные аспекты';
                 transitMeta.textContent = '';
                 renderAspectMatrix(data.planets, data.planets, data.aspects, false);
                 drawChart(data.planets, data.houses, data.aspects, null);
             } else {
-                const transit = data.transit_planets || [];
-                const aspects = data.transit_aspects || data.aspects || [];
-                matrixTitle.textContent = currentMode === 'natal' ? 'Транзит ↔ Натал' :
-                                          currentMode === 'solar' ? 'Соляр ↔ Натал' : 'Лунар ↔ Натал';
-                const meta = data.transit_meta || data.transit_meta;
-                transitMeta.textContent = meta ? `На ${meta.dt}` : '';
-                if (transit.length > 0) {
-                    renderAspectMatrix(data.planets, transit, aspects, true);
+                matrixTitle.textContent = data.mode === 'solar' ? 'Соляр ↔ Натал' :
+                                          data.mode === 'lunar' ? 'Лунар ↔ Натал' : 'Транзит ↔ Натал';
+                transitMeta.textContent = metaText;
+                if (outerPlanets.length > 0) {
+                    renderAspectMatrix(data.planets, outerPlanets, outerAspects, true);
+                    drawChart(data.planets, data.houses, data.aspects, outerPlanets);
                 } else {
                     renderAspectMatrix(data.planets, data.planets, data.aspects, false);
+                    drawChart(data.planets, data.houses, data.aspects, null);
                 }
-                drawChart(data.planets, data.houses, data.aspects, transit.length > 0 ? transit : null);
             }
         }
 
@@ -924,7 +941,17 @@
         function renderPlanetsTable(data) {
             const tBody = document.getElementById('planetsTableBody');
             tBody.innerHTML = '';
-            const transit = data.transit_planets || [];
+            
+            // Определяем внешние планеты в зависимости от режима
+            let transit = [];
+            if (data.mode === 'solar' && data.solar) {
+                transit = data.solar.planets || [];
+            } else if (data.mode === 'lunar' && data.lunar) {
+                transit = data.lunar.planets || [];
+            } else {
+                transit = data.transit_planets || [];
+            }
+            
             const transitMap = {};
             transit.forEach(p => { if (p.key) transitMap[p.key] = p; });
 
