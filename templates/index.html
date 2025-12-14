@@ -519,10 +519,11 @@
         <div id="result" class="result-section">
             <!-- Mode Tabs: Натал / Соляр / Лунар -->
             <div class="mode-tabs">
-                <button class="mode-tab active" data-mode="natal" onclick="setMode('natal')">Натал</button>
+                <button class="mode-tab active" data-mode="transit" onclick="setMode('transit')">Транзиты</button>
+                <button class="mode-tab" data-mode="natal" onclick="setMode('natal')">Натал</button>
                 <button class="mode-tab" data-mode="solar" onclick="setMode('solar')">Соляр</button>
                 <button class="mode-tab" data-mode="lunar" onclick="setMode('lunar')">Лунар</button>
-                <button class="mode-tab" data-mode="synastry" onclick="setMode('synastry')">D83dDc95 Синастрия</button>
+                <button class="mode-tab" data-mode="synastry" onclick="setMode('synastry')">Синастрия</button>
             </div>
 
             <!-- Extra settings for Solar/Lunar -->
@@ -632,7 +633,7 @@
     </div>
 
     <script>
-        let currentMode = 'natal';
+        let currentMode = 'transit';
         let currentView = 'natal';
         let globalData = null;
         let birthData = {};
@@ -892,17 +893,9 @@ function selectCity(name, lat, lon) {
         // Mode switching
         function setMode(mode) {
             currentMode = mode;
-            // Обновляем стили всех вкладок
-            document.querySelectorAll('.main-tab').forEach(t => {
-                if (t.dataset.mode === mode) {
-                    t.style.background = 'var(--accent)';
-                    t.style.color = '#fff';
-                    t.style.border = 'none';
-                } else {
-                    t.style.background = 'rgba(255,255,255,0.1)';
-                    t.style.color = 'var(--text)';
-                    t.style.border = '1px solid var(--border)';
-                }
+            // Обновляем вкладки
+            document.querySelectorAll('.mode-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.mode === mode);
             });
             
             // Показываем/скрываем формы
