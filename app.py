@@ -88,6 +88,33 @@ class UserData(BaseModel):
     orb_opposition: Optional[int] = None
 
 
+
+class SynastryData(BaseModel):
+    """Данные для расчёта синастрии"""
+    # Первый человек
+    name1: str
+    year1: int
+    month1: int
+    day1: int
+    hour1: int
+    minute1: int
+    city1: str
+    lat1: Optional[float] = None
+    lon1: Optional[float] = None
+    gender1: Optional[str] = 'male'
+    
+    # Второй человек
+    name2: str
+    year2: int
+    month2: int
+    day2: int
+    hour2: int
+    minute2: int
+    city2: str
+    lat2: Optional[float] = None
+    lon2: Optional[float] = None
+    gender2: Optional[str] = 'female'
+
 @app.get('/')
 async def landing(request: Request):
     """Landing page"""

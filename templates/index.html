@@ -522,6 +522,7 @@
                 <button class="mode-tab active" data-mode="natal" onclick="setMode('natal')">Натал</button>
                 <button class="mode-tab" data-mode="solar" onclick="setMode('solar')">Соляр</button>
                 <button class="mode-tab" data-mode="lunar" onclick="setMode('lunar')">Лунар</button>
+                <button class="mode-tab" data-mode="synastry" onclick="setMode('synastry')">D83dDc95 Синастрия</button>
             </div>
 
             <!-- Extra settings for Solar/Lunar -->
@@ -542,6 +543,27 @@
                     <button onclick="calculateLunar()" style="padding:8px 15px; background:var(--blue); border:none; color:white; border-radius:5px; cursor:pointer;">Рассчитать лунар</button>
                 </div>
             </div>
+            <!-- Synastry Form -->
+            <div id="synastryForm" class="extra-settings" style="display:none;">
+                <h4 style="margin-bottom:15px;">💕 Синастрия — данные партнёра</h4>
+                <div style="display:grid;gap:12px;">
+                    <input type="text" id="partner_name" placeholder="Имя партнёра" style="padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <input type="number" id="partner_day" placeholder="День" min="1" max="31" style="width:70px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                        <input type="number" id="partner_month" placeholder="Месяц" min="1" max="12" style="width:80px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                        <input type="number" id="partner_year" placeholder="Год" min="1900" max="2100" style="width:90px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <input type="number" id="partner_hour" placeholder="Час" min="0" max="23" style="width:70px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                        <input type="number" id="partner_minute" placeholder="Мин" min="0" max="59" style="width:70px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                    </div>
+                    <input type="text" id="partner_city" placeholder="Город партнёра" style="padding:12px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:10px;">
+                    <input type="hidden" id="partner_lat">
+                    <input type="hidden" id="partner_lon">
+                    <button onclick="calculateSynastry()" style="padding:14px 24px;background:linear-gradient(135deg,#e91e63,#9c27b0);border:none;color:white;border-radius:10px;cursor:pointer;font-weight:600;font-size:16px;">💕 Рассчитать совместимость</button>
+                </div>
+            </div>
+
 
             <h2 style="text-align:center">
                 <span id="resName" style="color: var(--accent)"></span> — расчет Транзитов
@@ -829,6 +851,8 @@
             
             document.getElementById('solarSettings').classList.toggle('visible', mode === 'solar');
             document.getElementById('lunarSettings').classList.toggle('visible', mode === 'lunar');
+            const synForm = document.getElementById('synastryForm');
+            if (synForm) synForm.style.display = mode === 'synastry' ? 'block' : 'none';
             
             if (mode === 'natal' && globalData) {
                 updateDisplay();
@@ -868,7 +892,87 @@
             updateDisplay();
         }
 
-        function setView(view) {
+        
+        async function calculateSynastry() {
+            if (!birthData.name) return alert("Сначала рассчитайте свою карту");
+            
+            const pName = document.getElementById("partner_name").value;
+            const pDay = parseInt(document.getElementById("partner_day").value);
+            const pMonth = parseInt(document.getElementById("partner_month").value);
+            const pYear = parseInt(document.getElementById("partner_year").value);
+            const pHour = parseInt(document.getElementById("partner_hour").value) || 12;
+            const pMinute = parseInt(document.getElementById("partner_minute").value) || 0;
+            const pCity = document.getElementById("partner_city").value;
+            
+            if (!pName || !pDay || !pMonth || !pYear || !pCity) {
+                return alert("Заполните все данные партнёра");
+            }
+            
+            const data = {
+                name1: birthData.name,
+                year1: birthData.year,
+                month1: birthData.month,
+                day1: birthData.day,
+                hour1: birthData.hour,
+                minute1: birthData.minute,
+                city1: birthData.city,
+                lat1: birthData.lat,
+                lon1: birthData.lon,
+                gender1: birthData.gender,
+                name2: pName,
+                year2: pYear,
+                month2: pMonth,
+                day2: pDay,
+                hour2: pHour,
+                minute2: pMinute,
+                city2: pCity,
+            };
+            
+            try {
+                const res = await fetch("/api/synastry", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                
+                if (result.error) return alert(result.error);
+                
+                showSynastryResult(result);
+            } catch(e) {
+                alert("Ошибка: " + e.message);
+            }
+        }
+        
+        function showSynastryResult(result) {
+            const scoreColor = result.score >= 70 ? "#4caf50" : result.score >= 50 ? "#ffc107" : "#f44336";
+            
+            let html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px;margin:20px 0;text-align:center;">';
+            html += '<h3 style="margin-bottom:20px;">💕 Совместимость</h3>';
+            html += '<div style="font-size:64px;font-weight:700;color:' + scoreColor + ';margin:20px 0;">' + result.score + '%</div>';
+            html += '<div style="font-size:20px;color:var(--text);margin-bottom:15px;">' + result.level + '</div>';
+            html += '<p style="color:var(--text-secondary);max-width:500px;margin:0 auto 20px;">' + result.description + '</p>';
+            html += '<div style="display:flex;justify-content:center;gap:30px;margin-top:20px;">';
+            html += '<div><span style="color:#4caf50;font-weight:700;">' + (result.positive_count || 0) + '</span> гармоничных</div>';
+            html += '<div><span style="color:#f44336;font-weight:700;">' + (result.challenging_count || 0) + '</span> напряжённых</div>';
+            html += '</div></div>';
+            
+            if (result.aspects && result.aspects.length > 0) {
+                html += '<h4 style="margin:20px 0 10px;">Ключевые аспекты</h4>';
+                result.aspects.forEach(function(a) {
+                    const color = a.is_positive ? "#4caf50" : a.is_challenging ? "#f44336" : "#888";
+                    html += '<div style="background:var(--card);border-left:3px solid ' + color + ';padding:12px 16px;margin:8px 0;border-radius:8px;">';
+                    html += '<b>' + a.p1 + '</b> ' + a.aspect + ' <b>' + a.p2 + '</b>';
+                    html += '</div>';
+                });
+            }
+            
+            document.getElementById("textsList").innerHTML = html;
+            document.getElementById("result").style.display = "block";
+            document.getElementById("form").style.display = "none";
+        }
+
+function setView(view) {
             currentView = view;
             document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`.view-tab[data-view="${view}"]`).classList.add('active');
