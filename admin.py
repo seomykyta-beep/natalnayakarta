@@ -8,19 +8,27 @@ app = FastAPI(title="Natal Admin")
 DB_PATH = Path(__file__).parent / 'data' / 'texts.db'
 
 CATEGORIES = [
-    ('natal_planets_signs', 'Натал: Планеты в знаках', ['planet', 'sign']),
-    ('natal_planets_houses', 'Натал: Планеты в домах', ['planet', 'house']),
-    ('natal_aspects', 'Натал: Аспекты', ['planet1', 'planet2', 'aspect']),
-    ('transit_aspects', 'Транзит: Аспекты к наталу', ['transit_planet', 'natal_planet', 'aspect']),
-    ('transit_planets_houses', 'Транзит: Планеты в домах', ['planet', 'house']),
-    ('solar_planets_signs', 'Соляр: Планеты в знаках', ['planet', 'sign']),
-    ('solar_planets_houses', 'Соляр: Планеты в домах', ['planet', 'house']),
-    ('solar_aspects', 'Соляр: Аспекты к наталу', ['solar_planet', 'natal_planet', 'aspect']),
-    ('lunar_planets_signs', 'Лунар: Планеты в знаках', ['planet', 'sign']),
-    ('lunar_planets_houses', 'Лунар: Планеты в домах', ['planet', 'house']),
-    ('lunar_aspects', 'Лунар: Аспекты к наталу', ['lunar_planet', 'natal_planet', 'aspect']),
-    ('synastry_aspects', 'Синастрия: Аспекты', ['planet1', 'planet2', 'aspect']),
-    ('synastry_planets_houses', 'Синастрия: Планеты в домах', ['planet', 'house']),
+    # НАТАЛ
+    ('natal_planets_signs', 'Натал: Планеты в знаках', ['planet', 'sign'], 'text'),
+    ('natal_planets_houses', 'Натал: Планеты в домах', ['planet', 'house'], 'text'),
+    ('natal_aspects', 'Натал: Аспекты', ['planet1', 'planet2', 'aspect'], 'text'),
+    # ТРАНЗИТ
+    ('transit_aspects', 'Транзит: Аспекты к наталу', ['transit_planet', 'natal_planet', 'aspect'], 'text'),
+    ('transit_planets_houses', 'Транзит: Планеты в домах', ['planet', 'house'], 'text'),
+    # СОЛЯР
+    ('solar_planets_signs', 'Соляр: Планеты в знаках', ['planet', 'sign'], 'text'),
+    ('solar_planets_houses', 'Соляр: Планеты в домах', ['planet', 'house'], 'text'),
+    ('solar_aspects', 'Соляр: Аспекты к наталу', ['solar_planet', 'natal_planet', 'aspect'], 'text'),
+    # ЛУНАР
+    ('lunar_planets_signs', 'Лунар: Планеты в знаках', ['planet', 'sign'], 'text'),
+    ('lunar_planets_houses', 'Лунар: Планеты в домах', ['planet', 'house'], 'text'),
+    ('lunar_aspects', 'Лунар: Аспекты к наталу', ['lunar_planet', 'natal_planet', 'aspect'], 'text'),
+    # СИНАСТРИЯ
+    ('synastry_aspects', 'Синастрия: Расшифровки аспектов', ['planet1', 'planet2', 'aspect'], 'text'),
+    ('synastry_planets_houses', 'Синастрия: Планеты в домах партнёра', ['planet', 'house'], 'text'),
+    ('synastry_spheres', 'Синастрия: Сферы совместимости', ['sphere', 'level'], 'text'),
+    ('synastry_levels', 'Синастрия: Уровни совместимости', ['level', 'title'], 'description'),
+    ('synastry_recommendations', 'Синастрия: Рекомендации', ['category', 'condition'], 'recommendation'),
 ]
 
 def get_db():
@@ -30,10 +38,10 @@ def get_stats():
     conn = get_db()
     cur = conn.cursor()
     stats = []
-    for table, name, _ in CATEGORIES:
+    for table, name, _, text_col in CATEGORIES:
         cur.execute(f"SELECT COUNT(*) FROM {table}")
         total = cur.fetchone()[0]
-        cur.execute(f"SELECT COUNT(*) FROM {table} WHERE length(text) > 10")
+        cur.execute(f"SELECT COUNT(*) FROM {table} WHERE length({text_col}) > 10")
         filled = cur.fetchone()[0]
         stats.append((table, name, total, filled, total - filled))
     conn.close()
@@ -99,7 +107,7 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
     if not cat:
         return "Категория не найдена"
     
-    table_name, name, columns = cat
+    table_name, name, columns, text_col = cat
     per_page = 50
     offset = (page - 1) * per_page
     
