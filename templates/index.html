@@ -965,7 +965,10 @@ function selectCity(name, lat, lon) {
                 h2.innerHTML = '<span id="resName" style="color: var(--accent)">' + name + '</span> — ' + (titleMap[mode] || 'расчет');
             }
             
+            // Обновляем отображение для всех режимов кроме синастрии
             if (!isSynastry && globalData) {
+                // Устанавливаем режим в данных
+                globalData.mode = mode;
                 updateDisplay();
             }
         }
@@ -1162,14 +1165,23 @@ function setView(view) {
             const tBody = document.getElementById('planetsTableBody');
             tBody.innerHTML = '';
             
+            const mode = currentMode || data.mode || 'transit';
+            const transitHeader = document.getElementById('transitColHeader');
+            
             // Определяем внешние планеты в зависимости от режима
             let transit = [];
-            if (data.mode === 'solar' && data.solar) {
+            if (mode === 'natal') {
+                transit = []; // Для натала не показываем транзиты
+                if (transitHeader) transitHeader.textContent = '';
+            } else if (mode === 'solar' && data.solar) {
                 transit = data.solar.planets || [];
-            } else if (data.mode === 'lunar' && data.lunar) {
+                if (transitHeader) transitHeader.textContent = 'Соляр';
+            } else if (mode === 'lunar' && data.lunar) {
                 transit = data.lunar.planets || [];
+                if (transitHeader) transitHeader.textContent = 'Лунар';
             } else {
                 transit = data.transit_planets || [];
+                if (transitHeader) transitHeader.textContent = 'Транзит';
             }
             
             const transitMap = {};

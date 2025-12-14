@@ -202,7 +202,7 @@ def generate_pdf(user_data):
     
     for p in planets[:10]:
         if p.get('text'):
-            header = f"{p.get('icon', '')} {p.get('name', '')} в {p.get('sign', '')}, {p.get('house', '')} дом"
+            header = f"{p.get('icon', '')} {p.get('name', '')} в {p.get('sign_locative', p.get('sign', ''))}, {p.get('house', '')} дом"
             story.append(Paragraph(header, planet_header))
             
             # Разбиваем текст на части если он слишком длинный
