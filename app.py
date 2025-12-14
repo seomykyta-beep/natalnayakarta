@@ -15,6 +15,7 @@ import logging
 from config import BOT_TOKEN, HOST, PORT, CHARTS_DIR, REPORTS_DIR, TEMPLATES_DIR, STATIC_DIR
 from engine import calculate_chart_with_mode, generate_pdf
 from core.auth import create_user, authenticate, create_session, get_user_by_token, update_profile, delete_session
+from core.synastry import calculate_synastry
 
 # Логирование
 logging.basicConfig(
@@ -318,6 +319,55 @@ async def get_pdf(name: str):
     if file_path.exists():
         return FileResponse(str(file_path), filename=f'Horoscope_{name}.pdf')
     return {'error': 'File not found'}
+
+class SynastryData(BaseModel):
+    name1: str
+    year1: int
+    month1: int
+    day1: int
+    hour1: int = 12
+    minute1: int = 0
+    city1: str = ''
+    lat1: float = 55.75
+    lon1: float = 37.62
+    gender1: str = 'M'
+    name2: str
+    year2: int
+    month2: int
+    day2: int
+    hour2: int = 12
+    minute2: int = 0
+    city2: str = ''
+    lat2: float = 55.75
+    lon2: float = 37.62
+
+
+@app.post('/api/synastry')
+async def api_synastry(data: SynastryData):
+    """API расчёта синастрии"""
+    logger.info(f'Synastry request: {data.name1} + {data.name2}')
+    
+    # Рассчитываем карты обоих партнёров
+    chart1 = calculate_chart_with_mode(
+        name=data.name1, year=data.year1, month=data.month1, day=data.day1,
+        hour=data.hour1, minute=data.minute1, city=data.city1,
+        lat=data.lat1, lon=data.lon1, gender=data.gender1, mode='natal'
+    )
+    
+    chart2 = calculate_chart_with_mode(
+        name=data.name2, year=data.year2, month=data.month2, day=data.day2,
+        hour=data.hour2, minute=data.minute2, city=data.city2,
+        lat=data.lat2, lon=data.lon2, gender='M', mode='natal'
+    )
+    
+    # Рассчитываем синастрию
+    result = calculate_synastry(chart1, chart2)
+    result['name1'] = data.name1
+    result['name2'] = data.name2
+    
+    logger.info(f'Synastry complete: {data.name1} + {data.name2}, score={result.get("score")}')
+    return result
+
 
 
 # Telegram Bot handlers
