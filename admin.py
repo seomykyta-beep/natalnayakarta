@@ -1,11 +1,16 @@
 """Админ-панель для управления текстами — расширенная версия"""
-from fastapi import FastAPI, Request, Form
+import base64
+import hmac
+from fastapi import FastAPI, Request, Form, Depends, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 import sqlite3
 from pathlib import Path
 
-app = FastAPI(title="Natal Admin")
+app = FastAPI(title="Natal Admin", docs_url=None, redoc_url=None, openapi_url=None)
 DB_PATH = Path(__file__).parent / 'data' / 'texts.db'
+
+ADMIN_USER = "admin"
+ADMIN_PASS = "astro2025"
 
 CATEGORIES = [
     # НАТАЛ
@@ -34,6 +39,27 @@ CATEGORIES = [
 def get_db():
     return sqlite3.connect(DB_PATH)
 
+def _unauthorized():
+    raise HTTPException(
+        status_code=401,
+        detail="Unauthorized",
+        headers={"WWW-Authenticate": 'Basic realm="Natal Admin"'}
+    )
+
+def require_basic_auth(request: Request):
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Basic "):
+        _unauthorized()
+    try:
+        raw = auth.split(" ", 1)[1].strip()
+        decoded = base64.b64decode(raw).decode("utf-8")
+        username, password = decoded.split(":", 1)
+    except Exception:
+        _unauthorized()
+    if not (hmac.compare_digest(username, ADMIN_USER) and hmac.compare_digest(password, ADMIN_PASS)):
+        _unauthorized()
+    return True
+
 def get_stats():
     conn = get_db()
     cur = conn.cursor()
@@ -41,14 +67,18 @@ def get_stats():
     for table, name, _, text_col in CATEGORIES:
         cur.execute(f"SELECT COUNT(*) FROM {table}")
         total = cur.fetchone()[0]
-        cur.execute(f"SELECT COUNT(*) FROM {table} WHERE length({text_col}) > 10")
+        cur.execute(f"SELECT COUNT(*) FROM {table} WHERE {text_col} IS NOT NULL AND length({text_col}) > 10")
         filled = cur.fetchone()[0]
         stats.append((table, name, total, filled, total - filled))
     conn.close()
     return stats
 
 @app.get("/", response_class=HTMLResponse)
-async def index():
+async def root(_auth: bool = Depends(require_basic_auth)):
+    return RedirectResponse("/admin", status_code=302)
+
+@app.get("/admin", response_class=HTMLResponse)
+async def index(_auth: bool = Depends(require_basic_auth)):
     stats = get_stats()
     total_all = sum(s[2] for s in stats)
     filled_all = sum(s[3] for s in stats)
@@ -59,7 +89,7 @@ async def index():
         color = "#4caf50" if pct == 100 else "#ffc107" if pct > 0 else "#f44336"
         rows += f"""<tr>
             <td>{i}</td>
-            <td><a href="/edit/{table}">{name}</a></td>
+            <td><a href="/admin/edit/{table}">{name}</a></td>
             <td>{total}</td>
             <td style="color:{color}">{filled}</td>
             <td>{empty}</td>
@@ -101,8 +131,8 @@ async def index():
     </table>
 </body></html>"""
 
-@app.get("/edit/{table}", response_class=HTMLResponse)
-async def edit_category(table: str, page: int = 1, filter: str = "all"):
+@app.get("/admin/edit/{table}", response_class=HTMLResponse)
+async def edit_category(table: str, page: int = 1, filter: str = "all", _auth: bool = Depends(require_basic_auth)):
     cat = next((c for c in CATEGORIES if c[0] == table), None)
     if not cat:
         return "Категория не найдена"
@@ -117,9 +147,9 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
     # Фильтр
     where = ""
     if filter == "empty":
-        where = "WHERE length(text) <= 10 OR text IS NULL OR text = ''"
+        where = f"WHERE {text_col} IS NULL OR length({text_col}) <= 10"
     elif filter == "filled":
-        where = "WHERE length(text) > 10"
+        where = f"WHERE {text_col} IS NOT NULL AND length({text_col}) > 10"
     
     cur.execute(f"SELECT COUNT(*) FROM {table} {where}")
     total = cur.fetchone()[0]
@@ -135,7 +165,7 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
     for row in rows:
         row_dict = dict(zip(col_names, row))
         keys = " | ".join(str(row_dict.get(c, "")) for c in columns)
-        text = row_dict.get("text", "") or ""
+        text = row_dict.get(text_col, "") or ""
         text_preview = text[:100] + "..." if len(text) > 100 else text
         has_text = len(text) > 10
         table_html += f"""<tr>
@@ -143,7 +173,7 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
             <td>{keys}</td>
             <td style="color:{'#4caf50' if has_text else '#f44336'}">{"✓" if has_text else "✗"}</td>
             <td style="max-width:400px;overflow:hidden;text-overflow:ellipsis">{text_preview}</td>
-            <td><a href="/edit/{table}/{row_dict['id']}">✏️</a></td>
+            <td><a href="/admin/edit/{table}/{row_dict['id']}">✏️</a></td>
         </tr>"""
     
     # Пагинация
@@ -152,7 +182,7 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
         if p == page:
             pagination += f"<span style='padding:5px 10px;background:#bf5af2;border-radius:4px'>{p}</span> "
         else:
-            pagination += f"<a href='/edit/{table}?page={p}&filter={filter}' style='padding:5px 10px'>{p}</a> "
+            pagination += f"<a href='/admin/edit/{table}?page={p}&filter={filter}' style='padding:5px 10px'>{p}</a> "
     
     return f"""<!DOCTYPE html>
 <html><head>
@@ -171,13 +201,13 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
         .pagination {{ margin:20px 0; }}
     </style>
 </head><body>
-    <a href="/">← Назад</a>
+    <a href="/admin">← Назад</a>
     <h1>{name}</h1>
     
     <div class="filters">
-        <a href="/edit/{table}?filter=all" class="{'active' if filter=='all' else ''}">Все ({total})</a>
-        <a href="/edit/{table}?filter=empty" class="{'active' if filter=='empty' else ''}">Пустые</a>
-        <a href="/edit/{table}?filter=filled" class="{'active' if filter=='filled' else ''}">Заполненные</a>
+        <a href="/admin/edit/{table}?filter=all" class="{'active' if filter=='all' else ''}">Все ({total})</a>
+        <a href="/admin/edit/{table}?filter=empty" class="{'active' if filter=='empty' else ''}">Пустые</a>
+        <a href="/admin/edit/{table}?filter=filled" class="{'active' if filter=='filled' else ''}">Заполненные</a>
     </div>
     
     <table>
@@ -188,11 +218,13 @@ async def edit_category(table: str, page: int = 1, filter: str = "all"):
     <div class="pagination">{pagination}</div>
 </body></html>"""
 
-@app.get("/edit/{table}/{id}", response_class=HTMLResponse)
-async def edit_item(table: str, id: int):
+@app.get("/admin/edit/{table}/{id}", response_class=HTMLResponse)
+async def edit_item(table: str, id: int, _auth: bool = Depends(require_basic_auth)):
     cat = next((c for c in CATEGORIES if c[0] == table), None)
     if not cat:
         return "Категория не найдена"
+    
+    table_name, name, columns, text_col = cat
     
     conn = get_db()
     cur = conn.cursor()
@@ -205,7 +237,7 @@ async def edit_item(table: str, id: int):
         return "Запись не найдена"
     
     row_dict = dict(zip(col_names, row))
-    text = row_dict.get("text", "") or ""
+    text = row_dict.get(text_col, "") or ""
     
     return f"""<!DOCTYPE html>
 <html><head>
@@ -219,11 +251,11 @@ async def edit_item(table: str, id: int):
         .info {{ background:#1a1a1a; padding:15px; border-radius:8px; margin:20px 0; }}
     </style>
 </head><body>
-    <a href="/edit/{table}">← Назад к списку</a>
+    <a href="/admin/edit/{table}">← Назад к списку</a>
     <h1>Редактирование</h1>
     
     <div class="info">
-        {' | '.join(f'<b>{k}:</b> {v}' for k, v in row_dict.items() if k not in ['id', 'text'])}
+        {' | '.join(f'<b>{k}:</b> {v}' for k, v in row_dict.items() if k not in ['id', text_col])}
     </div>
     
     <form method="post">
@@ -233,15 +265,19 @@ async def edit_item(table: str, id: int):
     </form>
 </body></html>"""
 
-@app.post("/edit/{table}/{id}")
-async def save_item(table: str, id: int, text: str = Form(...)):
+@app.post("/admin/edit/{table}/{id}")
+async def save_item(table: str, id: int, text: str = Form(...), _auth: bool = Depends(require_basic_auth)):
+    cat = next((c for c in CATEGORIES if c[0] == table), None)
+    if not cat:
+        return "Категория не найдена"
+    table_name, name, columns, text_col = cat
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(f"UPDATE {table} SET text = ? WHERE id = ?", (text, id))
+    cur.execute(f"UPDATE {table} SET {text_col} = ? WHERE id = ?", (text, id))
     conn.commit()
     conn.close()
-    return RedirectResponse(f"/edit/{table}", status_code=303)
+    return RedirectResponse(f"/admin/edit/{table}", status_code=303)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
