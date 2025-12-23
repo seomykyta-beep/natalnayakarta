@@ -213,6 +213,27 @@
             overflow: visible;
             box-sizing: border-box;
         }
+        
+        /* Zoomable chart wrapper */
+        .chart-zoom-wrapper {
+            overflow: hidden;
+            touch-action: pan-x pan-y pinch-zoom;
+            position: relative;
+        }
+        .chart-zoom-wrapper svg {
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+        .zoom-hint {
+            display: none;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            .zoom-hint { display: block; }
+        }
 
         /* View Tabs */
         .view-tabs {
@@ -662,6 +683,7 @@
 
             <!-- Chart -->
             <div id="chartDiv"></div>
+            <div class="zoom-hint">👆 Разведите пальцы для увеличения</div>
 
             <!-- Matrix & Tables -->
             <div class="scheme-box">
@@ -1622,6 +1644,67 @@ function setView(view) {
             link.download = `Transit_${name}.pdf`;
             link.click();
         }
-    </script>
+    
+        // Pinch-to-zoom for chart
+        (function() {
+            let scale = 1;
+            let startDist = 0;
+            let startScale = 1;
+            
+            function getDistance(touches) {
+                const dx = touches[0].clientX - touches[1].clientX;
+                const dy = touches[0].clientY - touches[1].clientY;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const chartDiv = document.getElementById('chartDiv');
+                if (!chartDiv) return;
+                
+                chartDiv.addEventListener('touchstart', function(e) {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        startDist = getDistance(e.touches);
+                        startScale = scale;
+                    }
+                }, { passive: false });
+                
+                chartDiv.addEventListener('touchmove', function(e) {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        const dist = getDistance(e.touches);
+                        scale = Math.min(3, Math.max(1, startScale * (dist / startDist)));
+                        const svg = chartDiv.querySelector('svg');
+                        if (svg) {
+                            svg.style.transform = 'scale(' + scale + ')';
+                        }
+                    }
+                }, { passive: false });
+                
+                chartDiv.addEventListener('touchend', function(e) {
+                    if (e.touches.length < 2) {
+                        // Reset to 1 if nearly 1
+                        if (scale < 1.1) {
+                            scale = 1;
+                            const svg = chartDiv.querySelector('svg');
+                            if (svg) svg.style.transform = 'scale(1)';
+                        }
+                    }
+                });
+                
+                // Double tap to reset
+                let lastTap = 0;
+                chartDiv.addEventListener('touchend', function(e) {
+                    const now = Date.now();
+                    if (now - lastTap < 300 && e.touches.length === 0) {
+                        scale = 1;
+                        const svg = chartDiv.querySelector('svg');
+                        if (svg) svg.style.transform = 'scale(1)';
+                    }
+                    lastTap = now;
+                });
+            });
+        })();
+</script>
 </body>
 </html>
