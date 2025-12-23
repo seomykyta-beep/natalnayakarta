@@ -127,7 +127,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': True,
         'dignity': '',
         'afetic_score': 0,
-        'text': 'Кармическая задача'
+        'text': ((get_interpretation('North_node', sign, gender, mode='natal') + '\n' + get_text('houses', 'North_node', f'House{house}', gender, mode='natal')).strip() or 'Кармическая задача')
     })
     
     south_node = (mean_node + 180) % 360
@@ -147,7 +147,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': True,
         'dignity': '',
         'afetic_score': 0,
-        'text': 'Прошлый опыт'
+        'text': ((get_interpretation('South_node', sign, gender, mode='natal') + '\n' + get_text('houses', 'South_node', f'House{house}', gender, mode='natal')).strip() or 'Прошлый опыт')
     })
     
     lilith = (mean_node + 90) % 360
@@ -167,7 +167,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': False,
         'dignity': '',
         'afetic_score': 0,
-        'text': 'Теневая сторона'
+        'text': ((get_interpretation('Lilith', sign, gender, mode='natal') + '\n' + get_text('houses', 'Lilith', f'House{house}', gender, mode='natal')).strip() or 'Теневая сторона')
     })
     
     # ASC и MC
@@ -186,7 +186,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': False,
         'dignity': '',
         'afetic_score': 0,
-        'text': 'Ваше внешнее Я'
+        'text': (f"Асцендент в {ZODIAC_SIGNS_LOCATIVE.get(sign, sign)} описывает ваш стиль проявления и первое впечатление. Это то, как вы входите в контакт с миром: темп, манера речи, пластика, границы.\n\nВ плюсе это дает ясный образ и уверенное самопредъявление; в минусе - игру в роль и зависимость от реакции. Полезно время от времени спрашивать себя: какой образ я транслирую и совпадает ли он с тем, что мне важно?\n\nПрактика: меньше доказывать, больше показывать через действия. Выбирайте один маленький жест (тон, поза, слово), который делает вас спокойнее и собраннее - и закрепляйте его.")
     })
     
     mc = houses[9]
@@ -204,7 +204,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': False,
         'dignity': '',
         'afetic_score': 0,
-        'text': 'Цель жизни'
+        'text': (f"Середина Неба в {ZODIAC_SIGNS_LOCATIVE.get(sign, sign)} показывает ваш вектор карьеры и репутации: за что вас узнают, где вы хотите быть полезным(ой), какой стиль ответственности для вас естественен.\n\nВ плюсе МС дает понятный профессиональный маршрут и способность собирать результаты; в минусе - страх оценки и жесткую зависимость от статуса. Важно строить путь не из тревоги, а из смысла.\n\nПрактика: сформулируйте одну долгую цель и разложите ее на квартальные шаги. Тогда МС раскрывается как опора: вы видите, что делать сегодня, и не теряете направление.")
     })
     
     aspects = find_aspects(planets_data)
