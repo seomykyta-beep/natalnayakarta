@@ -66,6 +66,9 @@ class UserData(BaseModel):
     transit_day: Optional[int] = None
     transit_hour: Optional[int] = None
     transit_minute: Optional[int] = None
+    transit_city: Optional[str] = None
+    transit_lat: Optional[float] = None
+    transit_lon: Optional[float] = None
     
     # Соляр
     solar_year: Optional[int] = None
@@ -293,6 +296,9 @@ async def api_calculate(data: UserData):
         transit_day=data.transit_day,
         transit_hour=data.transit_hour,
         transit_minute=data.transit_minute,
+        transit_city=data.transit_city,
+        transit_lat=data.transit_lat,
+        transit_lon=data.transit_lon,
         solar_year=data.solar_year,
         solar_city=data.solar_city,
         solar_lat=data.solar_lat,

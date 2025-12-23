@@ -229,6 +229,7 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
                         lat=None, lon=None,
                         transit_year=None, transit_month=None, transit_day=None,
                         transit_hour=None, transit_minute=None,
+                        transit_city=None, transit_lat=None, transit_lon=None,
                         custom_orbs=None, gender='male'):
     """Расчёт натальной карты с транзитами"""
     if not SKYFIELD_AVAILABLE:
@@ -253,11 +254,14 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
     }
     
     if transit_year and transit_month and transit_day:
-        transit_dt = tz.localize(datetime(
+        t_city = transit_city or city
+        t_lat, t_lon, t_tz_str = get_city_info(t_city, transit_lat or lat, transit_lon or lon)
+        t_tz = pytz.timezone(t_tz_str)
+        transit_dt = t_tz.localize(datetime(
             transit_year, transit_month, transit_day,
             transit_hour or 12, transit_minute or 0
         ))
-        transit_chart = build_chart(transit_dt, r_lat, r_lon, city)
+        transit_chart = build_chart(transit_dt, t_lat, t_lon, t_city)
         
         result['transit_planets'] = transit_chart['planets']
         result['transit_aspects'] = find_transit_aspects(
@@ -274,6 +278,7 @@ def calculate_chart_with_mode(name, year, month, day, hour, minute, city,
                               lat=None, lon=None, gender='male', mode='natal',
                               transit_year=None, transit_month=None, transit_day=None,
                               transit_hour=None, transit_minute=None,
+                              transit_city=None, transit_lat=None, transit_lon=None,
                               solar_year=None, solar_city=None, solar_lat=None, solar_lon=None,
                               lunar_year=None, lunar_month=None, lunar_city=None, lunar_lat=None, lunar_lon=None,
                               custom_orbs=None):
@@ -284,6 +289,7 @@ def calculate_chart_with_mode(name, year, month, day, hour, minute, city,
         lat, lon,
         transit_year, transit_month, transit_day,
         transit_hour, transit_minute,
+        transit_city, transit_lat, transit_lon,
         custom_orbs, gender
     )
     

@@ -19,6 +19,14 @@
             --border: rgba(255,255,255,0.08);
             --input-bg: rgba(0,0,0,0.4);
         }
+
+        :root { --blue: var(--accent); }
+
+        :root[data-theme="transit"] { --accent: #06d6a0; --accent-2: #118ab2; }
+        :root[data-theme="natal"] { --accent: #bf5af2; --accent-2: #5e5ce6; }
+        :root[data-theme="solar"] { --accent: #ffd60a; --accent-2: #ff9500; }
+        :root[data-theme="lunar"] { --accent: #a8dadc; --accent-2: #457b9d; }
+        :root[data-theme="synastry"] { --accent: #e91e63; --accent-2: #9c27b0; }
         
         * { box-sizing: border-box; }
         
@@ -511,6 +519,18 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>Текущее место (для транзита):</td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" id="transit_city" class="city-input" placeholder="Начните вводить город..." oninput="suggestTransitCity()" autocomplete="off">
+                            <div class="suggestions" id="transit_suggestions"></div>
+                        </div>
+                        <div class="coords" id="transitCoordsDisplay">Широта: —, Долгота: —</div>
+                        <input type="hidden" id="transit_lat">
+                        <input type="hidden" id="transit_lon">
+                    </td>
+                </tr>
             </table>
 
             <button class="calc-btn" id="calcBtn" onclick="calculate()">РАССЧИТАТЬ ТРАНЗИТЫ</button>
@@ -530,21 +550,43 @@
 
             <!-- Extra settings for Solar/Lunar -->
             <div id="solarSettings" class="extra-settings" style="display:none;">
-                <h4>☀️ Соляр — укажите год</h4>
-                <div class="row">
-                    <span>Год соляра:</span>
+                <h4>☀️ Соляр — год и место</h4>
+                <div class="row" style="gap:12px;">
+                    <span>Год:</span>
                     <input type="number" id="solar_year" style="width:100px">
-                    <button onclick="calculateSolar()" style="padding:12px 24px; background:linear-gradient(135deg, #ffd60a, #ff9500); border:none; color:#000; border-radius:10px; cursor:pointer; font-weight:600; font-size:14px;">Рассчитать соляр</button>
                 </div>
+                <div style="height:10px"></div>
+                <div>
+                    <div class="input-group">
+                        <input type="text" id="solar_city" class="city-input" placeholder="Город соляра (если не указать — город рождения)" oninput="suggestSolarCity()" autocomplete="off">
+                        <div class="suggestions" id="solar_suggestions"></div>
+                    </div>
+                    <div class="coords" id="solarCoordsDisplay">Широта: —, Долгота: —</div>
+                    <input type="hidden" id="solar_lat">
+                    <input type="hidden" id="solar_lon">
+                </div>
+                <div style="height:12px"></div>
+                <button onclick="calculateSolar()" style="padding:12px 24px; background:linear-gradient(135deg, #ffd60a, #ff9500); border:none; color:#000; border-radius:10px; cursor:pointer; font-weight:600; font-size:14px;">Рассчитать соляр</button>
             </div>
             <div id="lunarSettings" class="extra-settings" style="display:none;">
-                <h4>🌙 Лунар — укажите месяц</h4>
-                <div class="row">
+                <h4>🌙 Лунар — месяц и место</h4>
+                <div class="row" style="gap:12px;">
                     <span>Месяц:</span>
                     <input type="number" id="lunar_month" style="width:60px" placeholder="ММ">
                     <input type="number" id="lunar_year" style="width:100px" placeholder="ГГГГ">
-                    <button onclick="calculateLunar()" style="padding:12px 24px; background:linear-gradient(135deg, #a8dadc, #457b9d); border:none; color:#fff; border-radius:10px; cursor:pointer; font-weight:600; font-size:14px;">Рассчитать лунар</button>
                 </div>
+                <div style="height:10px"></div>
+                <div>
+                    <div class="input-group">
+                        <input type="text" id="lunar_city" class="city-input" placeholder="Город лунара (если не указать — город рождения)" oninput="suggestLunarCity()" autocomplete="off">
+                        <div class="suggestions" id="lunar_suggestions"></div>
+                    </div>
+                    <div class="coords" id="lunarCoordsDisplay">Широта: —, Долгота: —</div>
+                    <input type="hidden" id="lunar_lat">
+                    <input type="hidden" id="lunar_lon">
+                </div>
+                <div style="height:12px"></div>
+                <button onclick="calculateLunar()" style="padding:12px 24px; background:linear-gradient(135deg, #a8dadc, #457b9d); border:none; color:#fff; border-radius:10px; cursor:pointer; font-weight:600; font-size:14px;">Рассчитать лунар</button>
             </div>
             <!-- Synastry Form -->
             <div id="synastryForm" class="extra-settings" style="display:none;">
@@ -619,6 +661,7 @@
                     </thead>
                     <tbody id="planetsTableBody"></tbody>
                 </table>
+                <div id="planetsCards" class="data-cards"></div>
             </div>
 
             <!-- Texts -->
@@ -698,6 +741,7 @@
         window.addEventListener('load', () => {
             setDefaultDates();
             setupAutoFocus();
+            document.documentElement.dataset.theme = currentMode;
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
@@ -830,6 +874,156 @@ function selectCity(name, lat, lon) {
             document.getElementById('lon').value = lon;
             document.getElementById('coordsDisplay').textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
             document.getElementById('suggestions').style.display = 'none';
+        
+        // Transit city search
+        let transitAbortCtrl = null;
+        let transitSearchTimer = null;
+
+        function suggestTransitCity() {
+            const val = document.getElementById('transit_city').value.trim();
+            const list = document.getElementById('transit_suggestions');
+            if (val.length < 2) { if(list) list.style.display = 'none'; return; }
+            if (transitAbortCtrl) transitAbortCtrl.abort();
+            if (transitSearchTimer) clearTimeout(transitSearchTimer);
+            transitSearchTimer = setTimeout(() => searchTransitNominatim(val, list), 100);
+        }
+
+        async function searchTransitNominatim(val, list) {
+            transitAbortCtrl = new AbortController();
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: transitAbortCtrl.signal });
+                const data = await res.json();
+                if (!data.length) { list.style.display = 'none'; return; }
+                list.innerHTML = '';
+                list.style.display = 'block';
+                const seen = new Set();
+                data.forEach(p => {
+                    const addr = p.address || {};
+                    const cityName = addr.city || addr.town || addr.village || addr.hamlet || addr.locality || p.name || p.display_name.split(',')[0];
+                    const region = addr.state || addr.region || addr.county || '';
+                    const country = addr.country || '';
+                    const key = `${cityName}_${String(p.lat).substring(0,6)}`;
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    const location = [region, country].filter(Boolean).join(', ');
+                    div.innerHTML = `<span style="font-weight:500">${cityName}</span><span style="color:#86868b;font-size:12px;margin-left:8px">${location}</span>`;
+                    div.onclick = () => selectTransitCity(cityName, p.lat, p.lon);
+                    list.appendChild(div);
+                });
+            } catch(e) { if (e.name !== 'AbortError') console.error(e); }
+        }
+
+        function selectTransitCity(name, lat, lon) {
+            document.getElementById('transit_city').value = name;
+            document.getElementById('transit_lat').value = lat;
+            document.getElementById('transit_lon').value = lon;
+            const el = document.getElementById('transitCoordsDisplay');
+            if (el) el.textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
+            const list = document.getElementById('transit_suggestions');
+            if (list) list.style.display = 'none';
+        }
+
+        // Solar city search
+        let solarAbortCtrl = null;
+        let solarSearchTimer = null;
+
+        function suggestSolarCity() {
+            const val = document.getElementById('solar_city').value.trim();
+            const list = document.getElementById('solar_suggestions');
+            if (val.length < 2) { if(list) list.style.display = 'none'; return; }
+            if (solarAbortCtrl) solarAbortCtrl.abort();
+            if (solarSearchTimer) clearTimeout(solarSearchTimer);
+            solarSearchTimer = setTimeout(() => searchSolarNominatim(val, list), 100);
+        }
+
+        async function searchSolarNominatim(val, list) {
+            solarAbortCtrl = new AbortController();
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: solarAbortCtrl.signal });
+                const data = await res.json();
+                if (!data.length) { list.style.display = 'none'; return; }
+                list.innerHTML = '';
+                list.style.display = 'block';
+                const seen = new Set();
+                data.forEach(p => {
+                    const addr = p.address || {};
+                    const cityName = addr.city || addr.town || addr.village || addr.hamlet || addr.locality || p.name || p.display_name.split(',')[0];
+                    const region = addr.state || addr.region || addr.county || '';
+                    const country = addr.country || '';
+                    const key = `${cityName}_${String(p.lat).substring(0,6)}`;
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    const location = [region, country].filter(Boolean).join(', ');
+                    div.innerHTML = `<span style="font-weight:500">${cityName}</span><span style="color:#86868b;font-size:12px;margin-left:8px">${location}</span>`;
+                    div.onclick = () => selectSolarCity(cityName, p.lat, p.lon);
+                    list.appendChild(div);
+                });
+            } catch(e) { if (e.name !== 'AbortError') console.error(e); }
+        }
+
+        function selectSolarCity(name, lat, lon) {
+            document.getElementById('solar_city').value = name;
+            document.getElementById('solar_lat').value = lat;
+            document.getElementById('solar_lon').value = lon;
+            const el = document.getElementById('solarCoordsDisplay');
+            if (el) el.textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
+            const list = document.getElementById('solar_suggestions');
+            if (list) list.style.display = 'none';
+        }
+
+        // Lunar city search
+        let lunarAbortCtrl = null;
+        let lunarSearchTimer = null;
+
+        function suggestLunarCity() {
+            const val = document.getElementById('lunar_city').value.trim();
+            const list = document.getElementById('lunar_suggestions');
+            if (val.length < 2) { if(list) list.style.display = 'none'; return; }
+            if (lunarAbortCtrl) lunarAbortCtrl.abort();
+            if (lunarSearchTimer) clearTimeout(lunarSearchTimer);
+            lunarSearchTimer = setTimeout(() => searchLunarNominatim(val, list), 100);
+        }
+
+        async function searchLunarNominatim(val, list) {
+            lunarAbortCtrl = new AbortController();
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: lunarAbortCtrl.signal });
+                const data = await res.json();
+                if (!data.length) { list.style.display = 'none'; return; }
+                list.innerHTML = '';
+                list.style.display = 'block';
+                const seen = new Set();
+                data.forEach(p => {
+                    const addr = p.address || {};
+                    const cityName = addr.city || addr.town || addr.village || addr.hamlet || addr.locality || p.name || p.display_name.split(',')[0];
+                    const region = addr.state || addr.region || addr.county || '';
+                    const country = addr.country || '';
+                    const key = `${cityName}_${String(p.lat).substring(0,6)}`;
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    const location = [region, country].filter(Boolean).join(', ');
+                    div.innerHTML = `<span style="font-weight:500">${cityName}</span><span style="color:#86868b;font-size:12px;margin-left:8px">${location}</span>`;
+                    div.onclick = () => selectLunarCity(cityName, p.lat, p.lon);
+                    list.appendChild(div);
+                });
+            } catch(e) { if (e.name !== 'AbortError') console.error(e); }
+        }
+
+        function selectLunarCity(name, lat, lon) {
+            document.getElementById('lunar_city').value = name;
+            document.getElementById('lunar_lat').value = lat;
+            document.getElementById('lunar_lon').value = lon;
+            const el = document.getElementById('lunarCoordsDisplay');
+            if (el) el.textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
+            const list = document.getElementById('lunar_suggestions');
+            if (list) list.style.display = 'none';
+        }
         }
 
         document.addEventListener('click', (e) => {
@@ -874,7 +1068,10 @@ function selectCity(name, lat, lon) {
                 transit_month: parseInt(document.getElementById('t_month').value),
                 transit_day: parseInt(document.getElementById('t_day').value),
                 transit_hour: parseInt(document.getElementById('t_hour').value),
-                transit_minute: parseInt(document.getElementById('t_minute').value)
+                transit_minute: parseInt(document.getElementById('t_minute').value),
+                transit_city: document.getElementById('transit_city').value || document.getElementById('city').value,
+                transit_lat: parseFloat(document.getElementById('transit_lat').value) || (parseFloat(document.getElementById('lat').value) || null),
+                transit_lon: parseFloat(document.getElementById('transit_lon').value) || (parseFloat(document.getElementById('lon').value) || null)
             };
 
             try {
@@ -971,13 +1168,19 @@ function selectCity(name, lat, lon) {
                 globalData.mode = mode;
                 updateDisplay();
             }
+
+            document.documentElement.dataset.theme = mode;
         }
 
         async function calculateSolar() {
             const year = parseInt(document.getElementById('solar_year').value);
             if (!year) return alert('Укажите год');
             
-            const data = {...birthData, mode: 'solar', solar_year: year};
+            const data = {...birthData, mode: 'solar', solar_year: year,
+                solar_city: document.getElementById('solar_city').value || birthData.city,
+                solar_lat: parseFloat(document.getElementById('solar_lat').value) || birthData.lat || null,
+                solar_lon: parseFloat(document.getElementById('solar_lon').value) || birthData.lon || null
+            };
             const res = await fetch('/api/calculate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -994,7 +1197,11 @@ function selectCity(name, lat, lon) {
             const year = parseInt(document.getElementById('lunar_year').value);
             if (!month || !year) return alert('Укажите месяц и год');
             
-            const data = {...birthData, mode: 'lunar', lunar_month: month, lunar_year: year};
+            const data = {...birthData, mode: 'lunar', lunar_month: month, lunar_year: year,
+                lunar_city: document.getElementById('lunar_city').value || birthData.city,
+                lunar_lat: parseFloat(document.getElementById('lunar_lat').value) || birthData.lat || null,
+                lunar_lon: parseFloat(document.getElementById('lunar_lon').value) || birthData.lon || null
+            };
             const res = await fetch('/api/calculate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -1149,7 +1356,7 @@ function setView(view) {
             document.getElementById('resCity').textContent = data.meta.city;
             
             if (data.transit_meta) {
-                document.getElementById('resTransit').textContent = `Транзиты на: ${data.transit_meta.dt}`;
+                document.getElementById('resTransit').textContent = `Транзиты на: ${data.transit_meta.dt} • место: ${data.transit_meta.city}`;
             }
             
             renderPlanetsTable(data);
@@ -1164,6 +1371,8 @@ function setView(view) {
         function renderPlanetsTable(data) {
             const tBody = document.getElementById('planetsTableBody');
             tBody.innerHTML = '';
+            const cards = document.getElementById('planetsCards');
+            if (cards) cards.innerHTML = '';
             
             const mode = currentMode || data.mode || 'transit';
             const transitHeader = document.getElementById('transitColHeader');
@@ -1205,6 +1414,23 @@ function setView(view) {
                     <td>${p.dignity ? '<span style="color:' + (p.dignity=="Обитель"?'#4caf50':p.dignity=="Экзальтация"?'#8bc34a':p.dignity=="Изгнание"?'#f44336':'#ff9800') + '; font-weight:bold;">' + p.dignity + '</span>' : '—'}</td>
                     <td class="transit-cell">${op ? formatPos(op) + oRetro : '—'}</td>
                 </tr>`;
+
+                if (cards) {
+                    const dign = p.dignity || '—';
+                    const tLabel = (mode === 'solar' ? 'Соляр' : mode === 'lunar' ? 'Лунар' : 'Транзит');
+                    const tVal = (op ? (formatPos(op) + oRetro) : '—');
+                    cards.innerHTML += `<div class="data-card">
+                        <div class="row1">
+                            <div class="pname">${p.icon} ${p.name} ${retro}</div>
+                            <div class="pill">${tLabel}</div>
+                        </div>
+                        <div class="grid">
+                            <div><div class="k">Натал</div><div class="v">${formatPos(p)}</div></div>
+                            <div><div class="k">${tLabel}</div><div class="v">${tVal}</div></div>
+                            <div style="grid-column:1/-1"><div class="k">Достоинство</div><div class="v">${dign}</div></div>
+                        </div>
+                    </div>`;
+                }
             });
         }
 
