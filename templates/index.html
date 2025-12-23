@@ -1166,6 +1166,8 @@ function selectCity(name, lat, lon) {
             if (!isSynastry && globalData) {
                 // Устанавливаем режим в данных
                 globalData.mode = mode;
+                renderPlanetsTable(globalData);
+                renderTexts(globalData);
                 updateDisplay();
             }
 
@@ -1189,6 +1191,8 @@ function selectCity(name, lat, lon) {
             const result = await res.json();
             if (result.error) return alert(result.error);
             globalData = result;
+            renderPlanetsTable(result);
+            renderTexts(result);
             updateDisplay();
         }
 
@@ -1379,18 +1383,24 @@ function setView(view) {
             
             // Определяем внешние планеты в зависимости от режима
             let transit = [];
+            const transitCells = document.querySelectorAll('.transit-cell');
             if (mode === 'natal') {
-                transit = []; // Для натала не показываем транзиты
-                if (transitHeader) transitHeader.textContent = '';
+                transit = [];
+                if (transitHeader) transitHeader.style.display = 'none';
+                transitCells.forEach(c => c.style.display = 'none');
             } else if (mode === 'solar' && data.solar) {
+                if (transitHeader) transitHeader.style.display = '';
+                transitCells.forEach(c => c.style.display = '');
                 transit = data.solar.planets || [];
                 if (transitHeader) transitHeader.textContent = 'Соляр';
             } else if (mode === 'lunar' && data.lunar) {
                 transit = data.lunar.planets || [];
-                if (transitHeader) transitHeader.textContent = 'Лунар';
+                if (transitHeader) { transitHeader.textContent = 'Лунар'; transitHeader.style.display = ''; }
+                transitCells.forEach(c => c.style.display = '');
             } else {
                 transit = data.transit_planets || [];
-                if (transitHeader) transitHeader.textContent = 'Транзит';
+                if (transitHeader) { transitHeader.textContent = 'Транзит'; transitHeader.style.display = ''; }
+                transitCells.forEach(c => c.style.display = '');
             }
             
             const transitMap = {};
@@ -1438,24 +1448,71 @@ function setView(view) {
             const container = document.getElementById('textsList');
             container.innerHTML = '';
             
-            data.planets.forEach(p => {
-                if (p.text && p.key !== 'ASC' && p.key !== 'MC') {
-                    container.innerHTML += `<div class="planet-text-block">
-                        <div class="planet-text-header">${p.icon} ${p.name} в ${p.sign_locative || p.sign}, ${p.house} дом</div>
-                        <div class="planet-text-body">${p.text}</div>
-                    </div>`;
-                }
-            });
-
-            const colors = {Square:'#ff5555', Opposition:'#ff5555', Trine:'#8bc34a', Sextile:'#4dd0e1', Conjunction:'#4fc3f7'};
+            const mode = currentMode || data.mode || 'transit';
+            const colors = {Square:'#ff5555', Opposition:'#ff5555', Trine:'#8bc34a', Sextile:'#4dd0e1', Conjunction:'#4fc3f7', Quincunx:'#ff9800'};
             const symbols = {Conjunction:'☌', Sextile:'✶', Square:'□', Trine:'△', Opposition:'☍', Quincunx:'⤻'};
             
-            data.aspects.forEach(a => {
-                container.innerHTML += `<div class="planet-text-block" style="border-left-color:${colors[a.type]||'#ccc'}">
-                    <div class="planet-text-header"><span style="color:${colors[a.type]||'#ccc'}">${symbols[a.type]||'●'}</span> ${a.p1} — ${a.p2} (${a.name || a.type})</div>
-                    <div class="planet-text-body">${a.text || ''}</div>
-                </div>`;
-            });
+            if (mode === 'natal') {
+                data.planets.forEach(p => {
+                    if (p.text && p.key !== 'ASC' && p.key !== 'MC') {
+                        container.innerHTML += `<div class="planet-text-block">
+                            <div class="planet-text-header">${p.icon} ${p.name} в ${p.sign_locative || p.sign}, ${p.house} дом</div>
+                            <div class="planet-text-body">${p.text}</div>
+                        </div>`;
+                    }
+                });
+                data.aspects.forEach(a => {
+                    container.innerHTML += `<div class="planet-text-block" style="border-left-color:${colors[a.type]||'#ccc'}">
+                        <div class="planet-text-header"><span style="color:${colors[a.type]||'#ccc'}">${symbols[a.type]||'●'}</span> ${a.p1} — ${a.p2} (${a.name || a.type})</div>
+                        <div class="planet-text-body">${a.text || ''}</div>
+                    </div>`;
+                });
+            } 
+            else if (mode === 'transit') {
+                const transitAspects = data.transit_aspects || [];
+                if (transitAspects.length > 0) {
+                    container.innerHTML += '<h3 style="margin:20px 0 10px;color:var(--accent)">Транзитные аспекты</h3>';
+                    transitAspects.forEach(a => {
+                        container.innerHTML += `<div class="planet-text-block" style="border-left-color:${colors[a.type]||'#ccc'}">
+                            <div class="planet-text-header"><span style="color:${colors[a.type]||'#ccc'}">${symbols[a.type]||'●'}</span> тр.${a.p1} → ${a.p2} (${a.name || a.type})</div>
+                            <div class="planet-text-body">${a.text || ''}</div>
+                        </div>`;
+                    });
+                } else {
+                    container.innerHTML += '<p style="color:#888">Транзитные аспекты не найдены</p>';
+                }
+            }
+            else if (mode === 'solar' && data.solar) {
+                const solarAspects = data.solar.aspects || [];
+                container.innerHTML += '<h3 style="margin:20px 0 10px;color:var(--accent)">Соляр: аспекты к натальным планетам</h3>';
+                if (solarAspects.length > 0) {
+                    solarAspects.forEach(a => {
+                        container.innerHTML += `<div class="planet-text-block" style="border-left-color:${colors[a.type]||'#ccc'}">
+                            <div class="planet-text-header"><span style="color:${colors[a.type]||'#ccc'}">${symbols[a.type]||'●'}</span> сол.${a.p1} → ${a.p2} (${a.name || a.type})</div>
+                            <div class="planet-text-body">${a.text || ''}</div>
+                        </div>`;
+                    });
+                } else {
+                    container.innerHTML += '<p style="color:#888">Нажмите Рассчитать соляр</p>';
+                }
+            }
+            else if (mode === 'lunar' && data.lunar) {
+                const lunarAspects = data.lunar.aspects || [];
+                container.innerHTML += '<h3 style="margin:20px 0 10px;color:var(--accent)">Лунар: аспекты к натальным планетам</h3>';
+                if (lunarAspects.length > 0) {
+                    lunarAspects.forEach(a => {
+                        container.innerHTML += `<div class="planet-text-block" style="border-left-color:${colors[a.type]||'#ccc'}">
+                            <div class="planet-text-header"><span style="color:${colors[a.type]||'#ccc'}">${symbols[a.type]||'●'}</span> лун.${a.p1} → ${a.p2} (${a.name || a.type})</div>
+                            <div class="planet-text-body">${a.text || ''}</div>
+                        </div>`;
+                    });
+                } else {
+                    container.innerHTML += '<p style="color:#888">Нажмите Рассчитать лунар</p>';
+                }
+            }
+            else {
+                container.innerHTML += '<p style="color:#888">Выберите режим</p>';
+            }
         }
 
         function drawChart(planets, cusps, aspects, transit) {
