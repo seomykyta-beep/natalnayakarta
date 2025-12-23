@@ -5,22 +5,25 @@ class NatalChart {
         this.cx = size / 2;
         this.cy = size / 2;
         this.ns = "http://www.w3.org/2000/svg";
+        
+        // Mobile detection
+        this.isMobile = size < 400;
 
-        // Радиусы для одиночной карты
-        this.rOuter = size / 2 - 5;
-        this.rOuterAccent = this.rOuter - 15;
-        this.rRulerOuter = this.rOuterAccent - 12;
-        this.rRulerInner = this.rRulerOuter - 18;
-        this.rZodiacOuter = this.rRulerInner - 12;
-        this.rZodiacInner = this.rZodiacOuter - 35;
-        this.rPlanetBase = this.rZodiacInner - 15;
-        this.rAspect = this.rPlanetBase - 55;
-        this.rHouseText = this.rAspect - 15;
+        // Радиусы для одиночной карты (адаптивные)
+        this.rOuter = size / 2 - 3;
+        this.rOuterAccent = this.rOuter - (this.isMobile ? 6 : 15);
+        this.rRulerOuter = this.rOuterAccent - (this.isMobile ? 6 : 12);
+        this.rRulerInner = this.rRulerOuter - (this.isMobile ? 10 : 18);
+        this.rZodiacOuter = this.rRulerInner - (this.isMobile ? 6 : 12);
+        this.rZodiacInner = this.rZodiacOuter - (this.isMobile ? 22 : 35);
+        this.rPlanetBase = this.rZodiacInner - (this.isMobile ? 10 : 15);
+        this.rAspect = this.rPlanetBase - (this.isMobile ? 35 : 55);
+        this.rHouseText = this.rAspect - (this.isMobile ? 8 : 15);
 
-        // Радиусы для двойной карты
-        this.rOuterRing = size / 2 - 5;
-        this.rTransitOuter = this.rOuterRing - 10;
-        this.rTransitInner = this.rTransitOuter - 40;
+        // Радиусы для двойной карты (адаптивные)
+        this.rOuterRing = size / 2 - 3;
+        this.rTransitOuter = this.rOuterRing - (this.isMobile ? 5 : 10);
+        this.rTransitInner = this.rTransitOuter - (this.isMobile ? 25 : 40);
         
         this.svg = document.createElementNS(this.ns, "svg");
         this.svg.setAttribute("width", size);
@@ -77,17 +80,18 @@ class NatalChart {
 
     drawDualChart(data) {
         const s = this.size;
-        this.rOuter = s / 2 - 5;
-        this.rTransitOuter = this.rOuter - 10;
-        this.rTransitInner = this.rTransitOuter - 45;
-        this.rOuterAccent = this.rTransitInner - 5;
-        this.rRulerOuter = this.rOuterAccent - 8;
-        this.rRulerInner = this.rRulerOuter - 12;
-        this.rZodiacOuter = this.rRulerInner - 8;
-        this.rZodiacInner = this.rZodiacOuter - 28;
-        this.rPlanetBase = this.rZodiacInner - 12;
-        this.rAspect = this.rPlanetBase - 40;
-        this.rHouseText = this.rAspect - 10;
+        const m = this.isMobile;
+        this.rOuter = s / 2 - 3;
+        this.rTransitOuter = this.rOuter - (m ? 4 : 10);
+        this.rTransitInner = this.rTransitOuter - (m ? 28 : 45);
+        this.rOuterAccent = this.rTransitInner - (m ? 3 : 5);
+        this.rRulerOuter = this.rOuterAccent - (m ? 4 : 8);
+        this.rRulerInner = this.rRulerOuter - (m ? 6 : 12);
+        this.rZodiacOuter = this.rRulerInner - (m ? 4 : 8);
+        this.rZodiacInner = this.rZodiacOuter - (m ? 18 : 28);
+        this.rPlanetBase = this.rZodiacInner - (m ? 8 : 12);
+        this.rAspect = this.rPlanetBase - (m ? 25 : 40);
+        this.rHouseText = this.rAspect - (m ? 6 : 10);
 
         this.drawDualBackground();
         this.drawOuterTransitRing(data.outerPlanets);
@@ -178,7 +182,7 @@ class NatalChart {
             this.setAttr(text, "y", ty);
             this.setAttr(text, "text-anchor", "middle");
             this.setAttr(text, "dominant-baseline", "central");
-            this.setAttr(text, "font-size", "16");
+            this.setAttr(text, "font-size", this.isMobile ? "11" : "16");
             this.setAttr(text, "fill", "#333");
             text.textContent = this.signs[i];
             this.svg.appendChild(text);
@@ -216,7 +220,7 @@ class NatalChart {
             this.setAttr(text, "y", ty);
             this.setAttr(text, "text-anchor", "middle");
             this.setAttr(text, "dominant-baseline", "central");
-            this.setAttr(text, "font-size", "10");
+            this.setAttr(text, "font-size", this.isMobile ? "7" : "10");
             this.setAttr(text, "fill", "#666");
             text.textContent = (i + 1).toString();
             this.svg.appendChild(text);
@@ -246,7 +250,7 @@ class NatalChart {
             this.setAttr(text, "y", y);
             this.setAttr(text, "text-anchor", "middle");
             this.setAttr(text, "dominant-baseline", "central");
-            this.setAttr(text, "font-size", "14");
+            this.setAttr(text, "font-size", this.isMobile ? "10" : "14");
             this.setAttr(text, "font-weight", "bold");
             this.setAttr(text, "fill", this.glyphColors[p.key] || "#333");
             text.textContent = this.planetIcons[p.key] || p.icon || "●";
@@ -268,7 +272,7 @@ class NatalChart {
             this.setAttr(text, "y", y);
             this.setAttr(text, "text-anchor", "middle");
             this.setAttr(text, "dominant-baseline", "central");
-            this.setAttr(text, "font-size", "12");
+            this.setAttr(text, "font-size", this.isMobile ? "9" : "12");
             this.setAttr(text, "fill", "#0097a7");
             text.textContent = this.planetIcons[p.key] || p.icon || "●";
             this.svg.appendChild(text);
