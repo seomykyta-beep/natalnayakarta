@@ -73,7 +73,7 @@
             backdrop-filter: blur(40px);
             border: 1px solid var(--border);
             border-radius: 16px;
-            overflow: hidden;
+            overflow: visible;
         }
         
         .form-table tr { border-bottom: 1px solid var(--border); }
@@ -206,7 +206,7 @@
             padding: 20px;
             margin: 24px auto;
             max-width: 600px;
-            overflow: hidden;
+            overflow: visible;
             box-sizing: border-box;
         }
 
@@ -245,7 +245,7 @@
             backdrop-filter: blur(40px);
             border: 1px solid var(--border);
             border-radius: 16px;
-            overflow: hidden;
+            overflow: visible;
             font-size: 14px;
         }
         
@@ -687,7 +687,7 @@
         let birthData = {};
 
 
-        // Автоматический переход между полями
+                // Автоматический переход между полями
         function setupAutoFocus() {
             const fieldGroups = [
                 ['day', 'month', 'year', 'hour', 'minute', 'city'],
@@ -716,7 +716,10 @@
                                 if (nextField) nextField.focus();
                             }
                         });
-                    
+                    }
+                });
+            });
+
             // Автопереход для полей синастрии
             const synFields = ['partner_day', 'partner_month', 'partner_year', 'partner_hour', 'partner_minute', 'partner_city'];
             synFields.forEach((fieldId, index) => {
@@ -731,9 +734,6 @@
                         }
                     });
                 }
-            });
-}
-                });
             });
         }
 
@@ -793,7 +793,7 @@
                     return; 
                 }
                 
-                list.innerHTML = '';
+                console.log("Found", data.length, "results for", val); list.innerHTML = '';
                 list.style.display = 'block';
                 
                 const seen = new Set();
@@ -841,7 +841,7 @@
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: partnerAbortCtrl.signal });
                 const data = await res.json();
                 if (!data.length) { list.style.display = 'none'; return; }
-                list.innerHTML = ''; list.style.display = 'block';
+                console.log("Found", data.length, "results for", val); list.innerHTML = ''; list.style.display = 'block';
                 const seen = new Set();
                 data.forEach(p => {
                     const addr = p.address || {};
@@ -874,6 +874,7 @@ function selectCity(name, lat, lon) {
             document.getElementById('lon').value = lon;
             document.getElementById('coordsDisplay').textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
             document.getElementById('suggestions').style.display = 'none';
+        }
         
         // Transit city search
         let transitAbortCtrl = null;
@@ -894,7 +895,7 @@ function selectCity(name, lat, lon) {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: transitAbortCtrl.signal });
                 const data = await res.json();
                 if (!data.length) { list.style.display = 'none'; return; }
-                list.innerHTML = '';
+                console.log("Found", data.length, "results for", val); list.innerHTML = '';
                 list.style.display = 'block';
                 const seen = new Set();
                 data.forEach(p => {
@@ -944,7 +945,7 @@ function selectCity(name, lat, lon) {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: solarAbortCtrl.signal });
                 const data = await res.json();
                 if (!data.length) { list.style.display = 'none'; return; }
-                list.innerHTML = '';
+                console.log("Found", data.length, "results for", val); list.innerHTML = '';
                 list.style.display = 'block';
                 const seen = new Set();
                 data.forEach(p => {
@@ -994,7 +995,7 @@ function selectCity(name, lat, lon) {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&accept-language=ru&addressdetails=1&limit=8`, { signal: lunarAbortCtrl.signal });
                 const data = await res.json();
                 if (!data.length) { list.style.display = 'none'; return; }
-                list.innerHTML = '';
+                console.log("Found", data.length, "results for", val); list.innerHTML = '';
                 list.style.display = 'block';
                 const seen = new Set();
                 data.forEach(p => {
@@ -1023,7 +1024,6 @@ function selectCity(name, lat, lon) {
             if (el) el.textContent = `Широта: ${parseFloat(lat).toFixed(4)}, Долгота: ${parseFloat(lon).toFixed(4)}`;
             const list = document.getElementById('lunar_suggestions');
             if (list) list.style.display = 'none';
-        }
         }
 
         document.addEventListener('click', (e) => {
