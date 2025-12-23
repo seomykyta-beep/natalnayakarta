@@ -1,6 +1,9 @@
 """Расчёт синастрии — совместимость двух людей"""
 
 
+from .texts import get_db_aspect_text
+
+
 def calculate_synastry(chart1, chart2):
     """
     Рассчитывает совместимость двух натальных карт.
@@ -99,6 +102,8 @@ def calculate_synastry(chart1, chart2):
                     
                     total_score += score_delta
                     
+                    # Get text from DB
+                    aspect_text = get_db_aspect_text(key1, key2, aspect_en, mode="synastry", outer_planet=key1, natal_planet=key2)
                     synastry_aspects.append({
                         'p1': p1.get('name', key1),
                         'p1_key': key1,
@@ -110,6 +115,7 @@ def calculate_synastry(chart1, chart2):
                         'is_positive': is_positive,
                         'is_challenging': is_challenging,
                         'score': round(score_delta, 1),
+                        'text': aspect_text or '',
                     })
                     break
     

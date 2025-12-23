@@ -179,7 +179,26 @@ def get_db_aspect_text(planet1, planet2, aspect_type, mode="natal", outer_planet
             row = cur.fetchone()
         return (row["text"] if row else "") or ""
 
+    if mode == "synastry":
+        cur.execute("SELECT text FROM synastry_aspects WHERE planet1=? AND planet2=? AND aspect=?", (op, np, aspect_type))
+        row = cur.fetchone()
+        if not row:
+            cur.execute("SELECT text FROM synastry_aspects WHERE planet1=? AND planet2=? AND aspect=?", (np, op, aspect_type))
+            row = cur.fetchone()
+        return (row["text"] if row else "") or ""
+
     return ""
+
+
+def get_transit_house_text(planet_key, house_num):
+    """Get text for transit planet in natal house"""
+    con = _db()
+    if con is None:
+        return ""
+    cur = con.cursor()
+    cur.execute("SELECT text FROM transit_planets_houses WHERE planet=? AND house=?", (planet_key, house_num))
+    row = cur.fetchone()
+    return (row["text"] if row else "") or ""
 
 
 def get_aspect_text(planet1, planet2, aspect_type, mode="natal"):

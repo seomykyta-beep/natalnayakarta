@@ -7,8 +7,8 @@ import pytz
 from skyfield.api import load
 
 from .constants import ZODIAC_SIGNS, ZODIAC_ICONS, PLANET_NAMES, PLANET_ICONS, ZODIAC_SIGNS_LOCATIVE
-from .texts import TEXTS, get_text, get_interpretation
-from .aspects import find_aspects, find_transit_aspects
+from .texts import TEXTS, get_text, get_interpretation, get_transit_house_text
+from .aspects import find_aspects, find_transit_aspects, find_solar_aspects, find_lunar_aspects
 from .houses import calculate_houses, get_house_placement
 from .dignities import calculate_dignity, calculate_afetics
 
@@ -173,6 +173,9 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
     # ASC и MC
     asc = houses[0]
     sign, deg, icon = degrees_to_zodiac(asc)
+    asc_text = get_interpretation('ASC', sign, gender, mode='natal')
+    if not asc_text:
+        asc_text = f"Асцендент в {ZODIAC_SIGNS_LOCATIVE.get(sign, sign)} описывает ваш стиль проявления и первое впечатление. Это то, как вы входите в контакт с миром."
     planets_data.append({
         'name': 'Асцендент',
         'key': 'ASC',
@@ -186,11 +189,14 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': False,
         'dignity': '',
         'afetic_score': 0,
-        'text': (f"Асцендент в {ZODIAC_SIGNS_LOCATIVE.get(sign, sign)} описывает ваш стиль проявления и первое впечатление. Это то, как вы входите в контакт с миром: темп, манера речи, пластика, границы.\n\nВ плюсе это дает ясный образ и уверенное самопредъявление; в минусе - игру в роль и зависимость от реакции. Полезно время от времени спрашивать себя: какой образ я транслирую и совпадает ли он с тем, что мне важно?\n\nПрактика: меньше доказывать, больше показывать через действия. Выбирайте один маленький жест (тон, поза, слово), который делает вас спокойнее и собраннее - и закрепляйте его.")
+        'text': asc_text
     })
     
     mc = houses[9]
     sign, deg, icon = degrees_to_zodiac(mc)
+    mc_text = get_interpretation('MC', sign, gender, mode='natal')
+    if not mc_text:
+        mc_text = f"Середина Неба в {ZODIAC_SIGNS_LOCATIVE.get(sign, sign)} показывает ваш вектор карьеры и репутации."
     planets_data.append({
         'name': 'Середина Неба',
         'key': 'MC',
@@ -204,7 +210,7 @@ def build_chart(local_dt, latitude, longitude, city_label, gender='male'):
         'retrograde': False,
         'dignity': '',
         'afetic_score': 0,
-        'text': (f"Середина Неба в {ZODIAC_SIGNS_LOCATIVE.get(sign, sign)} показывает ваш вектор карьеры и репутации: за что вас узнают, где вы хотите быть полезным(ой), какой стиль ответственности для вас естественен.\n\nВ плюсе МС дает понятный профессиональный маршрут и способность собирать результаты; в минусе - страх оценки и жесткую зависимость от статуса. Важно строить путь не из тревоги, а из смысла.\n\nПрактика: сформулируйте одну долгую цель и разложите ее на квартальные шаги. Тогда МС раскрывается как опора: вы видите, что делать сегодня, и не теряете направление.")
+        'text': mc_text
     })
     
     aspects = find_aspects(planets_data)
@@ -263,6 +269,24 @@ def calculate_real_chart(name, year, month, day, hour, minute, city,
         ))
         transit_chart = build_chart(transit_dt, t_lat, t_lon, t_city)
         
+        # Calculate which natal house each transit planet is in
+        natal_houses = natal_chart['houses']
+        for tp in transit_chart['planets']:
+            tp_pos = tp.get('abs_pos', 0)
+            # Find which natal house this position falls into
+            for i in range(12):
+                house_start = natal_houses[i]
+                house_end = natal_houses[(i + 1) % 12]
+                if house_end < house_start:  # Crosses 0 degrees
+                    if tp_pos >= house_start or tp_pos < house_end:
+                        tp['natal_house'] = i + 1
+                        tp['house_text'] = get_transit_house_text(tp.get('key'), i + 1)
+                        break
+                else:
+                    if house_start <= tp_pos < house_end:
+                        tp['natal_house'] = i + 1
+                        tp['house_text'] = get_transit_house_text(tp.get('key'), i + 1)
+                        break
         result['transit_planets'] = transit_chart['planets']
         result['transit_aspects'] = find_transit_aspects(
             natal_chart['planets'],
@@ -309,6 +333,11 @@ def calculate_chart_with_mode(name, year, month, day, hour, minute, city,
                 month, day
             )
             result['solar'] = solar_data
+            # Calculate cross-aspects solar -> natal
+            result['solar']['aspects'] = find_solar_aspects(
+                result['planets'],
+                solar_data['planets']
+            )
     
     elif mode == 'lunar' and lunar_year and lunar_month:
         from .lunar import find_lunar_return
@@ -323,5 +352,10 @@ def calculate_chart_with_mode(name, year, month, day, hour, minute, city,
                 r_lat, r_lon, tz_str
             )
             result['lunar'] = lunar_data
+            # Calculate cross-aspects lunar -> natal
+            result['lunar']['aspects'] = find_lunar_aspects(
+                result['planets'],
+                lunar_data['planets']
+            )
     
     return result

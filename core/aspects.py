@@ -105,3 +105,13 @@ def find_cross_aspects(natal_planets, outer_planets, mode="transit", custom_orbs
 
 def find_transit_aspects(natal_planets, transit_planets, custom_orbs=None):
     return find_cross_aspects(natal_planets, transit_planets, mode="transit", custom_orbs=custom_orbs)
+
+
+def find_solar_aspects(natal_planets, solar_planets, custom_orbs=None):
+    """Кросс-аспекты соляр -> натал"""
+    return find_cross_aspects(natal_planets, solar_planets, mode="solar", custom_orbs=custom_orbs)
+
+
+def find_lunar_aspects(natal_planets, lunar_planets, custom_orbs=None):
+    """Кросс-аспекты лунар -> натал"""
+    return find_cross_aspects(natal_planets, lunar_planets, mode="lunar", custom_orbs=custom_orbs)
