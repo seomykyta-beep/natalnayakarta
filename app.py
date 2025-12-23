@@ -128,7 +128,7 @@ async def landing(request: Request):
 @app.get('/app')
 async def home(request: Request):
     """Приложение"""
-    return templates.TemplateResponse('index.html', {'request': request})
+    response = templates.TemplateResponse('index.html', {'request': request}); response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'; response.headers['Pragma'] = 'no-cache'; return response
 
 
 
