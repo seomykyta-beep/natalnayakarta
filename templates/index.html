@@ -237,6 +237,19 @@
         .view-tab.active { background: rgba(255,255,255,0.1); color: var(--text); }
 
         /* Data Table */
+        .data-cards { display: none; gap: 16px; }
+        .data-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .data-card .row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .data-card .pname { font-weight: 600; font-size: 16px; }
+        .data-card .pill { background: var(--accent); color: #000; font-size: 11px; padding: 4px 10px; border-radius: 12px; }
+        .data-card .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .data-card .k { color: #888; font-size: 12px; }
+        .data-card .v { font-size: 14px; margin-top: 2px; }
         .data-table {
             width: 100%;
             border-collapse: separate;
@@ -408,8 +421,8 @@
             .form-table input.city-input { max-width: 100%; }
             .calc-btn { max-width: 100%; }
             #chartDiv { padding: 12px; }
-            .data-table { font-size: 12px; }
-            .data-table th, .data-table td { padding: 10px 12px; }
+            .data-table { display: none !important; }
+            .data-cards { display: grid !important; }
             .planet-text-block { padding: 16px; }
         }
 </style>
