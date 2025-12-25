@@ -749,20 +749,25 @@
             <div id="chartDiv"></div>
             <div class="zoom-hint">👆 Разведите пальцы для увеличения</div>
 
-            <!-- Matrix & Tables -->
-            <div class="scheme-box">
-                <h3 style="text-align:center; margin-top:0">✨ <span id="matrixTitle">Матрица аспектов</span></h3>
-                <div class="aspect-matrix-wrapper">
-                    <table id="aspectMatrixTable" class="aspect-matrix-table"></table>
-                </div>
-                <div id="transitMeta" class="info-text"></div>
-                <div class="aspect-legend">
+            <!-- Matrix & Tables - Collapsible -->
+            <div class="scheme-box collapsible-section" id="aspectsSection">
+                <h3 style="text-align:center; margin-top:0; cursor:pointer" onclick="toggleSection('aspectsContent')">
+                    📊 <span id="matrixTitle">Таблица аспектов</span> 
+                    <span style="font-size:12px;color:#888">(нажмите чтобы раскрыть)</span>
+                </h3>
+                <div id="aspectsContent" style="display:none">
+                    <div class="aspect-matrix-wrapper">
+                        <table id="aspectMatrixTable" class="aspect-matrix-table"></table>
+                    </div>
+                    <div id="transitMeta" class="info-text"></div>
+                    <div class="aspect-legend">
                     <div class="aspect-legend-item"><span class="legend-symbol asp-conj">●</span>Соединение 0°</div>
                     <div class="aspect-legend-item"><span class="legend-symbol asp-sextile">✶</span>Секстиль 60°</div>
                     <div class="aspect-legend-item"><span class="legend-symbol asp-trine">△</span>Тригон 120°</div>
                     <div class="aspect-legend-item"><span class="legend-symbol asp-square">□</span>Квадрат 90°</div>
                     <div class="aspect-legend-item"><span class="legend-symbol asp-opposition">☍</span>Оппозиция 180°</div>
                     <div class="aspect-legend-item"><span style="color:#ff5555">R</span>Ретроградный</div>
+                    </div>
                 </div>
             </div>
 
@@ -1508,6 +1513,14 @@ function setView(view) {
             updateDisplay();
         }
 
+        
+        function toggleSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
         function renderPlanetsTable(data) {
             const tBody = document.getElementById('planetsTableBody');
             tBody.innerHTML = '';
