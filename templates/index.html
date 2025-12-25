@@ -1361,7 +1361,7 @@ function selectCity(name, lat, lon) {
                 // Устанавливаем режим в данных
                 globalData.mode = mode;
                 renderPlanetsTable(globalData);
-                renderTexts(globalData);
+                renderTexts(globalData); renderShortForecast(globalData);
                 updateDisplay();
             }
 
@@ -1386,7 +1386,7 @@ function selectCity(name, lat, lon) {
             if (result.error) return alert(result.error);
             globalData = result; updatePdfButtons();
             renderPlanetsTable(result);
-            renderTexts(result);
+            renderTexts(result); renderShortForecast(result);
             updateDisplay();
         }
 
@@ -1558,7 +1558,7 @@ function setView(view) {
             }
             
             renderPlanetsTable(data);
-            renderTexts(data);
+            renderTexts(data); renderShortForecast(data);
             
             currentView = 'transit';  // Start with transit view
             document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
@@ -1681,6 +1681,53 @@ function setView(view) {
                     </div>`;
                 }
             });
+        }
+
+        
+        function renderShortForecast(data) {
+            const container = document.getElementById('shortForecastContent');
+            if (!container) return;
+            
+            const mode = currentMode || data.mode || 'transit';
+            let html = '';
+            
+            // Get important aspects (exact ones with small orbs)
+            let aspects = [];
+            if (mode === 'transit') {
+                aspects = (data.transit_aspects || []).filter(a => Math.abs(a.orb || 0) < 3);
+            } else if (mode === 'natal') {
+                aspects = (data.aspects || []).filter(a => Math.abs(a.orb || 0) < 3);
+            } else if (mode === 'solar' && data.solar) {
+                aspects = (data.solar.aspects || []).filter(a => Math.abs(a.orb || 0) < 3);
+            } else if (mode === 'lunar' && data.lunar) {
+                aspects = (data.lunar.aspects || []).filter(a => Math.abs(a.orb || 0) < 3);
+            }
+            
+            // Take top 3 most exact aspects
+            aspects = aspects.slice(0, 3);
+            
+            if (aspects.length === 0) {
+                html = '<p style="color:#888; text-align:center">Нет точных аспектов в данный момент</p>';
+            } else {
+                html = '<div style="margin-bottom:15px; color:#667eea; font-weight:500">🔮 Главные влияния сейчас:</div>';
+                const symbols = {Conjunction:'☌', Sextile:'✶', Square:'□', Trine:'△', Opposition:'☍', Quincunx:'⤻'};
+                const colors = {Square:'#ff5555', Opposition:'#ff5555', Trine:'#8bc34a', Sextile:'#4dd0e1', Conjunction:'#4fc3f7', Quincunx:'#ff9800'};
+                
+                aspects.forEach((a, i) => {
+                    const symbol = symbols[a.type] || '●';
+                    const color = colors[a.type] || '#ccc';
+                    const shortText = (a.text || '').substring(0, 200) + (a.text && a.text.length > 200 ? '...' : '');
+                    
+                    html += '<div style="margin-bottom:15px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; border-left:3px solid ' + color + '">';
+                    html += '<div style="font-weight:600; margin-bottom:6px"><span style="color:' + color + '">' + symbol + '</span> ' + (a.p1 || '') + ' — ' + (a.p2 || '') + '</div>';
+                    if (shortText) {
+                        html += '<div style="color:#aaa; font-size:14px; line-height:1.5">' + shortText + '</div>';
+                    }
+                    html += '</div>';
+                });
+            }
+            
+            container.innerHTML = html;
         }
 
         function renderTexts(data) {
