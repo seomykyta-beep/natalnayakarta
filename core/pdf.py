@@ -68,12 +68,12 @@ def generate_pdf(user_data):
     
     planet_header = ParagraphStyle('PlanetHeader',
         fontName=DEFAULT_FONT, fontSize=12, textColor=COLORS['primary'],
-        spaceBefore=12, spaceAfter=4)
+        spaceBefore=25, spaceAfter=8)
     
     interpretation = ParagraphStyle('Interpretation',
         fontName=DEFAULT_FONT, fontSize=10, textColor=COLORS['text_light'],
-        spaceAfter=10, leading=14, leftIndent=10, rightIndent=10,
-        backColor=COLORS['bg_light'], borderPadding=8)
+        leading=14, leftIndent=10, rightIndent=10,
+        spaceAfter=20)
     
     footer_style = ParagraphStyle('Footer',
         fontName=DEFAULT_FONT, fontSize=8, textColor=COLORS['text_light'],
@@ -272,8 +272,8 @@ def generate_pdf_by_mode(user_data, mode='full'):
     
     interpretation = ParagraphStyle('Interpretation',
         fontName=DEFAULT_FONT, fontSize=9, textColor=COLORS['text_light'],
-        spaceAfter=8, leading=13, leftIndent=8, rightIndent=8,
-        backColor=COLORS['bg_light'], borderPadding=6)
+        leading=13, leftIndent=8, rightIndent=8,
+        spaceAfter=15)
     
     footer_style = ParagraphStyle('Footer',
         fontName=DEFAULT_FONT, fontSize=8, textColor=COLORS['text_light'], alignment=1)
