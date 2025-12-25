@@ -1472,11 +1472,12 @@ function setView(view) {
                 const retro = p.is_retro ? '<span style="color:#ff5555">R</span>' : '';
                 const op = transitMap[p.key];
                 const oRetro = op?.is_retro ? '<span style="color:#ff5555">R</span>' : '';
+                const tHouse = (op && op.natal_house) ? ' <span style="color:#888;font-size:12px">(' + op.natal_house + ' дом)</span>' : '';
                 tBody.innerHTML += `<tr>
                     <td>${p.icon} ${p.name} ${retro}</td>
                     <td>${formatPos(p)}</td>
                     <td>${p.dignity ? '<span style="color:' + (p.dignity=="Обитель"?'#4caf50':p.dignity=="Экзальтация"?'#8bc34a':p.dignity=="Изгнание"?'#f44336':'#ff9800') + '; font-weight:bold;">' + p.dignity + '</span>' : ''}</td>
-                    <td class="transit-cell">${op ? formatPos(op) + oRetro : '—'}</td>
+                    <td class="transit-cell">${op ? formatPos(op) + oRetro + tHouse : ''}</td>
                 </tr>`;
 
                 if (cards) {
