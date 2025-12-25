@@ -313,18 +313,45 @@ async def api_calculate(data: UserData):
     
     result['gender'] = data.gender
     generate_pdf(result)
+    # Save calculation data for later PDF generation
+    safe_name = ''.join(c for c in result.get('name', 'unknown') if c.isalnum() or c in ' _-')[:50]
+    data_file = DATA_DIR / f'{safe_name}.json'
+    with open(data_file, 'w', encoding='utf-8') as f:
+        json.dump(result, f, ensure_ascii=False, default=str)
     
     logger.info(f'Calculate complete: {data.name}')
     return result
 
 
 @app.get('/api/pdf')
-async def get_pdf(name: str):
-    """Скачать PDF отчёт"""
-    file_path = REPORTS_DIR / f'report_{name}.pdf'
-    if file_path.exists():
-        return FileResponse(str(file_path), filename=f'Horoscope_{name}.pdf')
-    return {'error': 'File not found'}
+async def get_pdf(name: str, mode: str = 'full'):
+    """Скачать PDF отчёт по режиму"""
+    from core.pdf import generate_pdf_by_mode
+    
+    safe_name = ''.join(c for c in name if c.isalnum() or c in ' _-')[:50]
+    
+    # Load saved calculation data
+    data_file = DATA_DIR / f'{safe_name}.json'
+    if not data_file.exists():
+        # Fallback to existing report
+        file_path = REPORTS_DIR / f'report_{safe_name}.pdf'
+        if file_path.exists():
+            return FileResponse(str(file_path), filename=f'Horoscope_{safe_name}.pdf')
+        return {'error': 'Data not found'}
+    
+    with open(data_file, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    # Generate PDF for specific mode
+    suffix = '' if mode == 'full' else f'_{mode}'
+    pdf_path = generate_pdf_by_mode(data, mode)
+    
+    if pdf_path and Path(pdf_path).exists():
+        mode_labels = {'full': '', 'natal': '_Натал', 'transit': '_Транзиты', 'solar': '_Соляр', 'lunar': '_Лунар', 'synastry': '_Синастрия'}
+        filename = f'Horoscope_{safe_name}{mode_labels.get(mode, "")}.pdf'
+        return FileResponse(str(pdf_path), filename=filename)
+    
+    return {'error': 'PDF generation failed'}
 
 class SynastryData(BaseModel):
     name1: str
