@@ -1472,10 +1472,11 @@ function setView(view) {
                 const retro = p.is_retro ? '<span style="color:#ff5555">R</span>' : '';
                 const op = transitMap[p.key];
                 const oRetro = op?.is_retro ? '<span style="color:#ff5555">R</span>' : '';
+                const nHouse = p.house ? ' <span style="color:#888;font-size:12px">(' + p.house + ' дом)</span>' : '';
                 const tHouse = (op && op.natal_house) ? ' <span style="color:#888;font-size:12px">(' + op.natal_house + ' дом)</span>' : '';
                 tBody.innerHTML += `<tr>
                     <td>${p.icon} ${p.name} ${retro}</td>
-                    <td>${formatPos(p)}</td>
+                    <td>${formatPos(p)}${nHouse}</td>
                     <td>${p.dignity ? '<span style="color:' + (p.dignity=="Обитель"?'#4caf50':p.dignity=="Экзальтация"?'#8bc34a':p.dignity=="Изгнание"?'#f44336':'#ff9800') + '; font-weight:bold;">' + p.dignity + '</span>' : ''}</td>
                     <td class="transit-cell">${op ? formatPos(op) + oRetro + tHouse : ''}</td>
                 </tr>`;
@@ -1484,15 +1485,13 @@ function setView(view) {
                     const dign = p.dignity || '';
                     const tLabel = (mode === 'solar' ? 'Соляр' : mode === 'lunar' ? 'Лунар' : 'Транзит');
                     const tVal = (op ? (formatPos(op) + oRetro) : '—');
-                    const tHouse = (op && op.natal_house) ? op.natal_house + ' дом' : '';
+                    const natalHouse = p.house ? p.house + ' дом' : '';
+                    const transitHouse = (op && op.natal_house) ? op.natal_house + ' дом' : '';
                     
-                    let extraRows = '';
+                    let dignRow = '';
                     if (dign) {
                         const dignColor = dign === 'Обитель' ? '#4caf50' : dign === 'Экзальтация' ? '#8bc34a' : dign === 'Изгнание' ? '#f44336' : '#ff9800';
-                        extraRows += `<div><div class="k">Достоинство</div><div class="v" style="color:${dignColor};font-weight:bold">${dign}</div></div>`;
-                    }
-                    if (tHouse) {
-                        extraRows += `<div><div class="k">Дом</div><div class="v">${tHouse}</div></div>`;
+                        dignRow = `<div style="grid-column:1/-1"><div class="k">Достоинство</div><div class="v" style="color:${dignColor};font-weight:bold">${dign}</div></div>`;
                     }
                     
                     cards.innerHTML += `<div class="data-card">
@@ -1501,9 +1500,9 @@ function setView(view) {
                             <div class="pill">${tLabel}</div>
                         </div>
                         <div class="grid">
-                            <div><div class="k">Натал</div><div class="v">${formatPos(p)}</div></div>
-                            <div><div class="k">${tLabel}</div><div class="v">${tVal}</div></div>
-                            ${extraRows}
+                            <div><div class="k">Натал</div><div class="v">${formatPos(p)}</div><div class="k" style="margin-top:4px">${natalHouse}</div></div>
+                            <div><div class="k">${tLabel}</div><div class="v">${tVal}</div><div class="k" style="margin-top:4px">${transitHouse}</div></div>
+                            ${dignRow}
                         </div>
                     </div>`;
                 }
