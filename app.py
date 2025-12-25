@@ -14,7 +14,8 @@ import logging
 
 from config import BOT_TOKEN, HOST, PORT, CHARTS_DIR, REPORTS_DIR, TEMPLATES_DIR, STATIC_DIR
 from engine import calculate_chart_with_mode, generate_pdf
-from core.auth import create_user, authenticate, create_session, get_user_by_token, update_profile, delete_session
+from core.auth import register_user, login_user, get_user_by_id, update_user_profile, decode_token, save_calculation, get_user_calculations
+from core.database import test_connection
 from core.synastry import calculate_synastry
 
 # Логирование
@@ -93,6 +94,113 @@ class UserData(BaseModel):
 
 
 
+
+# ============ AUTH ENDPOINTS ============
+
+class RegisterData(BaseModel):
+    phone: str
+    password: str
+    name: Optional[str] = None
+
+class LoginData(BaseModel):
+    phone: str
+    password: str
+
+class ProfileUpdateData(BaseModel):
+    name: Optional[str] = None
+    birth_date: Optional[str] = None
+    birth_time: Optional[str] = None
+    birth_city: Optional[str] = None
+    birth_lat: Optional[float] = None
+    birth_lon: Optional[float] = None
+    current_city: Optional[str] = None
+    current_lat: Optional[float] = None
+    current_lon: Optional[float] = None
+    email: Optional[str] = None
+    telegram: Optional[str] = None
+
+def get_current_user(request: Request):
+    """Get current user from token"""
+    token = request.cookies.get('auth_token')
+    if not token:
+        auth_header = request.headers.get('Authorization', '')
+        if auth_header.startswith('Bearer '):
+            token = auth_header[7:]
+    if not token:
+        return None
+    payload = decode_token(token)
+    if not payload:
+        return None
+    return get_user_by_id(payload['user_id'])
+
+@app.post('/api/auth/register')
+async def api_register(data: RegisterData):
+    """Register new user"""
+    result = register_user(data.phone, data.password, data.name)
+    if result['success']:
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({'success': True, 'user_id': result['user_id']})
+        response.set_cookie('auth_token', result['token'], httponly=True, max_age=7*24*3600, samesite='lax')
+        return response
+    return {'success': False, 'error': result['error']}
+
+@app.post('/api/auth/login')
+async def api_login(data: LoginData):
+    """Login user"""
+    result = login_user(data.phone, data.password)
+    if result['success']:
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({'success': True, 'user_id': result['user_id'], 'name': result['name']})
+        response.set_cookie('auth_token', result['token'], httponly=True, max_age=7*24*3600, samesite='lax')
+        return response
+    return {'success': False, 'error': result['error']}
+
+@app.post('/api/auth/logout')
+async def api_logout():
+    """Logout user"""
+    from fastapi.responses import JSONResponse
+    response = JSONResponse({'success': True})
+    response.delete_cookie('auth_token')
+    return response
+
+@app.get('/api/auth/me')
+async def api_get_me(request: Request):
+    """Get current user info"""
+    user = get_current_user(request)
+    if not user:
+        return {'authenticated': False}
+    return {'authenticated': True, 'user': user}
+
+@app.get('/api/user/profile')
+async def api_get_profile(request: Request):
+    """Get user profile"""
+    user = get_current_user(request)
+    if not user:
+        return {'success': False, 'error': 'Not authenticated'}
+    return {'success': True, 'profile': user}
+
+@app.put('/api/user/profile')
+async def api_update_profile(request: Request, data: ProfileUpdateData):
+    """Update user profile"""
+    user = get_current_user(request)
+    if not user:
+        return {'success': False, 'error': 'Not authenticated'}
+    
+    update_data = {k: v for k, v in data.dict().items() if v is not None}
+    result = update_user_profile(user['id'], update_data)
+    return result
+
+@app.get('/api/user/calculations')
+async def api_get_calculations(request: Request):
+    """Get user calculation history"""
+    user = get_current_user(request)
+    if not user:
+        return {'success': False, 'error': 'Not authenticated'}
+    
+    calculations = get_user_calculations(user['id'])
+    return {'success': True, 'calculations': calculations}
+
+
 class SynastryData(BaseModel):
     """Данные для расчёта синастрии"""
     # Первый человек
@@ -140,6 +248,18 @@ async def profile_page(request: Request):
     """Страница профиля"""
     return templates.TemplateResponse('profile.html', {'request': request})
 
+
+
+
+@app.get('/login')
+async def login_page(request: Request):
+    """Страница входа"""
+    return templates.TemplateResponse('login.html', {'request': request})
+
+@app.get('/register')
+async def register_page(request: Request):
+    """Страница регистрации"""
+    return templates.TemplateResponse('register.html', {'request': request})
 
 @app.get('/auth')
 async def auth_page(request: Request):
@@ -352,6 +472,113 @@ async def get_pdf(name: str, mode: str = 'full'):
         return FileResponse(str(pdf_path), filename=filename)
     
     return {'error': 'PDF generation failed'}
+
+
+# ============ AUTH ENDPOINTS ============
+
+class RegisterData(BaseModel):
+    phone: str
+    password: str
+    name: Optional[str] = None
+
+class LoginData(BaseModel):
+    phone: str
+    password: str
+
+class ProfileUpdateData(BaseModel):
+    name: Optional[str] = None
+    birth_date: Optional[str] = None
+    birth_time: Optional[str] = None
+    birth_city: Optional[str] = None
+    birth_lat: Optional[float] = None
+    birth_lon: Optional[float] = None
+    current_city: Optional[str] = None
+    current_lat: Optional[float] = None
+    current_lon: Optional[float] = None
+    email: Optional[str] = None
+    telegram: Optional[str] = None
+
+def get_current_user(request: Request):
+    """Get current user from token"""
+    token = request.cookies.get('auth_token')
+    if not token:
+        auth_header = request.headers.get('Authorization', '')
+        if auth_header.startswith('Bearer '):
+            token = auth_header[7:]
+    if not token:
+        return None
+    payload = decode_token(token)
+    if not payload:
+        return None
+    return get_user_by_id(payload['user_id'])
+
+@app.post('/api/auth/register')
+async def api_register(data: RegisterData):
+    """Register new user"""
+    result = register_user(data.phone, data.password, data.name)
+    if result['success']:
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({'success': True, 'user_id': result['user_id']})
+        response.set_cookie('auth_token', result['token'], httponly=True, max_age=7*24*3600, samesite='lax')
+        return response
+    return {'success': False, 'error': result['error']}
+
+@app.post('/api/auth/login')
+async def api_login(data: LoginData):
+    """Login user"""
+    result = login_user(data.phone, data.password)
+    if result['success']:
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({'success': True, 'user_id': result['user_id'], 'name': result['name']})
+        response.set_cookie('auth_token', result['token'], httponly=True, max_age=7*24*3600, samesite='lax')
+        return response
+    return {'success': False, 'error': result['error']}
+
+@app.post('/api/auth/logout')
+async def api_logout():
+    """Logout user"""
+    from fastapi.responses import JSONResponse
+    response = JSONResponse({'success': True})
+    response.delete_cookie('auth_token')
+    return response
+
+@app.get('/api/auth/me')
+async def api_get_me(request: Request):
+    """Get current user info"""
+    user = get_current_user(request)
+    if not user:
+        return {'authenticated': False}
+    return {'authenticated': True, 'user': user}
+
+@app.get('/api/user/profile')
+async def api_get_profile(request: Request):
+    """Get user profile"""
+    user = get_current_user(request)
+    if not user:
+        return {'success': False, 'error': 'Not authenticated'}
+    return {'success': True, 'profile': user}
+
+@app.put('/api/user/profile')
+async def api_update_profile(request: Request, data: ProfileUpdateData):
+    """Update user profile"""
+    user = get_current_user(request)
+    if not user:
+        return {'success': False, 'error': 'Not authenticated'}
+    
+    update_data = {k: v for k, v in data.dict().items() if v is not None}
+    result = update_user_profile(user['id'], update_data)
+    return result
+
+@app.get('/api/user/calculations')
+async def api_get_calculations(request: Request):
+    """Get user calculation history"""
+    user = get_current_user(request)
+    if not user:
+        return {'success': False, 'error': 'Not authenticated'}
+    
+    calculations = get_user_calculations(user['id'])
+    return {'success': True, 'calculations': calculations}
+
 
 class SynastryData(BaseModel):
     name1: str

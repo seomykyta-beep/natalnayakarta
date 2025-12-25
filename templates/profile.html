@@ -3,159 +3,494 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль - Натальная Карта</title>
+    <title>Личный кабинет - Натальная карта</title>
     <style>
-        :root { --bg: #0a0a1a; --card: #12122a; --text: #e0e0e0; --accent: #ffd700; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        h1 { color: var(--accent); font-size: 24px; }
-        .nav-links a { color: #888; text-decoration: none; margin-left: 20px; }
-        .nav-links a:hover { color: var(--accent); }
-        .card { background: var(--card); padding: 30px; border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255,215,0,0.1); }
-        .card h2 { color: var(--accent); font-size: 18px; margin-bottom: 20px; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; color: #888; font-size: 13px; margin-bottom: 8px; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 15px; }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn { padding: 12px 25px; background: linear-gradient(135deg, var(--accent) 0%, #ff9100 100%); border: none; border-radius: 8px; color: var(--bg); font-weight: bold; cursor: pointer; }
-        .btn:hover { opacity: 0.9; }
-        .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
-        .premium-badge { display: inline-block; padding: 5px 12px; background: linear-gradient(135deg, #7c4dff 0%, #e040fb 100%); border-radius: 20px; font-size: 12px; margin-left: 10px; }
-        .status { padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; }
-        .status.success { background: rgba(76, 175, 80, 0.2); color: #4caf50; display: block; }
-        .status.error { background: rgba(239, 83, 80, 0.2); color: #ef5350; display: block; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        h1 { font-size: 24px; }
+        .header-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+        .header-links a:hover { text-decoration: underline; }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group { margin-bottom: 15px; }
+        label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        input::placeholder { color: #666; }
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #667eea;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+        }
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #81c784;
+        }
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #ff6b6b;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-type {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #667eea;
+        }
+        .history-date {
+            color: #888;
+            font-size: 13px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        .support-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 0;
+        }
+        .support-link:hover { text-decoration: underline; }
+        .city-suggestions {
+            position: absolute;
+            background: #2a2a4a;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            width: 100%;
+            display: none;
+        }
+        .city-suggestion {
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+        .city-suggestion:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+        .city-wrapper { position: relative; }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>👤 Профиль <span id="premiumBadge" class="premium-badge" style="display:none">Premium</span></h1>
-            <div class="nav-links">
-                <a href="/app">📊 Карта</a>
-                <a href="#" onclick="logout()">🚪 Выйти</a>
+        <header>
+            <h1>☿ Личный кабинет</h1>
+            <div class="header-links">
+                <a href="/app">Калькулятор</a>
+                <a href="#" onclick="logout(); return false;">Выйти</a>
             </div>
-        </div>
+        </header>
         
-        <div id="status" class="status"></div>
-        
-        <div class="card">
-            <h2>📧 Аккаунт</h2>
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" id="email" readonly>
-            </div>
-            <div class="input-group">
-                <label>Имя</label>
-                <input type="text" id="name" placeholder="Ваше имя">
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>🎂 Данные рождения</h2>
-            <p style="color:#888; font-size:13px; margin-bottom:20px">Сохраните данные, чтобы не вводить их каждый раз</p>
-            
-            <div class="row">
-                <div class="input-group">
-                    <label>Дата рождения</label>
-                    <input type="date" id="birthDate">
-                </div>
-                <div class="input-group">
-                    <label>Время рождения</label>
-                    <input type="time" id="birthTime">
+        <div id="notAuth" style="display:none">
+            <div class="card">
+                <div class="empty-state">
+                    <p>Вы не авторизованы</p>
+                    <br>
+                    <a href="/login" class="btn">Войти</a>
+                    <a href="/register" class="btn btn-outline" style="margin-left:10px">Регистрация</a>
                 </div>
             </div>
-            
-            <div class="input-group">
-                <label>Город рождения</label>
-                <input type="text" id="birthCity" placeholder="Москва">
-            </div>
-            
-            <div class="input-group">
-                <label>Пол</label>
-                <select id="gender">
-                    <option value="male">Мужской</option>
-                    <option value="female">Женский</option>
-                </select>
-            </div>
-            
-            <button class="btn" onclick="saveProfile()">💾 Сохранить</button>
         </div>
         
-        <div class="card">
-            <h2>💎 Подписка</h2>
-            <p id="subscriptionStatus" style="margin-bottom:15px">Бесплатный тариф</p>
-            <button class="btn btn-outline">Перейти на Premium</button>
+        <div id="profileContent" style="display:none">
+            <!-- Natal data -->
+            <div class="card">
+                <div class="card-title">🌟 Натальные данные</div>
+                <div class="message" id="natalMsg"></div>
+                
+                <form id="natalForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Имя</label>
+                            <input type="text" id="name" placeholder="Ваше имя">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Дата рождения</label>
+                            <input type="date" id="birth_date">
+                        </div>
+                        <div class="form-group">
+                            <label>Время рождения</label>
+                            <input type="time" id="birth_time">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group city-wrapper">
+                        <label>Город рождения</label>
+                        <input type="text" id="birth_city" placeholder="Начните вводить город..." autocomplete="off">
+                        <input type="hidden" id="birth_lat">
+                        <input type="hidden" id="birth_lon">
+                        <div class="city-suggestions" id="birthCitySuggestions"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Сохранить</button>
+                </form>
+            </div>
+            
+            <!-- Current city -->
+            <div class="card">
+                <div class="card-title">📍 Город для транзитов</div>
+                <div class="message" id="currentMsg"></div>
+                
+                <form id="currentForm">
+                    <div class="form-group city-wrapper">
+                        <label>Текущий город</label>
+                        <input type="text" id="current_city" placeholder="Где вы сейчас?" autocomplete="off">
+                        <input type="hidden" id="current_lat">
+                        <input type="hidden" id="current_lon">
+                        <div class="city-suggestions" id="currentCitySuggestions"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Сохранить</button>
+                </form>
+            </div>
+            
+            <!-- Contacts -->
+            <div class="card">
+                <div class="card-title">📱 Контактные данные</div>
+                <div class="message" id="contactMsg"></div>
+                
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" id="phone" readonly style="opacity:0.7">
+                        </div>
+                        <div class="form-group">
+                            <label>Email (необязательно)</label>
+                            <input type="email" id="email" placeholder="email@example.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Telegram (необязательно)</label>
+                        <input type="text" id="telegram" placeholder="@username">
+                    </div>
+                    
+                    <button type="submit" class="btn">Сохранить</button>
+                </form>
+            </div>
+            
+            <!-- History -->
+            <div class="card">
+                <div class="card-title">📊 История расчётов</div>
+                <div id="historyList">
+                    <div class="empty-state">Загрузка...</div>
+                </div>
+            </div>
+            
+            <!-- Support -->
+            <div class="card">
+                <div class="card-title">💬 Поддержка</div>
+                <a href="https://t.me/your_support_bot" class="support-link" target="_blank">
+                    Написать в поддержку →
+                </a>
+            </div>
         </div>
     </div>
-
+    
     <script>
-        const token = localStorage.getItem('token');
-        if (!token) window.location.href = '/auth';
+        let currentUser = null;
         
-        async function loadProfile() {
-            const res = await fetch('/api/profile?token=' + token);
-            const data = await res.json();
+        async function checkAuth() {
+            try {
+                const resp = await fetch('/api/auth/me');
+                const data = await resp.json();
+                
+                if (data.authenticated && data.user) {
+                    currentUser = data.user;
+                    document.getElementById('notAuth').style.display = 'none';
+                    document.getElementById('profileContent').style.display = 'block';
+                    fillProfile(data.user);
+                    loadHistory();
+                } else {
+                    document.getElementById('notAuth').style.display = 'block';
+                    document.getElementById('profileContent').style.display = 'none';
+                }
+            } catch (e) {
+                document.getElementById('notAuth').style.display = 'block';
+            }
+        }
+        
+        function fillProfile(user) {
+            document.getElementById('name').value = user.name || '';
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('telegram').value = user.telegram || '';
+            document.getElementById('birth_city').value = user.birth_city || '';
+            document.getElementById('birth_lat').value = user.birth_lat || '';
+            document.getElementById('birth_lon').value = user.birth_lon || '';
+            document.getElementById('current_city').value = user.current_city || '';
+            document.getElementById('current_lat').value = user.current_lat || '';
+            document.getElementById('current_lon').value = user.current_lon || '';
             
-            if (!data.success) {
-                localStorage.clear();
-                window.location.href = '/auth';
+            if (user.birth_date) {
+                const parts = user.birth_date.split('.');
+                if (parts.length === 3) {
+                    document.getElementById('birth_date').value = parts[2] + '-' + parts[1] + '-' + parts[0];
+                }
+            }
+            if (user.birth_time) {
+                document.getElementById('birth_time').value = user.birth_time;
+            }
+        }
+        
+        async function loadHistory() {
+            try {
+                const resp = await fetch('/api/user/calculations');
+                const data = await resp.json();
+                
+                const list = document.getElementById('historyList');
+                
+                if (!data.success || !data.calculations || data.calculations.length === 0) {
+                    list.innerHTML = '<div class="empty-state">Расчётов пока нет</div>';
+                    return;
+                }
+                
+                const typeLabels = {
+                    'natal': 'Натал',
+                    'transit': 'Транзиты',
+                    'solar': 'Соляр',
+                    'lunar': 'Лунар',
+                    'synastry': 'Синастрия'
+                };
+                
+                list.innerHTML = data.calculations.map(c => {
+                    const date = new Date(c.created_at).toLocaleDateString('ru-RU');
+                    const type = typeLabels[c.calc_type] || c.calc_type;
+                    return '<div class="history-item"><span class="history-type">' + type + '</span><span class="history-date">' + date + '</span></div>';
+                }).join('');
+            } catch (e) {
+                document.getElementById('historyList').innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+            }
+        }
+        
+        async function updateProfile(data, msgId) {
+            const msg = document.getElementById(msgId);
+            try {
+                const resp = await fetch('/api/user/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await resp.json();
+                
+                if (result.success) {
+                    msg.className = 'message success';
+                    msg.textContent = 'Сохранено!';
+                } else {
+                    msg.className = 'message error';
+                    msg.textContent = result.error || 'Ошибка сохранения';
+                }
+                msg.style.display = 'block';
+                setTimeout(() => { msg.style.display = 'none'; }, 3000);
+            } catch (e) {
+                msg.className = 'message error';
+                msg.textContent = 'Ошибка соединения';
+                msg.style.display = 'block';
+            }
+        }
+        
+        document.getElementById('natalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dateInput = document.getElementById('birth_date').value;
+            let birthDate = null;
+            if (dateInput) {
+                const d = new Date(dateInput);
+                birthDate = d.getDate().toString().padStart(2,'0') + '.' + 
+                           (d.getMonth()+1).toString().padStart(2,'0') + '.' + d.getFullYear();
+            }
+            
+            await updateProfile({
+                name: document.getElementById('name').value,
+                birth_date: birthDate,
+                birth_time: document.getElementById('birth_time').value,
+                birth_city: document.getElementById('birth_city').value,
+                birth_lat: parseFloat(document.getElementById('birth_lat').value) || null,
+                birth_lon: parseFloat(document.getElementById('birth_lon').value) || null
+            }, 'natalMsg');
+        });
+        
+        document.getElementById('currentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await updateProfile({
+                current_city: document.getElementById('current_city').value,
+                current_lat: parseFloat(document.getElementById('current_lat').value) || null,
+                current_lon: parseFloat(document.getElementById('current_lon').value) || null
+            }, 'currentMsg');
+        });
+        
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await updateProfile({
+                email: document.getElementById('email').value,
+                telegram: document.getElementById('telegram').value
+            }, 'contactMsg');
+        });
+        
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+        
+        // City search
+        async function searchCity(query, suggestionsEl, latEl, lonEl) {
+            if (query.length < 2) {
+                suggestionsEl.style.display = 'none';
                 return;
             }
             
-            const user = data.user;
-            document.getElementById('email').value = user.email || '';
-            document.getElementById('name').value = user.name || '';
-            document.getElementById('birthDate').value = user.birth_date || '';
-            document.getElementById('birthTime').value = user.birth_time || '';
-            document.getElementById('birthCity').value = user.birth_city || '';
-            document.getElementById('gender').value = user.gender || 'male';
-            
-            if (user.is_premium) {
-                document.getElementById('premiumBadge').style.display = 'inline-block';
-                document.getElementById('subscriptionStatus').textContent = 'Premium активен';
+            try {
+                const resp = await fetch('/api/cities?q=' + encodeURIComponent(query));
+                const cities = await resp.json();
+                
+                if (cities.length > 0) {
+                    suggestionsEl.innerHTML = cities.map(c => 
+                        '<div class="city-suggestion" data-lat="' + c.lat + '" data-lon="' + c.lon + '">' + c.name + '</div>'
+                    ).join('');
+                    suggestionsEl.style.display = 'block';
+                    
+                    suggestionsEl.querySelectorAll('.city-suggestion').forEach(el => {
+                        el.addEventListener('click', () => {
+                            suggestionsEl.previousElementSibling.previousElementSibling.value = el.textContent;
+                            latEl.value = el.dataset.lat;
+                            lonEl.value = el.dataset.lon;
+                            suggestionsEl.style.display = 'none';
+                        });
+                    });
+                } else {
+                    suggestionsEl.style.display = 'none';
+                }
+            } catch (e) {
+                suggestionsEl.style.display = 'none';
             }
         }
         
-        async function saveProfile() {
-            const data = {
-                token: token,
-                name: document.getElementById('name').value,
-                birth_date: document.getElementById('birthDate').value,
-                birth_time: document.getElementById('birthTime').value,
-                birth_city: document.getElementById('birthCity').value,
-                gender: document.getElementById('gender').value
-            };
-            
-            const res = await fetch('/api/profile/update', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            });
-            
-            const result = await res.json();
-            const status = document.getElementById('status');
-            
-            if (result.success) {
-                status.className = 'status success';
-                status.textContent = '✅ Профиль сохранён';
-            } else {
-                status.className = 'status error';
-                status.textContent = '❌ ' + (result.error || 'Ошибка');
+        document.getElementById('birth_city').addEventListener('input', (e) => {
+            searchCity(e.target.value, 
+                document.getElementById('birthCitySuggestions'),
+                document.getElementById('birth_lat'),
+                document.getElementById('birth_lon')
+            );
+        });
+        
+        document.getElementById('current_city').addEventListener('input', (e) => {
+            searchCity(e.target.value,
+                document.getElementById('currentCitySuggestions'),
+                document.getElementById('current_lat'),
+                document.getElementById('current_lon')
+            );
+        });
+        
+        // Hide suggestions on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.city-wrapper')) {
+                document.querySelectorAll('.city-suggestions').forEach(el => el.style.display = 'none');
             }
-            
-            setTimeout(() => { status.style.display = 'none'; }, 3000);
-        }
+        });
         
-        function logout() {
-            fetch('/api/auth/logout?token=' + token, {method: 'POST'});
-            localStorage.clear();
-            window.location.href = '/';
-        }
-        
-        loadProfile();
+        checkAuth();
     </script>
 </body>
 </html>

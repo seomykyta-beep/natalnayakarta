@@ -489,11 +489,51 @@
             .data-cards { display: grid !important; }
             .planet-text-block { padding: 16px; }
         }
-</style>
+
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .auth-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 13px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .auth-btn:hover { transform: translateY(-2px); }
+        .auth-btn.outline {
+            background: transparent;
+            border: 1px solid #667eea;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-name {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Транзиты. Онлайн расчёт</h1>
+        <div class="auth-header">
+            <h1>Транзиты. Онлайн расчёт</h1>
+            <div id="authArea">
+                <a href="/login" class="auth-btn">Войти</a>
+            </div>
+        </div>
         <p class="subtitle">Персональный астрологический расчёт</p>
 
         <!-- INPUT FORM -->
@@ -1751,5 +1791,55 @@ function setView(view) {
             });
         })();
 </script>
+
+    <script>
+        // Check auth and update header
+        (async function() {
+            try {
+                const resp = await fetch('/api/auth/me');
+                const data = await resp.json();
+                const authArea = document.getElementById('authArea');
+                
+                if (data.authenticated && data.user) {
+                    window.currentUser = data.user;
+                    authArea.innerHTML = '<div class="user-menu"><span class="user-name">' + (data.user.name || data.user.phone) + '</span><a href="/profile" class="auth-btn">Профиль</a></div>';
+                    
+                    // Auto-fill natal data if empty
+                    if (data.user.birth_date && !document.getElementById('day').value) {
+                        const parts = data.user.birth_date.split('.');
+                        if (parts.length === 3) {
+                            document.getElementById('day').value = parseInt(parts[0]);
+                            document.getElementById('month').value = parseInt(parts[1]);
+                            document.getElementById('year').value = parseInt(parts[2]);
+                        }
+                    }
+                    if (data.user.birth_time && !document.getElementById('hour').value) {
+                        const timeParts = data.user.birth_time.split(':');
+                        if (timeParts.length >= 2) {
+                            document.getElementById('hour').value = parseInt(timeParts[0]);
+                            document.getElementById('minute').value = parseInt(timeParts[1]);
+                        }
+                    }
+                    if (data.user.birth_city && !document.getElementById('city').value) {
+                        document.getElementById('city').value = data.user.birth_city;
+                        if (data.user.birth_lat) document.getElementById('lat').value = data.user.birth_lat;
+                        if (data.user.birth_lon) document.getElementById('lon').value = data.user.birth_lon;
+                    }
+                    if (data.user.name && !document.getElementById('name').value) {
+                        document.getElementById('name').value = data.user.name;
+                    }
+                    // Current city for transits
+                    if (data.user.current_city) {
+                        const transitCity = document.getElementById('transitCity');
+                        if (transitCity && !transitCity.value) {
+                            transitCity.value = data.user.current_city;
+                            if (data.user.current_lat) document.getElementById('transitLat').value = data.user.current_lat;
+                            if (data.user.current_lon) document.getElementById('transitLon').value = data.user.current_lon;
+                        }
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
 </body>
 </html>
