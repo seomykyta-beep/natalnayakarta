@@ -224,6 +224,21 @@
             transform-origin: center center;
             transition: transform 0.1s ease-out;
         }
+        
+        .action-btn {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover, .action-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
         .zoom-hint {
             display: none;
             text-align: center;
@@ -244,7 +259,22 @@
         .pdf-mini-btn:hover { background: #444; border-color: #888; }
         
         @media (max-width: 768px) {
-            .zoom-hint { display: block; }
+            
+        .action-btn {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover, .action-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+        .zoom-hint { display: block; }
         }
 
         /* View Tabs */
@@ -749,6 +779,33 @@
             <div id="chartDiv"></div>
             <div class="zoom-hint">👆 Разведите пальцы для увеличения</div>
 
+            <!-- Action buttons -->
+            <div id="actionButtons" style="display:flex; gap:10px; justify-content:center; margin:20px 0; flex-wrap:wrap;">
+                <button class="action-btn" onclick="showSection('shortForecast')" id="btnShort">
+                    📋 Краткий прогноз
+                </button>
+                <button class="action-btn" onclick="showSection('fullInterpretation')" id="btnFull">
+                    📖 Полная расшифровка
+                </button>
+                <button class="action-btn" onclick="showSection('aspectsSection')" id="btnAspects">
+                    📊 Таблица аспектов
+                </button>
+            </div>
+
+            <!-- Short Forecast Section (new) -->
+            <div id="shortForecast" class="scheme-box" style="display:none">
+                <h3 style="text-align:center; margin-top:0">📋 Краткий прогноз</h3>
+                <div id="shortForecastContent" style="padding:15px; line-height:1.6">
+                    <p style="color:#888; text-align:center">Загрузка краткого прогноза...</p>
+                </div>
+            </div>
+
+            <!-- Full Interpretation Section -->
+            <div id="fullInterpretation" class="scheme-box" style="display:none">
+                <h3 style="text-align:center; margin-top:0">📖 Полная расшифровка</h3>
+                <div id="textsList"></div>
+            </div>
+
             <!-- Matrix & Tables - Collapsible -->
             <div class="scheme-box collapsible-section" id="aspectsSection">
                 <h3 style="text-align:center; margin-top:0; cursor:pointer" onclick="toggleSection('aspectsContent')">
@@ -787,11 +844,7 @@
                 <div id="planetsCards" class="data-cards"></div>
             </div>
 
-            <!-- Texts -->
-            <div class="text-section">
-                <h3 style="text-align:center">📖 Расшифровка</h3>
-                <div id="textsList"></div>
-            </div>
+            <!-- Texts moved to fullInterpretation section above -->
 
             <!-- PDF Download Buttons -->
             <div id="pdfButtons" style="margin:30px auto; max-width:400px; text-align:center;">
@@ -1514,6 +1567,27 @@ function setView(view) {
         }
 
         
+        
+        function showSection(id) {
+            // Hide all content sections
+            ['shortForecast', 'fullInterpretation', 'aspectsSection', 'aspectsContent'].forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.style.display = 'none';
+            });
+            // Show selected
+            const target = document.getElementById(id);
+            if (target) target.style.display = 'block';
+            // Also show aspects content if aspects section
+            if (id === 'aspectsSection') {
+                const content = document.getElementById('aspectsContent');
+                if (content) content.style.display = 'block';
+            }
+            // Update button states
+            document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector('[onclick*="' + id + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
         function toggleSection(id) {
             const el = document.getElementById(id);
             if (el) {
