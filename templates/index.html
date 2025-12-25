@@ -812,6 +812,14 @@
         let currentMode = 'transit';
         let currentView = 'natal';
         let globalData = null;
+        function updatePdfButtons() {
+            const pdfSolar = document.getElementById("pdfSolar");
+            const pdfLunar = document.getElementById("pdfLunar");
+            const pdfSynastry = document.getElementById("pdfSynastry");
+            if (pdfSolar) pdfSolar.style.display = (globalData && globalData.solar) ? "inline-block" : "none";
+            if (pdfLunar) pdfLunar.style.display = (globalData && globalData.lunar) ? "inline-block" : "none";
+            if (pdfSynastry) pdfSynastry.style.display = (globalData && globalData.synastry) ? "inline-block" : "none";
+        }
         let birthData = {};
 
 
