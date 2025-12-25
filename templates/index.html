@@ -1830,11 +1830,11 @@ function setView(view) {
                     }
                     // Current city for transits
                     if (data.user.current_city) {
-                        const transitCity = document.getElementById('transitCity');
+                        const transitCity = document.getElementById('transit_city');
                         if (transitCity && !transitCity.value) {
                             transitCity.value = data.user.current_city;
-                            if (data.user.current_lat) document.getElementById('transitLat').value = data.user.current_lat;
-                            if (data.user.current_lon) document.getElementById('transitLon').value = data.user.current_lon;
+                            if (data.user.current_lat) document.getElementById('transit_lat').value = data.user.current_lat;
+                            if (data.user.current_lon) document.getElementById('transit_lon').value = data.user.current_lon;
                         }
                     }
                 }
