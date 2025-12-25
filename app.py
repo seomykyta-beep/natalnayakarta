@@ -13,6 +13,8 @@ from typing import Optional
 import logging
 
 from config import BOT_TOKEN, HOST, PORT, CHARTS_DIR, REPORTS_DIR, TEMPLATES_DIR, STATIC_DIR
+from pathlib import Path
+DATA_DIR = Path("/opt/natal_chart/data_cache")
 from engine import calculate_chart_with_mode, generate_pdf
 from core.auth import register_user, login_user, get_user_by_id, update_user_profile, decode_token, save_calculation, get_user_calculations
 from core.database import test_connection
