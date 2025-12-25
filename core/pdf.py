@@ -210,6 +210,7 @@ def generate_pdf(user_data):
             if len(p.get('text', '')) > 5000:
                 text += '...'
             story.append(Paragraph(text, interpretation))
+            story.append(Spacer(1, 0.8*cm))
     
     # Интерпретации аспектов
     if aspects:
@@ -221,6 +222,7 @@ def generate_pdf(user_data):
                 header = f"{a.get('p1', '')} {a.get('name', '')} {a.get('p2', '')}"
                 story.append(Paragraph(header, planet_header))
                 story.append(Paragraph(a.get('text', '')[:5000], interpretation))
+                story.append(Spacer(1, 0.6*cm))
     
     # ========== ФИНАЛ ==========
     story.append(Spacer(1, 2*cm))
@@ -304,6 +306,7 @@ def generate_pdf_by_mode(user_data, mode='full'):
                 story.append(Paragraph(header, planet_header))
                 text = p.get('text', '')[:5000]
                 story.append(Paragraph(text, interpretation))
+            story.append(Spacer(1, 0.8*cm))
         
         # Натальные аспекты
         aspects = user_data.get('aspects', [])
