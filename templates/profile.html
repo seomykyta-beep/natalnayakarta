@@ -2,69 +2,73 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Личный кабинет - Натальная карта</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
         }
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
         }
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
-        h1 { font-size: 24px; }
+        h1 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
         .header-links a {
             color: #667eea;
             text-decoration: none;
-            margin-left: 20px;
-            font-size: 14px;
+            margin-left: 15px;
+            font-size: 13px;
         }
-        .header-links a:hover { text-decoration: underline; }
         .card {
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
             border: 1px solid rgba(255,255,255,0.1);
         }
         .card-title {
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            margin-bottom: 15px;
             color: #667eea;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
         }
-        .form-group { margin-bottom: 15px; }
+        .form-group { 
+            flex: 1; 
+            min-width: 0;
+            margin-bottom: 12px; 
+        }
+        .form-group.small { flex: 0 0 60px; min-width: 60px; }
         label {
             display: block;
             color: #aaa;
-            margin-bottom: 6px;
-            font-size: 13px;
+            margin-bottom: 5px;
+            font-size: 12px;
         }
         input, select {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 10px;
@@ -77,7 +81,7 @@
         }
         input::placeholder { color: #666; }
         .btn {
-            padding: 12px 24px;
+            padding: 12px 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 10px;
@@ -85,22 +89,15 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            width: 100%;
         }
-        .btn:hover { transform: translateY(-2px); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #667eea;
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
-        }
+        .btn:active { transform: scale(0.98); }
         .message {
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: none;
+            font-size: 13px;
         }
         .message.success {
             background: rgba(76, 175, 80, 0.2);
@@ -116,57 +113,66 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
         }
-        .history-item:last-child { border-bottom: none; }
         .history-type {
             background: rgba(102, 126, 234, 0.2);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 11px;
             color: #667eea;
-        }
-        .history-date {
-            color: #888;
-            font-size: 13px;
         }
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: #888;
+            font-size: 14px;
         }
         .support-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             color: #667eea;
             text-decoration: none;
-            padding: 10px 0;
+            font-size: 14px;
         }
-        .support-link:hover { text-decoration: underline; }
-        .city-suggestions {
+        .city-wrapper { position: relative; }
+        .suggestions {
             position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
             background: #2a2a4a;
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
             z-index: 100;
-            width: 100%;
             display: none;
         }
-        .city-suggestion {
-            padding: 10px 14px;
+        .suggestion-item {
+            padding: 12px;
             cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        .city-suggestion:hover {
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover, .suggestion-item:active {
             background: rgba(102, 126, 234, 0.3);
         }
-        .city-wrapper { position: relative; }
-        @media (max-width: 600px) {
-            .form-row { grid-template-columns: 1fr; }
-            header { flex-direction: column; align-items: flex-start; }
+        .date-inputs {
+            display: flex;
+            gap: 8px;
+        }
+        .date-inputs input {
+            text-align: center;
+            padding: 12px 8px;
+        }
+        @media (max-width: 400px) {
+            body { padding: 10px; }
+            .card { padding: 15px; }
+            h1 { font-size: 18px; }
+            .form-group.small { flex: 0 0 50px; min-width: 50px; }
+            input, select { padding: 10px; font-size: 14px; }
         }
     </style>
 </head>
@@ -185,50 +191,47 @@
                 <div class="empty-state">
                     <p>Вы не авторизованы</p>
                     <br>
-                    <a href="/login" class="btn">Войти</a>
-                    <a href="/register" class="btn btn-outline" style="margin-left:10px">Регистрация</a>
+                    <a href="/login" class="btn" style="display:inline-block;width:auto;padding:12px 24px">Войти</a>
                 </div>
             </div>
         </div>
         
         <div id="profileContent" style="display:none">
-            <!-- Natal data -->
             <div class="card">
                 <div class="card-title">🌟 Натальные данные</div>
                 <div class="message" id="natalMsg"></div>
                 
                 <form id="natalForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Имя</label>
-                            <input type="text" id="name" placeholder="Ваше имя">
-                        </div>
+                    <div class="form-group">
+                        <label>Имя</label>
+                        <input type="text" id="name" placeholder="Ваше имя">
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Дата рождения</label>
-                            <input type="date" id="birth_date">
-                        </div>
-                        <div class="form-group">
-                            <label>Время рождения</label>
-                            <input type="time" id="birth_time">
-                        </div>
+                    <label>Дата рождения</label>
+                    <div class="date-inputs" style="margin-bottom:12px">
+                        <input type="text" id="birth_day" placeholder="ДД" maxlength="2" inputmode="numeric" style="flex:1">
+                        <input type="text" id="birth_month" placeholder="ММ" maxlength="2" inputmode="numeric" style="flex:1">
+                        <input type="text" id="birth_year" placeholder="ГГГГ" maxlength="4" inputmode="numeric" style="flex:1.5">
+                    </div>
+                    
+                    <label>Время рождения</label>
+                    <div class="date-inputs" style="margin-bottom:12px">
+                        <input type="text" id="birth_hour" placeholder="ЧЧ" maxlength="2" inputmode="numeric" style="flex:1">
+                        <input type="text" id="birth_minute" placeholder="ММ" maxlength="2" inputmode="numeric" style="flex:1">
                     </div>
                     
                     <div class="form-group city-wrapper">
                         <label>Город рождения</label>
-                        <input type="text" id="birth_city" placeholder="Начните вводить город..." autocomplete="off">
+                        <input type="text" id="birth_city" placeholder="Начните вводить..." autocomplete="off" oninput="suggestBirthCity()">
                         <input type="hidden" id="birth_lat">
                         <input type="hidden" id="birth_lon">
-                        <div class="city-suggestions" id="birthCitySuggestions"></div>
+                        <div class="suggestions" id="birthSuggestions"></div>
                     </div>
                     
                     <button type="submit" class="btn">Сохранить</button>
                 </form>
             </div>
             
-            <!-- Current city -->
             <div class="card">
                 <div class="card-title">📍 Город для транзитов</div>
                 <div class="message" id="currentMsg"></div>
@@ -236,33 +239,29 @@
                 <form id="currentForm">
                     <div class="form-group city-wrapper">
                         <label>Текущий город</label>
-                        <input type="text" id="current_city" placeholder="Где вы сейчас?" autocomplete="off">
+                        <input type="text" id="current_city" placeholder="Где вы сейчас?" autocomplete="off" oninput="suggestCurrentCity()">
                         <input type="hidden" id="current_lat">
                         <input type="hidden" id="current_lon">
-                        <div class="city-suggestions" id="currentCitySuggestions"></div>
+                        <div class="suggestions" id="currentSuggestions"></div>
                     </div>
                     
                     <button type="submit" class="btn">Сохранить</button>
                 </form>
             </div>
             
-            <!-- Contacts -->
             <div class="card">
                 <div class="card-title">📱 Контактные данные</div>
                 <div class="message" id="contactMsg"></div>
                 
                 <form id="contactForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Телефон</label>
-                            <input type="tel" id="phone" readonly style="opacity:0.7">
-                        </div>
-                        <div class="form-group">
-                            <label>Email (необязательно)</label>
-                            <input type="email" id="email" placeholder="email@example.com">
-                        </div>
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="tel" id="phone" readonly style="opacity:0.7">
                     </div>
-                    
+                    <div class="form-group">
+                        <label>Email (необязательно)</label>
+                        <input type="email" id="email" placeholder="email@example.com">
+                    </div>
                     <div class="form-group">
                         <label>Telegram (необязательно)</label>
                         <input type="text" id="telegram" placeholder="@username">
@@ -272,7 +271,6 @@
                 </form>
             </div>
             
-            <!-- History -->
             <div class="card">
                 <div class="card-title">📊 История расчётов</div>
                 <div id="historyList">
@@ -280,7 +278,6 @@
                 </div>
             </div>
             
-            <!-- Support -->
             <div class="card">
                 <div class="card-title">💬 Поддержка</div>
                 <a href="https://t.me/your_support_bot" class="support-link" target="_blank">
@@ -292,204 +289,243 @@
     
     <script>
         let currentUser = null;
+        let birthAbortCtrl = null;
+        let currentAbortCtrl = null;
+        
+        // Автопереход между полями даты
+        function setupAutoTab() {
+            const fields = [
+                {id: "birth_day", max: 2, next: "birth_month", maxVal: 31},
+                {id: "birth_month", max: 2, next: "birth_year", maxVal: 12},
+                {id: "birth_year", max: 4, next: "birth_hour"},
+                {id: "birth_hour", max: 2, next: "birth_minute", maxVal: 23},
+                {id: "birth_minute", max: 2, next: null, maxVal: 59}
+            ];
+            
+            fields.forEach(f => {
+                const el = document.getElementById(f.id);
+                if (!el) return;
+                
+                el.addEventListener("input", (e) => {
+                    let val = e.target.value.replace(/\D/g, "");
+                    if (f.maxVal && parseInt(val) > f.maxVal) {
+                        val = String(f.maxVal);
+                    }
+                    e.target.value = val;
+                    
+                    if (val.length >= f.max && f.next) {
+                        document.getElementById(f.next).focus();
+                    }
+                });
+            });
+        }
+        
+        // Поиск города через Nominatim
+        async function searchNominatim(query, listEl, onSelect) {
+            try {
+                const res = await fetch(
+                    "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(query) + "&accept-language=ru&addressdetails=1&limit=6"
+                );
+                const data = await res.json();
+                
+                if (!data.length) { 
+                    listEl.style.display = "none"; 
+                    return; 
+                }
+                
+                listEl.innerHTML = "";
+                listEl.style.display = "block";
+                
+                const seen = new Set();
+                data.forEach(p => {
+                    const addr = p.address || {};
+                    const cityName = addr.city || addr.town || addr.village || addr.hamlet || p.name || p.display_name.split(",")[0];
+                    const region = addr.state || addr.region || "";
+                    const country = addr.country || "";
+                    
+                    const key = cityName + "_" + String(p.lat).substring(0,5);
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    
+                    const div = document.createElement("div");
+                    div.className = "suggestion-item";
+                    const loc = [region, country].filter(Boolean).join(", ");
+                    div.innerHTML = "<b>" + cityName + "</b> <span style=\"color:#888;font-size:12px\">" + loc + "</span>";
+                    div.onclick = () => onSelect(cityName, p.lat, p.lon, listEl);
+                    listEl.appendChild(div);
+                });
+            } catch(e) { 
+                console.error(e); 
+            }
+        }
+        
+        function suggestBirthCity() {
+            const val = document.getElementById("birth_city").value.trim();
+            const list = document.getElementById("birthSuggestions");
+            if (val.length < 2) { list.style.display = "none"; return; }
+            
+            searchNominatim(val, list, (name, lat, lon, listEl) => {
+                document.getElementById("birth_city").value = name;
+                document.getElementById("birth_lat").value = lat;
+                document.getElementById("birth_lon").value = lon;
+                listEl.style.display = "none";
+            });
+        }
+        
+        function suggestCurrentCity() {
+            const val = document.getElementById("current_city").value.trim();
+            const list = document.getElementById("currentSuggestions");
+            if (val.length < 2) { list.style.display = "none"; return; }
+            
+            searchNominatim(val, list, (name, lat, lon, listEl) => {
+                document.getElementById("current_city").value = name;
+                document.getElementById("current_lat").value = lat;
+                document.getElementById("current_lon").value = lon;
+                listEl.style.display = "none";
+            });
+        }
+        
+        // Скрыть подсказки при клике вне
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".city-wrapper")) {
+                document.querySelectorAll(".suggestions").forEach(el => el.style.display = "none");
+            }
+        });
         
         async function checkAuth() {
             try {
-                const resp = await fetch('/api/auth/me');
+                const resp = await fetch("/api/auth/me");
                 const data = await resp.json();
                 
                 if (data.authenticated && data.user) {
                     currentUser = data.user;
-                    document.getElementById('notAuth').style.display = 'none';
-                    document.getElementById('profileContent').style.display = 'block';
+                    document.getElementById("notAuth").style.display = "none";
+                    document.getElementById("profileContent").style.display = "block";
                     fillProfile(data.user);
                     loadHistory();
                 } else {
-                    document.getElementById('notAuth').style.display = 'block';
-                    document.getElementById('profileContent').style.display = 'none';
+                    document.getElementById("notAuth").style.display = "block";
                 }
             } catch (e) {
-                document.getElementById('notAuth').style.display = 'block';
+                document.getElementById("notAuth").style.display = "block";
             }
         }
         
         function fillProfile(user) {
-            document.getElementById('name').value = user.name || '';
-            document.getElementById('phone').value = user.phone || '';
-            document.getElementById('email').value = user.email || '';
-            document.getElementById('telegram').value = user.telegram || '';
-            document.getElementById('birth_city').value = user.birth_city || '';
-            document.getElementById('birth_lat').value = user.birth_lat || '';
-            document.getElementById('birth_lon').value = user.birth_lon || '';
-            document.getElementById('current_city').value = user.current_city || '';
-            document.getElementById('current_lat').value = user.current_lat || '';
-            document.getElementById('current_lon').value = user.current_lon || '';
+            document.getElementById("name").value = user.name || "";
+            document.getElementById("phone").value = user.phone || "";
+            document.getElementById("email").value = user.email || "";
+            document.getElementById("telegram").value = user.telegram || "";
+            document.getElementById("birth_city").value = user.birth_city || "";
+            document.getElementById("birth_lat").value = user.birth_lat || "";
+            document.getElementById("birth_lon").value = user.birth_lon || "";
+            document.getElementById("current_city").value = user.current_city || "";
+            document.getElementById("current_lat").value = user.current_lat || "";
+            document.getElementById("current_lon").value = user.current_lon || "";
             
             if (user.birth_date) {
-                const parts = user.birth_date.split('.');
+                const parts = user.birth_date.split(".");
                 if (parts.length === 3) {
-                    document.getElementById('birth_date').value = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    document.getElementById("birth_day").value = parts[0];
+                    document.getElementById("birth_month").value = parts[1];
+                    document.getElementById("birth_year").value = parts[2];
                 }
             }
             if (user.birth_time) {
-                document.getElementById('birth_time').value = user.birth_time;
+                const tp = user.birth_time.split(":");
+                if (tp.length >= 2) {
+                    document.getElementById("birth_hour").value = tp[0];
+                    document.getElementById("birth_minute").value = tp[1];
+                }
             }
         }
         
         async function loadHistory() {
             try {
-                const resp = await fetch('/api/user/calculations');
+                const resp = await fetch("/api/user/calculations");
                 const data = await resp.json();
-                
-                const list = document.getElementById('historyList');
+                const list = document.getElementById("historyList");
                 
                 if (!data.success || !data.calculations || data.calculations.length === 0) {
-                    list.innerHTML = '<div class="empty-state">Расчётов пока нет</div>';
+                    list.innerHTML = "<div class=\"empty-state\">Расчётов пока нет</div>";
                     return;
                 }
                 
-                const typeLabels = {
-                    'natal': 'Натал',
-                    'transit': 'Транзиты',
-                    'solar': 'Соляр',
-                    'lunar': 'Лунар',
-                    'synastry': 'Синастрия'
-                };
-                
+                const labels = {natal: "Натал", transit: "Транзиты", solar: "Соляр", lunar: "Лунар", synastry: "Синастрия"};
                 list.innerHTML = data.calculations.map(c => {
-                    const date = new Date(c.created_at).toLocaleDateString('ru-RU');
-                    const type = typeLabels[c.calc_type] || c.calc_type;
-                    return '<div class="history-item"><span class="history-type">' + type + '</span><span class="history-date">' + date + '</span></div>';
-                }).join('');
+                    const date = new Date(c.created_at).toLocaleDateString("ru-RU");
+                    return "<div class=\"history-item\"><span class=\"history-type\">" + (labels[c.calc_type] || c.calc_type) + "</span><span>" + date + "</span></div>";
+                }).join("");
             } catch (e) {
-                document.getElementById('historyList').innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+                document.getElementById("historyList").innerHTML = "<div class=\"empty-state\">Ошибка загрузки</div>";
             }
         }
         
         async function updateProfile(data, msgId) {
             const msg = document.getElementById(msgId);
             try {
-                const resp = await fetch('/api/user/profile', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                const resp = await fetch("/api/user/profile", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
                 const result = await resp.json();
                 
-                if (result.success) {
-                    msg.className = 'message success';
-                    msg.textContent = 'Сохранено!';
-                } else {
-                    msg.className = 'message error';
-                    msg.textContent = result.error || 'Ошибка сохранения';
-                }
-                msg.style.display = 'block';
-                setTimeout(() => { msg.style.display = 'none'; }, 3000);
+                msg.className = result.success ? "message success" : "message error";
+                msg.textContent = result.success ? "Сохранено!" : (result.error || "Ошибка");
+                msg.style.display = "block";
+                setTimeout(() => { msg.style.display = "none"; }, 3000);
             } catch (e) {
-                msg.className = 'message error';
-                msg.textContent = 'Ошибка соединения';
-                msg.style.display = 'block';
+                msg.className = "message error";
+                msg.textContent = "Ошибка соединения";
+                msg.style.display = "block";
             }
         }
         
-        document.getElementById('natalForm').addEventListener('submit', async (e) => {
+        document.getElementById("natalForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const dateInput = document.getElementById('birth_date').value;
-            let birthDate = null;
-            if (dateInput) {
-                const d = new Date(dateInput);
-                birthDate = d.getDate().toString().padStart(2,'0') + '.' + 
-                           (d.getMonth()+1).toString().padStart(2,'0') + '.' + d.getFullYear();
-            }
+            const day = document.getElementById("birth_day").value.padStart(2, "0");
+            const month = document.getElementById("birth_month").value.padStart(2, "0");
+            const year = document.getElementById("birth_year").value;
+            const hour = document.getElementById("birth_hour").value.padStart(2, "0");
+            const minute = document.getElementById("birth_minute").value.padStart(2, "0");
+            
+            const birthDate = (day && month && year) ? day + "." + month + "." + year : null;
+            const birthTime = (hour && minute) ? hour + ":" + minute : null;
             
             await updateProfile({
-                name: document.getElementById('name').value,
+                name: document.getElementById("name").value,
                 birth_date: birthDate,
-                birth_time: document.getElementById('birth_time').value,
-                birth_city: document.getElementById('birth_city').value,
-                birth_lat: parseFloat(document.getElementById('birth_lat').value) || null,
-                birth_lon: parseFloat(document.getElementById('birth_lon').value) || null
-            }, 'natalMsg');
+                birth_time: birthTime,
+                birth_city: document.getElementById("birth_city").value,
+                birth_lat: parseFloat(document.getElementById("birth_lat").value) || null,
+                birth_lon: parseFloat(document.getElementById("birth_lon").value) || null
+            }, "natalMsg");
         });
         
-        document.getElementById('currentForm').addEventListener('submit', async (e) => {
+        document.getElementById("currentForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             await updateProfile({
-                current_city: document.getElementById('current_city').value,
-                current_lat: parseFloat(document.getElementById('current_lat').value) || null,
-                current_lon: parseFloat(document.getElementById('current_lon').value) || null
-            }, 'currentMsg');
+                current_city: document.getElementById("current_city").value,
+                current_lat: parseFloat(document.getElementById("current_lat").value) || null,
+                current_lon: parseFloat(document.getElementById("current_lon").value) || null
+            }, "currentMsg");
         });
         
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        document.getElementById("contactForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             await updateProfile({
-                email: document.getElementById('email').value,
-                telegram: document.getElementById('telegram').value
-            }, 'contactMsg');
+                email: document.getElementById("email").value,
+                telegram: document.getElementById("telegram").value
+            }, "contactMsg");
         });
         
         async function logout() {
-            await fetch('/api/auth/logout', { method: 'POST' });
-            window.location.href = '/login';
+            await fetch("/api/auth/logout", { method: "POST" });
+            window.location.href = "/login";
         }
         
-        // City search
-        async function searchCity(query, suggestionsEl, latEl, lonEl) {
-            if (query.length < 2) {
-                suggestionsEl.style.display = 'none';
-                return;
-            }
-            
-            try {
-                const resp = await fetch('/api/cities?q=' + encodeURIComponent(query));
-                const cities = await resp.json();
-                
-                if (cities.length > 0) {
-                    suggestionsEl.innerHTML = cities.map(c => 
-                        '<div class="city-suggestion" data-lat="' + c.lat + '" data-lon="' + c.lon + '">' + c.name + '</div>'
-                    ).join('');
-                    suggestionsEl.style.display = 'block';
-                    
-                    suggestionsEl.querySelectorAll('.city-suggestion').forEach(el => {
-                        el.addEventListener('click', () => {
-                            suggestionsEl.previousElementSibling.previousElementSibling.value = el.textContent;
-                            latEl.value = el.dataset.lat;
-                            lonEl.value = el.dataset.lon;
-                            suggestionsEl.style.display = 'none';
-                        });
-                    });
-                } else {
-                    suggestionsEl.style.display = 'none';
-                }
-            } catch (e) {
-                suggestionsEl.style.display = 'none';
-            }
-        }
-        
-        document.getElementById('birth_city').addEventListener('input', (e) => {
-            searchCity(e.target.value, 
-                document.getElementById('birthCitySuggestions'),
-                document.getElementById('birth_lat'),
-                document.getElementById('birth_lon')
-            );
-        });
-        
-        document.getElementById('current_city').addEventListener('input', (e) => {
-            searchCity(e.target.value,
-                document.getElementById('currentCitySuggestions'),
-                document.getElementById('current_lat'),
-                document.getElementById('current_lon')
-            );
-        });
-        
-        // Hide suggestions on click outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.city-wrapper')) {
-                document.querySelectorAll('.city-suggestions').forEach(el => el.style.display = 'none');
-            }
-        });
-        
+        setupAutoTab();
         checkAuth();
     </script>
 </body>
