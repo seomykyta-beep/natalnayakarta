@@ -1566,9 +1566,10 @@ function setView(view) {
                 if (cards) {
                     const dign = p.dignity || '';
                     const tLabel = (mode === 'solar' ? 'Соляр' : mode === 'lunar' ? 'Лунар' : 'Транзит');
-                    const tVal = (op ? (formatPos(op) + oRetro) : '—');
+                    const tVal = (op ? (formatPos(op) + oRetro) : '');
                     const natalHouse = p.house ? p.house + ' дом' : '';
                     const transitHouse = (op && op.natal_house) ? op.natal_house + ' дом' : '';
+                    const showTransit = op && mode !== 'natal';
                     
                     let dignRow = '';
                     if (dign) {
@@ -1576,14 +1577,18 @@ function setView(view) {
                         dignRow = `<div style="grid-column:1/-1"><div class="k">Достоинство</div><div class="v" style="color:${dignColor};font-weight:bold">${dign}</div></div>`;
                     }
                     
+                    const pillHtml = showTransit ? `<div class="pill">${tLabel}</div>` : '';
+                    const gridCols = showTransit ? '1fr 1fr' : '1fr';
+                    const transitCol = showTransit ? `<div><div class="k">${tLabel}</div><div class="v">${tVal}</div><div class="k" style="margin-top:4px">${transitHouse}</div></div>` : '';
+                    
                     cards.innerHTML += `<div class="data-card">
                         <div class="row1">
                             <div class="pname">${p.icon} ${p.name} ${retro}</div>
-                            <div class="pill">${tLabel}</div>
+                            ${pillHtml}
                         </div>
-                        <div class="grid">
+                        <div class="grid" style="grid-template-columns:${gridCols}">
                             <div><div class="k">Натал</div><div class="v">${formatPos(p)}</div><div class="k" style="margin-top:4px">${natalHouse}</div></div>
-                            <div><div class="k">${tLabel}</div><div class="v">${tVal}</div><div class="k" style="margin-top:4px">${transitHouse}</div></div>
+                            ${transitCol}
                             ${dignRow}
                         </div>
                     </div>`;
