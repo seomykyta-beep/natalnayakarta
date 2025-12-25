@@ -206,8 +206,8 @@ def generate_pdf(user_data):
             story.append(Paragraph(header, planet_header))
             
             # Разбиваем текст на части если он слишком длинный
-            text = p.get('text', '')[:600]
-            if len(p.get('text', '')) > 600:
+            text = p.get('text', '')[:5000]
+            if len(p.get('text', '')) > 5000:
                 text += '...'
             story.append(Paragraph(text, interpretation))
     
@@ -220,7 +220,7 @@ def generate_pdf(user_data):
             if a.get('text'):
                 header = f"{a.get('p1', '')} {a.get('name', '')} {a.get('p2', '')}"
                 story.append(Paragraph(header, planet_header))
-                story.append(Paragraph(a.get('text', '')[:400], interpretation))
+                story.append(Paragraph(a.get('text', '')[:5000], interpretation))
     
     # ========== ФИНАЛ ==========
     story.append(Spacer(1, 2*cm))
@@ -302,7 +302,7 @@ def generate_pdf_by_mode(user_data, mode='full'):
             if p.get('text') and p.get('key') not in ['ASC', 'MC']:
                 header = f"{p.get('icon', '')} {p.get('name', '')} в {p.get('sign_locative', p.get('sign', ''))}, {p.get('house', '')} дом"
                 story.append(Paragraph(header, planet_header))
-                text = p.get('text', '')[:500]
+                text = p.get('text', '')[:5000]
                 story.append(Paragraph(text, interpretation))
         
         # Натальные аспекты
